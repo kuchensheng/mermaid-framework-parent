@@ -26,7 +26,7 @@ import java.util.List;
  * @CreateDate:2018/7/1 14:15
  */
 @RestController
-@RequestMapping(value = "/core")
+//@RequestMapping(value = "/core")
 @Api(value = "框架核心配置",tags = "框架核心配置")
 public class CoreController {
 
@@ -45,8 +45,9 @@ public class CoreController {
     @RequestMapping(value = "/getBalence",method = RequestMethod.GET)
     public String getCoreConfigByBalence(){
 
-        logger.info("访问了端口：{}",environment.getProperty("server.port"));
-        return "I am ok "+environment.getProperty("server.port");
+//        logger.info("访问了端口：{}",environment.getProperty("server.port"));
+//        return "I am ok "+environment.getProperty("server.port");
+        return "I am O";
     }
 
 }
