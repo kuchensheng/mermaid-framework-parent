@@ -11,12 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/6/24 21:24
- */
+
 public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServerHandler.class.getName());
     private static final String WEBSOCKET = "websocket";

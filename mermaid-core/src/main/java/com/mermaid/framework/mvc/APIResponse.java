@@ -10,12 +10,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/7/9 22:44
- */
+
 @Data
 public class APIResponse<T> {
 

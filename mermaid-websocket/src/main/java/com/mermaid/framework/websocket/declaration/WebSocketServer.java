@@ -20,12 +20,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/6/23 20:51
- */
+
 
 @Component
 @ServerEndpoint(value = "${mermaid.websocket.server.endpoint.uri:/websocket")

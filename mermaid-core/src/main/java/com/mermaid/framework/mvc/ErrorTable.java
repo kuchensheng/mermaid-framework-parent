@@ -12,12 +12,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/7/9 22:48
- */
+
 public class ErrorTable {
     private static final Logger logger = LoggerFactory.getLogger(ErrorTable.class);
     private static final PathMatchingResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();

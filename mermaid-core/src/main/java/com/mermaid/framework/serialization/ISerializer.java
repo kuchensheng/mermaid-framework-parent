@@ -1,10 +1,10 @@
 package com.mermaid.framework.serialization;
 
 /**
- * @version 1.0
- * @Desription: 序列化通用服务
- * @Author:Hui
- * @CreateDate:2018/8/19 13:33
+ * version 1.0
+ * Desription: 序列化通用服务
+ * @author :Hui
+ * CreateDate:2018/8/19 13:33
  */
 public interface ISerializer {
 

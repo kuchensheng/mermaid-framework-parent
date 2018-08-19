@@ -9,11 +9,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * @version 1.0
- * @Desription: Hession序列化
+ * version 1.0
+ * Desription: Hession序列化
  * 支持跨语言传输的二进制序列化协议
- * @Author:Hui
- * @CreateDate:2018/8/19 14:14
+ * @author:Hui
+ * CreateDate:2018/8/19 14:14
  */
 @Slf4j
 public class HessianSerializer implements ISerializer {

@@ -5,10 +5,7 @@ import com.thoughtworks.xstream.io.xml.Dom4JDriver;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * @version 1.0
- * @Desription:XML序列化工具
- * @Author:Hui
- * @CreateDate:2018/8/19 13:46
+
  */
 @Slf4j
 public class XmlSerializer implements ISerializer {

@@ -19,12 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/7/1 14:15
- */
+
 @RestController
 //@RequestMapping(value = "/core")
 @Api(value = "框架核心配置",tags = "框架核心配置")

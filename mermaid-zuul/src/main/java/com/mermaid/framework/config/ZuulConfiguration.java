@@ -10,12 +10,7 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/7/1 23:31
- */
+
 @Configuration
 @EnableZuulProxy
 @EnableConfigurationProperties({FilterConfiguration.class})

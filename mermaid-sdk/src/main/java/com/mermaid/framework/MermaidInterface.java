@@ -7,12 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/7/1 22:30
- */
+
 @FeignClient("core-service")
 public interface MermaidInterface {
     @ApiOperation(value = "获取负载列表",notes = "获取Ribbon ’s mermaid框架配置")

@@ -15,12 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/6/23 22:44
- */
+
 
 public class NettyWebSocketServer {
     private static final Logger logger = LoggerFactory.getLogger(NettyWebSocketServer.class);

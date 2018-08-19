@@ -7,12 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/7/2 0:07
- */
+
 public class PreFilter extends ZuulFilter {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

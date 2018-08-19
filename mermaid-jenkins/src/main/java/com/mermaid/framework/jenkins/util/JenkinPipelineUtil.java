@@ -13,12 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @version 1.0
- * @Desription:
- * @Author:Hui
- * @CreateDate:2018/7/5 23:01
- */
+
 public class JenkinPipelineUtil {
     private static final Logger logger = LoggerFactory.getLogger(JenkinPipelineUtil.class);
 

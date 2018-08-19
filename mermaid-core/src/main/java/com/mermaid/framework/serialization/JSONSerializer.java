@@ -15,10 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @version 1.0
- * @Desription:JSON序列化工具
- * @Author:Hui
- * @CreateDate:2018/8/19 13:50
  */
 @Slf4j
 public class JSONSerializer implements ISerializer {
