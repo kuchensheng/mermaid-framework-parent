@@ -52,6 +52,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <swagger.version>2.7.0</swagger.version>
     <jedis.version>2.9.0</jedis.version>
+    <zookeeper.version>3.4.11</zookeeper.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -86,6 +87,11 @@
         <groupId>redis.clients</groupId>
         <artifactId>jedis</artifactId>
         <version>${jedis.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>${zookeeper.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
