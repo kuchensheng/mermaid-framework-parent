@@ -25,4 +25,6 @@ public interface IRegisterCenter4Provider {
      * @return
      */
     Map<String,List<ProviderService>> getProviderServiceMap();
+
+    void registerProvoder();
 }

@@ -1,11 +1,13 @@
 package com.mermaid.framework.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.serialize.SerializableSerializer;
 import org.I0Itec.zkclient.serialize.ZkSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  * Desription:
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * version 1.0
  */
 @Configuration
+@Slf4j
 public class ZkServiceConfiguration {
 
     @Value("${mermaid.zk.servers:118.178.186.33:2181}")
@@ -32,6 +35,7 @@ public class ZkServiceConfiguration {
 
     @Bean
     public ZkClient zkClient() {
+        log.info("连接到ZK");
         ZkClient zkClient = new ZkClient(zkServers,sessionTimeout,connectionTimeout);
         return zkClient;
     }
