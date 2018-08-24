@@ -11,6 +11,8 @@ import org.I0Itec.zkclient.ZkClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -32,7 +34,7 @@ import java.util.*;
  */
 @Slf4j
 @Configuration
-public class RegisterCenter implements IRegisterCenter4Invoker,IRegisterCenter4Provider,InitializingBean{
+public class RegisterCenter implements IRegisterCenter4Invoker,IRegisterCenter4Provider,InitializingBean,EmbeddedServletContainerCustomizer{
 
     private static RegisterCenter registerCenter = new RegisterCenter();
 
@@ -186,4 +188,14 @@ public class RegisterCenter implements IRegisterCenter4Invoker,IRegisterCenter4P
     public Map<String, List<ProviderService>> getProviderServiceMap() {
         return null;
     }
+
+    @Override
+    public void customize(ConfigurableEmbeddedServletContainer configurableEmbeddedServletContainer) {
+        String port = env.getProperty("spring.application.index");
+        if(StringUtils.hasText(port)) {
+            configurableEmbeddedServletContainer.setPort(Integer.valueOf(port));
+        }
+    }
 }
+
+
