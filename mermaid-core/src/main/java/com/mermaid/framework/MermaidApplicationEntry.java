@@ -17,10 +17,9 @@ import java.util.Properties;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-@EnableFeignClients
-@EnableCircuitBreaker
+@EnableFeignClients(basePackages = {"com"})
 @PropertySource(value = {"classpath:/META-INF/mermaid-eureka.properties","classpath:/META-INF/mermaid-module-framework-core.properties"})
-@ComponentScan("com")
+@ComponentScan(basePackages = {"com"})
 public class MermaidApplicationEntry {
 
     public static void main(String[] args) {

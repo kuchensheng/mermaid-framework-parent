@@ -1,5 +1,6 @@
 package com.mermaid.framework.controller;
 
+import com.mermaid.framework.mvc.APIResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -42,4 +43,16 @@ public class CoreController {
         return "swagger2.html";
     }
 
+    @ApiOperation(value = "健康检查")
+    @RequestMapping(value = "/info",method = RequestMethod.GET)
+    public APIResponse<String> info() {
+        String appName = environment.getProperty("spring.application.name");
+        return APIResponse.success(appName);
+    }
+
+    @ApiOperation(value = "健康检查")
+    @RequestMapping(value = "/status",method = RequestMethod.GET)
+    public APIResponse<Boolean> status() {
+        return APIResponse.success(Boolean.TRUE);
+    }
 }
