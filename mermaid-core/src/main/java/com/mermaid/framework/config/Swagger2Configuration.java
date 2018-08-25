@@ -19,6 +19,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Component
 @Configuration
+@EnableSwagger2
 @Slf4j
 @PropertySource("/META-INF/mermaid-module-framework-core.properties")
 public class Swagger2Configuration {
@@ -29,10 +30,8 @@ public class Swagger2Configuration {
     public Docket createRestApi(){
         String baskPackageName = environment.getProperty("mermaid.swagger.package","com");
         log.info("swagger基础包={}",baskPackageName);
-
-        return new Docket(
-                DocumentationType.SWAGGER_2
-        ).apiInfo(apiInfo())
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(baskPackageName))
                 .paths(PathSelectors.any())

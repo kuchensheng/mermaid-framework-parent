@@ -13,23 +13,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 
-@ComponentScan({"com.mermaid.framework"})
+@ComponentScan({"com"})
 @SpringBootApplication
-@EnableSwagger2
 public class MermaidApplicationEntry {
 
-    private static final String CONN_SERVER = "118.178.186.33:2181";
-    private static final Integer SESSION_TIMEOUT = 50000;
     public static void main(String[] args) {
 
-//        IRegisterCenter4Provider provider = new RegisterCenter();
-//        provider.registerProvoder();
         SpringApplication.run(MermaidApplicationEntry.class,args);
     }
 }

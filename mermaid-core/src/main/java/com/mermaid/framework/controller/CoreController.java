@@ -45,4 +45,10 @@ public class CoreController {
         return "I am O";
     }
 
+    @ApiOperation(value = "测试swagger")
+    @RequestMapping(value = "/core/swagger2",method = RequestMethod.GET)
+    public String swagger2Test() {
+        return "swagger2.html";
+    }
+
 }

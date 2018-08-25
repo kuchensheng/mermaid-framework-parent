@@ -46,28 +46,8 @@ public class RegisterCenter implements IRegisterCenter4Invoker,IRegisterCenter4P
     @Autowired
     private ZkClient zkClient;
 
-    @Value("${mermaid.zk.servers:118.178.186.33:2181}")
-    private String zkServers;
-
-    @Value("${mermaid.zk.timeout.session:30000}")
-    private int sessionTimeout;
-
-    @Value("${mermaid.zk.timeout.connection:60000}")
-    private int connectionTimeout;
-
-    @Value("${mermaid.zk.channel_size:5}")
-    private int channelSize;
-
-
     @Autowired
     private Environment env;
-
-    @Bean
-    public ZkClient zkClient() {
-        log.info("连接到ZK");
-        ZkClient zkClient = new ZkClient(zkServers,sessionTimeout,connectionTimeout);
-        return zkClient;
-    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
