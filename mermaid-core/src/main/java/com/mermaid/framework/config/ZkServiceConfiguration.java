@@ -4,10 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.serialize.SerializableSerializer;
 import org.I0Itec.zkclient.serialize.ZkSerializer;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooKeeper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * Desription:
@@ -15,28 +19,24 @@ import org.springframework.stereotype.Component;
  * @author:Hui CreateDate:2018/8/20 0:09
  * version 1.0
  */
-@Configuration
-@Slf4j
-public class ZkServiceConfiguration {
+public class ZkServiceConfiguration extends ZooKeeper{
 
-    @Value("${mermaid.zk.servers:118.178.186.33:2181}")
-    private String zkServers;
-
-    @Value("${mermaid.zk.timeout.session:30000}")
-    private int sessionTimeout;
-
-    @Value("${mermaid.zk.timeout.connection:60000}")
-    private int connectionTimeout;
-
-    @Value("${mermaid.zk.channel_size:5}")
-    private int channelSize;
-
-
-
-    @Bean
-    public ZkClient zkClient() {
-        log.info("连接到ZK");
-        ZkClient zkClient = new ZkClient(zkServers,sessionTimeout,connectionTimeout);
-        return zkClient;
+    public ZkServiceConfiguration(String connectString, int sessionTimeout, Watcher watcher) throws IOException {
+        super(connectString, sessionTimeout, watcher);
     }
+
+    public ZkServiceConfiguration(String connectString, int sessionTimeout, Watcher watcher, boolean canBeReadOnly) throws IOException {
+        super(connectString, sessionTimeout, watcher, canBeReadOnly);
+    }
+
+    public ZkServiceConfiguration(String connectString, int sessionTimeout, Watcher watcher, long sessionId, byte[] sessionPasswd) throws IOException {
+        super(connectString, sessionTimeout, watcher, sessionId, sessionPasswd);
+    }
+
+    public ZkServiceConfiguration(String connectString, int sessionTimeout, Watcher watcher, long sessionId, byte[] sessionPasswd, boolean canBeReadOnly) throws IOException {
+        super(connectString, sessionTimeout, watcher, sessionId, sessionPasswd, canBeReadOnly);
+    }
+
+
+
 }

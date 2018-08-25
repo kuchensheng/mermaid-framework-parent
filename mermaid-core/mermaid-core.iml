@@ -162,5 +162,18 @@
     <orderEntry type="library" name="Maven: org.apache.yetus:audience-annotations:0.5.0" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty:3.10.5.Final" level="project" />
     <orderEntry type="library" name="Maven: com.github.sgroschupf:zkclient:0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-zookeeper-all:1.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-zookeeper-config:1.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-zookeeper:1.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-zookeeper-core:1.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-zookeeper-config:1.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.curator:curator-recipes:2.11.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.curator:curator-framework:2.11.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.curator:curator-client:2.11.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-zookeeper-discovery:1.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-zookeeper-discovery:1.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.curator:curator-x-discovery:2.11.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.13" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.13" level="project" />
   </component>
 </module>
