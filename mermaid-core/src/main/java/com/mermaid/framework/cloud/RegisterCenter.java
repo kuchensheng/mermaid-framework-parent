@@ -34,6 +34,7 @@ import java.util.*;
  */
 @Slf4j
 @Configuration
+@Component
 public class RegisterCenter implements IRegisterCenter4Invoker,IRegisterCenter4Provider,InitializingBean,EmbeddedServletContainerCustomizer{
 
     private static RegisterCenter registerCenter = new RegisterCenter();

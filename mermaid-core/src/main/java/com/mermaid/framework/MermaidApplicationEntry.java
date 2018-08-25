@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @ComponentScan({"com.mermaid.framework"})
 @SpringBootApplication
+@EnableSwagger2
 public class MermaidApplicationEntry {
 
     private static final String CONN_SERVER = "118.178.186.33:2181";

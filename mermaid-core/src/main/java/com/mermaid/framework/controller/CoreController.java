@@ -31,13 +31,13 @@ public class CoreController {
     private Environment environment;
 
     @ApiOperation(value = "获取框架配置",notes = "获取mermaid框架配置")
-    @RequestMapping(value = "/get",method = RequestMethod.GET)
+    @RequestMapping(value = "/core/get",method = RequestMethod.GET)
     public void getCoreConfig(){
 
 
     }
     @ApiOperation(value = "获取负载列表",notes = "获取Ribbon ’s mermaid框架配置")
-    @RequestMapping(value = "/getBalence",method = RequestMethod.GET)
+    @RequestMapping(value = "/core/getBalence",method = RequestMethod.GET)
     public String getCoreConfigByBalence(){
 
 //        logger.info("访问了端口：{}",environment.getProperty("server.port"));
