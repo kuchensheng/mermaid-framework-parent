@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 import javax.annotation.Resource;
@@ -19,6 +21,7 @@ import java.util.List;
 
 
 @ComponentScan({"com"})
+@EnableFeignClients
 @SpringBootApplication
 public class MermaidApplicationEntry {
 
