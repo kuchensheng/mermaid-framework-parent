@@ -6,7 +6,7 @@
   <groupId>com.mermaid.framework</groupId>
   <artifactId>mermaid-framework-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -114,7 +114,7 @@
             <releaseProfiles>release</releaseProfiles>
             <autoVersionSubmodules>true</autoVersionSubmodules>
             <tagBase>https://github.com/kuchensheng/mermaid-framework-parent.git</tagBase>
-            <tagNameFormat>v@{project.version}</tagNameFormat>
+            <tagNameFormat>@{project.version}</tagNameFormat>
           </configuration>
         </plugin>
         <plugin>
