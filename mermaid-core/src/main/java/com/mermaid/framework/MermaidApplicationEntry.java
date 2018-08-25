@@ -23,6 +23,10 @@ import java.util.Properties;
 public class MermaidApplicationEntry {
 
     public static void main(String[] args) {
+        System.setProperty("eureka.instance.prefer-ip-address",Boolean.TRUE.toString());
+        System.setProperty("eureka.instance.instance-id","${spring.cloud.client.ipAddress}:${spring.application.index}");
+        System.setProperty("eureka.instance.hostname","${spring.cloud.client.ipAddress}");
+        System.setProperty("eureka.instance.non-secure-port","${spring.application.index}");
 
         SpringApplication.run(MermaidApplicationEntry.class,args);
 
