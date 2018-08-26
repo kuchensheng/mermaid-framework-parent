@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <!--<localRepository>D:/repo</localRepository>-->
+    <pluginGroups></pluginGroups>
+
+    <proxies></proxies>
+    <servers>
+        <server>
+            <id>sweet-release</id>
+            <username>sweet</username>
+            <password>123456</password>
+        </server>
+        <server>
+            <id>sweet-snapshots</id>
+            <username>sweet</username>
+            <password>123456</password>
+        </server>
+    </servers>
+    <mirrors>
+        <mirror>
+            <id>nexus-release</id>
+            <mirrorOf>central</mirrorOf>
+            <name>infohow mirror</name>
+            <url>http://nexus.evun.cn/content/groups/public/</url>
+        </mirror>
+        <mirror>
+            <id>nexus-snapshots</id>
+            <mirrorOf>snapshots</mirrorOf>
+            <name>infohow mirror snapshots</name>
+            <url>http://nexus.evun.cn/content/groups/public/</url>
+        </mirror>
+    </mirrors>
+    <profiles>
+        <profile>
+            <id>nexus</id>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>http://nexus.evun.cn/content/groups/public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>snapshots</id>
+                    <url>http://nexus.evun.cn/content/groups/public/</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>public</id>
+                    <url>http://nexus.evun.cn/content/groups/public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+                <repository>
+                    <id>getui-nexus</id>
+                    <url>http://mvn.gt.igexin.com/nexus/content/repositories/releases/</url>
+                </repository>
+
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>central</id>
+                    <url>http://nexus.evun.cn/content/groups/public/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>snapshots</id>
+                    <url>http://nexus.evun.cn/content/groups/public/</url>
+
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                        <updatePolicy>always</updatePolicy>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.jdbc.url>jdbc:oracle:thin:@10.86.87.243:1521:sonar</sonar.jdbc.url>
+                <sonar.jdbc.username>sonar</sonar.jdbc.username>
+                <sonar.jdbc.password>sonar</sonar.jdbc.password>
+                <sonar.jdbc.driver>oracle.jdbc.driver.OracleDriver</sonar.jdbc.driver>
+            </properties>
+        </profile>
+    </profiles>
+    <activeProfiles>
+        <activeProfile>nexus</activeProfile>
+        <activeProfile>sonar</activeProfile>
+    </activeProfiles>
+</settings>
+

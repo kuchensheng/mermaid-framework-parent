@@ -118,4 +118,7 @@ public class APIResponse<T> {
         return new APIResponse(code, data);
     }
 
+    public static APIResponse widthCode(String errorCode) {
+        return new APIResponse(errorCode);
+    }
 }
