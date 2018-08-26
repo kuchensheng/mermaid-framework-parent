@@ -25,7 +25,6 @@ import java.util.Properties;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableFeignClients(basePackages = {"com"})
-//@PropertySource(value = {"classpath:/META-INF/mermaid-module-framework-eureka.properties","classpath:/META-INF/mermaid-module-framework-core.properties"})
 @ComponentScan(basePackages = {"com"})
 @Slf4j
 public class MermaidApplicationEntry {
@@ -41,7 +40,6 @@ public class MermaidApplicationEntry {
         springApplication.setDefaultProperties(properties);
         printConfigInfo(properties);
         springApplication.run(args);
-//        SpringApplication.run(MermaidApplicationEntry.class, args);
     }
 
     private static void printConfigInfo(Properties properties) {

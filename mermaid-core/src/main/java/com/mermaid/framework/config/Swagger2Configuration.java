@@ -21,7 +21,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 @Slf4j
-@PropertySource("/META-INF/mermaid-module-framework-core.properties")
 public class Swagger2Configuration {
 
     @Autowired
