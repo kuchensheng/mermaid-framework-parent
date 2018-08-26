@@ -1,6 +1,8 @@
 package com.mermaid.framework;
 
+import com.mermaid.framework.config.ModuleLoader;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -84,6 +86,9 @@ public class MermaidApplicationEntry {
             Properties applicationProperties = PropertiesLoaderUtils.loadProperties(applicationResource);
             log.info("读取application.properties=[{}]",applicationResource.getFilename());
             mergeProperties(properties,applicationProperties);
+//            ModuleLoader moduleLoader = new ModuleLoader();
+//            Properties modules = moduleLoader.scanModules();
+//            mergeProperties(properties,modules);
             //TODO 后续考虑从远程（配置中心）读取properties，并且以之为核心进行配置合并
             return properties;
         } catch (IOException e) {
@@ -93,14 +98,16 @@ public class MermaidApplicationEntry {
 
     private static void mergeProperties(Properties properties, Properties moduleResources) {
 //        log.info("merge configuration，if find same key,value will be set last properites file's value");
-        for(Map.Entry<Object,Object> entry : moduleResources.entrySet()) {
-            String key = String.valueOf(entry.getKey());
-            String value = StringUtils.isEmpty(entry.getValue()) ? "" : String.valueOf(entry.getValue());
-            if(properties.contains(key)) {
-                log.info("find key={}，overwrite old value,new value={}",key,value);
-                properties.setProperty(key,value);
-            }else {
-                properties.put(key,value);
+        if(null != moduleResources && moduleResources.size() > 0 ) {
+            for(Map.Entry<Object,Object> entry : moduleResources.entrySet()) {
+                String key = String.valueOf(entry.getKey());
+                String value = StringUtils.isEmpty(entry.getValue()) ? "" : String.valueOf(entry.getValue());
+                if(properties.contains(key)) {
+                    log.info("find key={}，overwrite old value,new value={}",key,value);
+                    properties.setProperty(key,value);
+                }else {
+                    properties.put(key,value);
+                }
             }
         }
     }
