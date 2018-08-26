@@ -13,12 +13,15 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.SimpleCommandLinePropertySource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
@@ -65,8 +68,16 @@ public class MermaidApplicationEntry {
             Resource applicationResource = pathMatchingResourcePatternResolver.getResource(CLASSPATH_CONFIG_RESOURCE_NAME);
             if(null != resources && resources.length > 0) {
                 for (Resource resource : resources) {
-                    log.info("读取本地配置文件[{}]",resource.getFilename());
-                    Properties moduleResources = PropertiesLoaderUtils.loadProperties(resource);
+                    String absoluteFile = resource.getURL().getPath();
+                    log.info("读取本地配置文件[{}]",absoluteFile);
+                    InputStream inputStream = resource.getInputStream();
+                    Properties moduleResources = null;
+                        if(resource.getURL().getProtocol().equals("jar")){
+                            absoluteFile = absoluteFile.substring(absoluteFile.lastIndexOf("!")+1);
+                            resource = new ClassPathResource(absoluteFile);
+                        }
+                        moduleResources = PropertiesLoaderUtils.loadProperties(resource);
+
                     mergeProperties(properties,moduleResources);
                 }
             }
