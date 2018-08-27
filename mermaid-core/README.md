@@ -16,5 +16,9 @@ mermaid-framework-core是mermaid框架的核心，它目前已具有如下**组�
 
 ## 2. QuickStart
 ```xml
-
+<dependency>
+    <groupId>com.mermaid.framework</groupId>
+    <artifactId>mermaid-core</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
 ```
