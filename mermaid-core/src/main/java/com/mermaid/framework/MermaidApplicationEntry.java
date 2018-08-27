@@ -86,9 +86,9 @@ public class MermaidApplicationEntry {
             Properties applicationProperties = PropertiesLoaderUtils.loadProperties(applicationResource);
             log.info("读取application.properties=[{}]",applicationResource.getFilename());
             mergeProperties(properties,applicationProperties);
-//            ModuleLoader moduleLoader = new ModuleLoader();
-//            Properties modules = moduleLoader.scanModules();
-//            mergeProperties(properties,modules);
+            ModuleLoader moduleLoader = new ModuleLoader();
+            Properties modules = moduleLoader.scanModules();
+            mergeProperties(properties,modules);
             //TODO 后续考虑从远程（配置中心）读取properties，并且以之为核心进行配置合并
             return properties;
         } catch (IOException e) {

@@ -7,7 +7,7 @@ package com.mermaid.framework.constant;
  * version 1.0
  */
 public interface ModuleConstants {
-    String MODULE_DEFINITION_RESOURCES = "classpath*:META-INF/mermaid-module*.properties";
+    String MODULE_DEFINITION_RESOURCES = "classpath*:META-INF/mermaid-*.properties";
 
     String CONFIG_ITEM_CODE_PACKAGE = "mermaid.module.code.basePackages";
 
