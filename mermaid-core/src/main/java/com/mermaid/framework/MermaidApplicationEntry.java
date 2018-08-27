@@ -29,8 +29,8 @@ import java.util.Properties;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-@EnableFeignClients(basePackages = {"com"})
-@ComponentScan(basePackages = {"com"})
+@EnableFeignClients
+@ComponentScan
 @Slf4j
 public class MermaidApplicationEntry {
 
