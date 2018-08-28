@@ -20,6 +20,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +31,9 @@ import java.util.Properties;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableFeignClients
-@ComponentScan
+@ComponentScan(basePackages = {"com"})
 @Slf4j
+@EnableWebMvc
 public class MermaidApplicationEntry {
 
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME = "application.properties";
