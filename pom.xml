@@ -16,13 +16,14 @@
   </parent>
 
   <modules>
-    <module>mermaid-core</module>
-    <module>mermaid-websocket</module>
-    <module>mermaid-eureka-server</module>
-    <module>mermaid-jenkins</module>
-    <module>mermaid-sdk</module>
-      <module>mermaid-zuul</module>
-      <module>mermaid-redis</module>
+    <module>modules/mermaid-core</module>
+    <module>modules/mermaid-websocket</module>
+    <module>modules/mermaid-eureka-server</module>
+    <module>modules/mermaid-jenkins</module>
+    <module>modules/mermaid-sdk</module>
+    <module>modules/mermaid-zuul</module>
+    <module>modules/mermaid-redis</module>
+    <module>modules/mermaid-plugin</module>
   </modules>
 
   <scm>
@@ -108,6 +109,11 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-annotations</artifactId>
         <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mybatis.generator</groupId>
+        <artifactId>mybatis-generator-core</artifactId>
+        <version>1.3.7</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

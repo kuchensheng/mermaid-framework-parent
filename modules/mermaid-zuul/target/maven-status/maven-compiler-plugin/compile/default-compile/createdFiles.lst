@@ -1,0 +1,6 @@
+com\mermaid\framework\config\ZuulConfiguration.class
+com\mermaid\framework\filter\AccessFilter.class
+com\mermaid\framework\filter\PreFilter.class
+com\mermaid\framework\ZuulEntry.class
+com\mermaid\framework\config\FilterConfiguration.class
+com\mermaid\framework\filter\PostFilter.class
