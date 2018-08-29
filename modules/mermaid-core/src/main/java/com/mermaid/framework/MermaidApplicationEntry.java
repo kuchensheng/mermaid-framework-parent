@@ -23,7 +23,7 @@ import java.util.Properties;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableFeignClients
-@ComponentScan(basePackages = {"com","org","net"})
+@ComponentScan({"com","cn","net"})
 @Slf4j
 @EnableWebMvc
 public class MermaidApplicationEntry {
@@ -68,7 +68,7 @@ public class MermaidApplicationEntry {
                     log.info("读取本地配置文件[{}]",absoluteFile);
                     InputStream inputStream = resource.getInputStream();
                     Properties moduleResources = null;
-                        if(resource.getURL().getProtocol().equals("jar")){
+                        if(("jar").equals(resource.getURL().getProtocol())){
                             absoluteFile = absoluteFile.substring(absoluteFile.lastIndexOf("!")+1);
                             resource = new ClassPathResource(absoluteFile);
                         }
@@ -80,9 +80,6 @@ public class MermaidApplicationEntry {
             Properties applicationProperties = PropertiesLoaderUtils.loadProperties(applicationResource);
             log.info("读取application.properties=[{}]",applicationResource.getFilename());
             mergeProperties(properties,applicationProperties);
-//            ModuleLoader moduleLoader = new ModuleLoader();
-//            Properties modules = moduleLoader.scanModules();
-//            mergeProperties(properties,modules);
             //TODO 后续考虑从远程（配置中心）读取properties，并且以之为核心进行配置合并
             return properties;
         } catch (IOException e) {
