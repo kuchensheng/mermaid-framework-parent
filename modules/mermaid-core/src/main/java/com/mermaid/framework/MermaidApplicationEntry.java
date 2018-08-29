@@ -23,7 +23,7 @@ import java.util.Properties;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableFeignClients
-@ComponentScan
+@ComponentScan(basePackages = {"com","org","net"})
 @Slf4j
 @EnableWebMvc
 public class MermaidApplicationEntry {

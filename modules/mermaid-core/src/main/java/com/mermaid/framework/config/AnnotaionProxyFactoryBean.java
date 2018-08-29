@@ -2,6 +2,9 @@ package com.mermaid.framework.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +20,7 @@ import java.util.Map;
  * @version 创建时间：2018/8/29 11:22
  */
 @Configuration
-public class AnnotaionProxyFactoryBean implements EnvironmentAware {
+public class AnnotaionProxyFactoryBean implements ApplicationContextAware,EnvironmentAware {
 
     private static String BASE_PACKAGES="com,cn,org,gov";
 
@@ -25,10 +28,12 @@ public class AnnotaionProxyFactoryBean implements EnvironmentAware {
 
     private Environment environment;
 
+    private ApplicationContext applicationContext;
+
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
-        setComonetScanValue();
+//        setComonetScanValue();
     }
 
     private void setComonetScanValue() {
@@ -74,5 +79,11 @@ public class AnnotaionProxyFactoryBean implements EnvironmentAware {
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+//        setComonetScanValue();
     }
 }
