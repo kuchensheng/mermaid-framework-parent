@@ -1,5 +1,6 @@
 package com.mermaid.framework.redis.impl;
 
+import com.mermaid.framework.redis.RedisCacheService;
 import com.mermaid.framework.redis.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -11,28 +12,45 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 
 
-@Service
-public class DefaultRedisService implements RedisService {
-
-    @Autowired
-    StringRedisTemplate template;
+public class DefaultRedisService implements RedisCacheService {
 
     @Override
-    public Integer set(final String key, final Object value, final long expaire) {
+    public void set(String key, Object value) {
 
-        Integer result = template.execute(new RedisCallback<Integer>() {
-            @Override
-            public Integer doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = template.getStringSerializer();
-                connection.setEx(serializer.serialize(key),expaire,serializer.serialize(String.valueOf(value)));
-                return 1;
-            }
-        });
+    }
+
+    @Override
+    public void set(String key, Object value, long expire) {
+
+    }
+
+    @Override
+    public String[] keys(String pattern) {
+        return new String[0];
+    }
+
+    @Override
+    public String get(String key) {
         return null;
     }
 
     @Override
-    public Integer set(String key, Object... value) {
+    public boolean exists(String key) {
+        return false;
+    }
+
+    @Override
+    public <T> T get(String key, Class<T> tpl) {
         return null;
+    }
+
+    @Override
+    public void delete(String... keys) {
+
+    }
+
+    @Override
+    public void expire(String key, long expire) {
+
     }
 }
