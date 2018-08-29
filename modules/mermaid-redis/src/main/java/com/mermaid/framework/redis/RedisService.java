@@ -1,8 +1,6 @@
 package com.mermaid.framework.redis;
 
 
-public interface RedisService {
-    Integer set(String key,Object value,long expaire);
+public interface RedisService extends RedisCacheService,RedisQueueService,RedisDistributedLockService,RedisDistributedCounterRedis{
 
-    Integer set(String key,Object...value);
 }

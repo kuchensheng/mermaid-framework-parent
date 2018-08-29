@@ -1,10 +1,9 @@
 package com.mermaid.framework.redis.impl;
 
-import com.mermaid.framework.redis.RedisCacheService;
-import com.mermaid.framework.redis.RedisDistributedLockService;
-import com.mermaid.framework.redis.RedisQueueService;
+import com.mermaid.framework.redis.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
@@ -15,8 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-
-public class DefaultRedisService implements RedisCacheService,RedisDistributedLockService,RedisQueueService {
+public class DefaultRedisService implements RedisService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultRedisService.class);
     private static Map<String,Object> operationsMap = new HashMap<>();
@@ -32,7 +30,13 @@ public class DefaultRedisService implements RedisCacheService,RedisDistributedLo
      */
     private String name;
 
+    @Autowired
     private RedisTemplate redisTemplate;
+
+    public DefaultRedisService() {
+
+    }
+
     public DefaultRedisService(String name) {
         this(name,null);
     }
