@@ -23,3 +23,12 @@ logs/
 
 #Mac OS Cache File
 .DS_Store
+
+/modules/mermaid-core/target/
+/modules/mermaid-plugin/target/
+/modules/mermaid-eureka-server/target/
+/modules/mermaid-jenkins/target/
+/modules/mermaid-redis/target/
+/modules/mermaid-sdk/target/
+/modules/mermaid-websocket/target/
+/modules/mermaid-zuul/target/
