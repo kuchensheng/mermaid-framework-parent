@@ -1,5 +1,6 @@
 package com.mermaid.framework;
 
+import com.mermaid.framework.config.AnnotaionProxyFactoryBean;
 import com.mermaid.framework.config.ModuleLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
