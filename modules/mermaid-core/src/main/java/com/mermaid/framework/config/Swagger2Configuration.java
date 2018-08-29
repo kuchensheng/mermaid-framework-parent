@@ -39,8 +39,8 @@ public class Swagger2Configuration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("spring boot 利用 swagger构建api文档")
-                .description("简单优雅的restful风格")
+                .title(environment.getProperty("spring.application.name","mermaid-core")+"Restful API Documentation")
+                .description("RESTFUL API Documentation")
                 .build();
     }
 
