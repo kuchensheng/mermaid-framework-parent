@@ -22,3 +22,5 @@ mermaid-framework-core是mermaid框架的核心，它目前已具有如下**组�
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
+## 3. 注意问题
+包名不能以org开头，否则swagger-ui.html页面可能会出现空白页
