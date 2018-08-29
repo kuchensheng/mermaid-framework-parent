@@ -16,6 +16,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -126,17 +127,56 @@ public class DefaultRedisService implements RedisCacheService,RedisDistributedLo
 
     @Override
     public boolean lock(String lockName) {
-        return false;
+        return lock(lockName,0l);
+    }
+
+    private byte[] str2Bytes(String s) {
+        try {
+            return s.getBytes("UTF8");
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     @Override
     public boolean lock(String lockName, long expire) {
-        return false;
+        return lock(lockName,expire,TimeUnit.SECONDS);
+    }
+
+    private boolean lock(String lockName, long expire, TimeUnit seconds) {
+        boolean flag = false;
+        if(expire > 0) {
+            switch (seconds) {
+                case SECONDS:
+                    expire *= 1000;
+                    break;
+                default:
+                    break;
+            }
+        }
+        try {
+            byte[] key = str2Bytes(lockName);
+            long finalExpire = expire;
+            flag = (Boolean)redisTemplate.execute(new RedisCallback() {
+                @Override
+                public Object doInRedis(RedisConnection connection) throws DataAccessException {
+                    Boolean flag = connection.setNX(key, str2Bytes("" + System.currentTimeMillis()));
+                    if(flag && finalExpire > 0) {
+                        connection.expire(key, finalExpire);
+                    }
+                    return flag;
+                }
+            });
+        } catch (Exception e) {
+            logger.error("redis lock error",e);
+        }
+        return flag;
     }
 
     @Override
     public void unlock(String lockName) {
-
+        delete(lockName);
     }
 
     public String getName() {
