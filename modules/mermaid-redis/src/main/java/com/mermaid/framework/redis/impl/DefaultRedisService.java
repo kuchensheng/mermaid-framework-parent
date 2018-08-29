@@ -2,20 +2,13 @@ package com.mermaid.framework.redis.impl;
 
 import com.mermaid.framework.redis.RedisCacheService;
 import com.mermaid.framework.redis.RedisDistributedLockService;
-import com.mermaid.framework.redis.RedisService;
+import com.mermaid.framework.redis.RedisQueueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jackson.JsonObjectSerializer;
-import org.springframework.core.serializer.Serializer;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +16,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 
-public class DefaultRedisService implements RedisCacheService,RedisDistributedLockService {
+public class DefaultRedisService implements RedisCacheService,RedisDistributedLockService,RedisQueueService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultRedisService.class);
     private static Map<String,Object> operationsMap = new HashMap<>();
@@ -77,7 +70,7 @@ public class DefaultRedisService implements RedisCacheService,RedisDistributedLo
             if(null == value) {
                 delete(key);
             }else {
-                ValueOperations operations = getOperation(STRING_TYPE);
+                ValueOperations operations = getValueOperation();
                 operations.set(key,value,expire);
             }
         } catch (Exception e) {
@@ -85,8 +78,12 @@ public class DefaultRedisService implements RedisCacheService,RedisDistributedLo
         }
     }
 
-    private ValueOperations getOperation(String stringType) {
-        return (ValueOperations) operationsMap.get(stringType);
+    private ValueOperations getValueOperation() {
+        return (ValueOperations) operationsMap.get(STRING_TYPE);
+    }
+
+    private ListOperations getListOperation() {
+        return (ListOperations) operationsMap.get(LIST_TYPE);
     }
 
     @Override
@@ -177,6 +174,32 @@ public class DefaultRedisService implements RedisCacheService,RedisDistributedLo
     @Override
     public void unlock(String lockName) {
         delete(lockName);
+    }
+
+    @Override
+    public Long push(String key, Object value) {
+        ListOperations listOperation = getListOperation();
+
+        Long aLong = listOperation.leftPush(str2Bytes(key), value);
+        return aLong;
+    }
+
+    @Override
+    public Long pushAll(String key, Object... values) {
+        ListOperations listOperation = getListOperation();
+        Long aLong = listOperation.leftPushAll(str2Bytes(key), values);
+        return aLong;
+    }
+
+    @Override
+    public <T> T pop(String key) {
+        ListOperations listOperation = getListOperation();
+        Object ret = null;
+        ret = listOperation.leftPop(str2Bytes(key));
+        if(null == ret) {
+            ret = listOperation.rightPop(str2Bytes(key));
+        }
+        return (T) ret;
     }
 
     public String getName() {
