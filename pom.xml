@@ -24,7 +24,6 @@
     <module>modules/mermaid-zuul</module>
     <module>modules/mermaid-redis</module>
     <module>modules/mermaid-plugin</module>
-    <module>modules/mermaid-test</module>
   </modules>
 
   <scm>
