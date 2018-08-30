@@ -225,4 +225,53 @@ public class DefaultRedisService implements RedisService {
         }
         this.name = name;
     }
+
+    @Override
+    public long getCurrentCounter(String key) {
+        try {
+            Object value = getValueOperation().get(key);
+            if(null != value) {
+                Long longValue = Long.parseLong(String.valueOf(value));
+                return longValue;
+            }
+        } catch (NumberFormatException e) {
+            logger.error(e.getMessage(),e);
+        }
+        return 0L;
+    }
+
+    @Override
+    public long increment(String key) {
+        return increment(key,1L);
+    }
+
+    @Override
+    public long increment(String key, long val) {
+        try {
+            return getValueOperation().increment(key, val);
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+        }
+        return 0;
+    }
+
+    @Override
+    public long decrement(String key) {
+        return decrement(key,1L);
+    }
+
+    @Override
+    public long decrement(final String key,final long val) {
+        try {
+            return  (long) redisTemplate.execute(new RedisCallback<Long>() {
+                @Override
+                public Long doInRedis(RedisConnection connection) throws DataAccessException {
+                    return connection.decrBy(str2Bytes(key),val);
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+        }
+        return 0L;
+    }
 }

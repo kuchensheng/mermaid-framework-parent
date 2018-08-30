@@ -1,5 +1,5 @@
 # 关于mermaid-framework
-**mermaid-framework**是用用程序核心框架，基于Spring boot开发。**mermaid-framework**包含以下组件：
+**mermaid-framework**是应用程序核心框架，基于Spring boot开发。**mermaid-framework**包含以下组件：
 
 + [mermaid-framework-core](modules/mermaid-core/README.md) -> 应用核心框架、启动器
 + [mermaid-framework-redis](modules/mermaid-redis/README.md) -> Redis访问组件，支持缓存
