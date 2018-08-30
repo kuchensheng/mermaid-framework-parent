@@ -9,11 +9,12 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
 import org.springframework.util.StringUtils;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Chensheng.Ku
+ */
 public class DefaultRedisService implements RedisService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultRedisService.class);
@@ -65,7 +66,7 @@ public class DefaultRedisService implements RedisService {
 
     @Override
     public void set(String key, Object value) {
-        set(key,value,0l);
+        set(key,value, 0L);
     }
 
     @Override
@@ -118,7 +119,11 @@ public class DefaultRedisService implements RedisService {
 
     @Override
     public void delete(String... keys) {
-        redisTemplate.delete(keys);
+        List<String> listKey = new ArrayList<>();
+        for (String key : keys) {
+            listKey.add(key);
+        }
+        redisTemplate.delete(listKey);
     }
 
     @Override
@@ -128,7 +133,7 @@ public class DefaultRedisService implements RedisService {
 
     @Override
     public boolean lock(String lockName) {
-        return lock(lockName,0l);
+        return lock(lockName, 0L);
     }
 
     private byte[] str2Bytes(String s) {
@@ -142,6 +147,10 @@ public class DefaultRedisService implements RedisService {
 
     @Override
     public boolean lock(String lockName, long expire) {
+        if(exists(lockName)) {
+            logger.error("已存在该锁="+lockName);
+            return false;
+        }
         return lock(lockName,expire,TimeUnit.SECONDS);
     }
 
@@ -157,8 +166,8 @@ public class DefaultRedisService implements RedisService {
             }
         }
         try {
-            byte[] key = str2Bytes(lockName);
-            long finalExpire = expire;
+            final byte[] key = str2Bytes(lockName);
+            final long finalExpire = expire;
             flag = (Boolean)redisTemplate.execute(new RedisCallback() {
                 @Override
                 public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -184,14 +193,14 @@ public class DefaultRedisService implements RedisService {
     public Long push(String key, Object value) {
         ListOperations listOperation = getListOperation();
 
-        Long aLong = listOperation.leftPush(str2Bytes(key), value);
+        Long aLong = listOperation.leftPush(key, value);
         return aLong;
     }
 
     @Override
     public Long pushAll(String key, Object... values) {
         ListOperations listOperation = getListOperation();
-        Long aLong = listOperation.leftPushAll(str2Bytes(key), values);
+        Long aLong = listOperation.leftPushAll(key, values);
         return aLong;
     }
 
@@ -199,9 +208,9 @@ public class DefaultRedisService implements RedisService {
     public <T> T pop(String key) {
         ListOperations listOperation = getListOperation();
         Object ret = null;
-        ret = listOperation.leftPop(str2Bytes(key));
+        ret = listOperation.leftPop(key);
         if(null == ret) {
-            ret = listOperation.rightPop(str2Bytes(key));
+            ret = listOperation.rightPop(key);
         }
         return (T) ret;
     }

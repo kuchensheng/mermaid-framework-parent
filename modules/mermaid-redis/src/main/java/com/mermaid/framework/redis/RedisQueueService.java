@@ -12,7 +12,7 @@ public interface RedisQueueService {
      * 添加单个元素
      * @param key
      * @param value
-     * @return
+     * @return 返回列表长度
      */
     Long push(String key,Object value);
 
@@ -20,7 +20,7 @@ public interface RedisQueueService {
      * 添加多个元素
      * @param key
      * @param values
-     * @return
+     * @return 返回列表长度
      */
     Long pushAll(String key,Object... values);
 
@@ -28,7 +28,7 @@ public interface RedisQueueService {
      * 获取一个元素
      * @param key
      * @param <T>
-     * @return
+     * @return 弹出一个元素
      */
     <T> T pop(String key);
 }
