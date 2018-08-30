@@ -9,7 +9,90 @@
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
-## 3.mermaid-redis配置清单
+## 3.接口说明
+```java
+/**
+* 更多详情查看 @see 各接口说明
+*/
+/**
+     * 设置存储给定键的值
+     * @throws Exception
+     */
+    @Test
+    public void set() throws Exception {
+        redisService.set("test","kuchensheng");
+        Assert.assertTrue(true);
+    }
+
+    /**
+     * 设置存储给定键的值，并设置失效时间
+     * @throws Exception
+     */
+    @Test
+    public void setWithExpire() throws Exception {
+        redisService.set("testwithexpire","kucsdf",2);
+        Assert.assertTrue(true);
+    }
+
+    /**
+     * 获取键的集合
+     * @throws Exception
+     */
+    @Test
+    public void keys() throws Exception {
+        Set<String> keys = redisService.keys("test*");
+        logger.info("result={}",keys.toString());
+        Assert.assertNotNull(keys);
+    }
+
+    /**
+     * 获取给定键的值，默认String类型
+     * @throws Exception
+     */
+    @Test
+    public void get() throws Exception {
+        String pipeline = redisService.get("test");
+        logger.info("key={},value={}","test",pipeline);
+        Assert.assertNotNull(pipeline);
+    }
+
+    @Test
+    public void getWithClazz() throws Exception {
+        String pipeline = redisService.get("test", String.class);
+        Assert.assertNotNull(pipeline);
+    }
+
+    /**
+     * 判断元素是否存在
+     * @throws Exception
+     */
+    @Test
+    public void exists() throws Exception {
+        boolean test = redisService.exists("test");
+        Assert.assertTrue(test);
+    }
+
+    /**
+     * 删除键[集合]
+     * @throws Exception
+     */
+    @Test
+    public void delete() throws Exception {
+        redisService.delete("test","testwithexpire");
+        Assert.assertTrue(true);
+    }
+
+    /**
+     * 给键设置失效时间
+     * @throws Exception
+     */
+    @Test
+    public void expire() throws Exception {
+        redisService.expire("test",2);
+        Assert.assertTrue(true);
+    }
+```
+## 4.mermaid-redis配置清单
 ```text
 #Redis服务器
 spring.redis.host=192.168.56.1
