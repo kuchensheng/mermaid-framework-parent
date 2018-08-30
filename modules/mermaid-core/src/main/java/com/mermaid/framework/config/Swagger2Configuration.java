@@ -39,7 +39,7 @@ public class Swagger2Configuration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title(environment.getProperty("spring.application.name","mermaid-core")+"Restful API Documentation")
+                .title(environment.getProperty("spring.application.name","mermaid-core ")+"Restful API Documentation")
                 .description("RESTFUL API Documentation")
                 .build();
     }
