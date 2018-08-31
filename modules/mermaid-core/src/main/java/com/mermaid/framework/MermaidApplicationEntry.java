@@ -22,7 +22,7 @@ import java.util.Properties;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients({"com","cn","net"})
 @ComponentScan({"com","cn","net"})
 @Slf4j
 @EnableWebMvc
