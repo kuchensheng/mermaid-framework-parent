@@ -1,6 +1,7 @@
 package com.mermaid.framework.controller;
 
 import com.mermaid.framework.mvc.APIResponse;
+import com.mermaid.framework.mvc.BusinessException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -47,5 +48,12 @@ public class CoreController {
     @RequestMapping(value = "/status",method = RequestMethod.GET)
     public APIResponse<Boolean> status() {
         return APIResponse.success(Boolean.TRUE);
+    }
+
+    @ApiOperation(value = "异常处理测试")
+    @RequestMapping(value = "/core/exception",method = RequestMethod.GET)
+    public APIResponse testException() {
+
+        throw BusinessException.withErrorCode("TEStdsfdd").withErrorMessageArguments("dddd");
     }
 }
