@@ -1,11 +1,17 @@
 package com.mermaid.framework.mvc.filter;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +24,25 @@ import java.util.*;
  * @author:Hui CreateDate:2018/9/1 14:35
  * version 1.0
  */
+@Configuration
 public class ModifyParametersFilter extends OncePerRequestFilter {
+
+    @Value("${spring.application.name:core}")
+    private String applicationName;
+
+    @Value("${spring.application.index:19000}")
+    private String applicationIndex;
+
+    @Bean
+    public FilterRegistrationBean registrationBean() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        registrationBean.setFilter(new ModifyParametersFilter());
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(Integer.MAX_VALUE);
+        registrationBean.setName("modifyParametersFilter");
+        return registrationBean;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         ModifyParametersWrapper modifyParametersWrapper = new ModifyParametersWrapper(request);
@@ -34,7 +58,7 @@ public class ModifyParametersFilter extends OncePerRequestFilter {
         Environment environment = getEnvironment();
         String appName = environment.getProperty("spring.application.name");
         String port = environment.getProperty("spring.application.index");
-        String traceId = appName+"-"+port+"-"+currentTime;
+        String traceId = applicationName+"-"+applicationIndex+"-"+currentTime;
         modifyParametersWrapper.putHeader("traceId",traceId);
 
         response.setHeader("currentReqTime",currentTime);

@@ -97,6 +97,9 @@ public class MermaidApplicationEntry {
                     log.info("find key={},overwrite old value,new value={}",key,value);
                     moduleResources.setProperty(key,value);
                 }
+                if("spring.application.name".equals(key) || "spring.application.index".equals(key)) {
+                    System.setProperty(key,value);
+                }
             }
         }
         properties.putAll(moduleResources);

@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.StringUtils;
@@ -30,6 +31,11 @@ public class TracableRestTemplate extends RestTemplate implements EnvironmentAwa
     private static final Logger logger = LoggerFactory.getLogger(TracableRestTemplate.class);
 
     private Environment environment;
+
+    public TracableRestTemplate(ClientHttpRequestFactory requestFactory) {
+        super(requestFactory);
+        this.registerTracableInterceptor(this.getInterceptors());
+    }
 
     @Override
     public void setEnvironment(Environment environment) {
@@ -79,6 +85,7 @@ public class TracableRestTemplate extends RestTemplate implements EnvironmentAwa
             String traceId = appName+"-"+port+"-"+currentTime;
             headers.add("traceId",traceId);
             ClientHttpResponse response = execution.execute(request,body);
+            response.getHeaders().add("traceId",traceId);
             return response;
         }
     }
