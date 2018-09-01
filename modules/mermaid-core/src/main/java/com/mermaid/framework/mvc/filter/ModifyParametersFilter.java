@@ -36,6 +36,9 @@ public class ModifyParametersFilter extends OncePerRequestFilter {
         String port = environment.getProperty("spring.application.index");
         String traceId = appName+"-"+port+"-"+currentTime;
         modifyParametersWrapper.putHeader("traceId",traceId);
+
+        response.setHeader("currentReqTime",currentTime);
+        response.setHeader("traceId",traceId);
         filterChain.doFilter(modifyParametersWrapper,response);
     }
 

@@ -1,112 +1,139 @@
 package com.mermaid.framework.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.springframework.util.StringUtils;
 
-import java.net.*;
-import java.util.Enumeration;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
- * Desription:
- *
- * @author:Hui CreateDate:2018/8/20 23:01
- * version 1.0
+ * 根据IP地址获取详细的地域信息
+ * 淘宝API
+ * @author Chensheng.Ku
+ * @version 创建时间：2018/8/31 13:13
  */
 public class IPUtil {
-    private static String hostIP = StringUtils.EMPTY;
+    private static String TAOBAO_GETIP="http://ip.taobao.com/service/getIpInfo.php";
+    
+    public static String getAddress(String ip) {
 
-    static {
+        String result = getResult(TAOBAO_GETIP,"ip="+ip,"utf-8");
 
-        String ip = null;
-        Enumeration allNetInterfaces;
-        try {
-            allNetInterfaces = NetworkInterface.getNetworkInterfaces();
-            while (allNetInterfaces.hasMoreElements()) {
-                NetworkInterface netInterface = (NetworkInterface) allNetInterfaces.nextElement();
-                List<InterfaceAddress> InterfaceAddress = netInterface.getInterfaceAddresses();
-                for (InterfaceAddress add : InterfaceAddress) {
-                    InetAddress Ip = add.getAddress();
-                    if (Ip != null && Ip instanceof Inet4Address) {
-                        if (StringUtils.equals(Ip.getHostAddress(), "127.0.0.1")) {
-                            continue;
+        if(!StringUtils.hasText(result)) {
+            return ip;
+        }
+        result = decodeUnicode(result);
+        String[] temp = result.split(",");
+        if(temp.length < 3) {
+            return ip;
+        }
+        return ip;
+    }
+
+    private static String decodeUnicode(String theString) {
+        char aChar;
+        int len = theString.length();
+        StringBuffer buffer = new StringBuffer(len);
+        for (int i = 0; i < len;) {
+            aChar = theString.charAt(i++);
+            if(aChar == '\\'){
+                aChar = theString.charAt(i++);
+                if(aChar == 'u'){
+                    int val = 0;
+                    for(int j = 0; j < 4; j++){
+                        aChar = theString.charAt(i++);
+                        switch (aChar) {
+                            case '0':
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '4':
+                            case '5':
+                            case '6':
+                            case '7':
+                            case '8':
+                            case '9':
+                                val = (val << 4) + aChar - '0';
+                                break;
+                            case 'a':
+                            case 'b':
+                            case 'c':
+                            case 'd':
+                            case 'e':
+                            case 'f':
+                                val = (val << 4) + 10 + aChar - 'a';
+                                break;
+                            case 'A':
+                            case 'B':
+                            case 'C':
+                            case 'D':
+                            case 'E':
+                            case 'F':
+                                val = (val << 4) + 10 + aChar - 'A';
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Malformed      encoding.");
                         }
-                        ip = Ip.getHostAddress();
-                        break;
                     }
+                    buffer.append((char) val);
+                }else{
+                    if(aChar == 't'){
+                        aChar = '\t';
+                    }
+                    if(aChar == 'r'){
+                        aChar = '\r';
+                    }
+                    if(aChar == 'n'){
+                        aChar = '\n';
+                    }
+                    if(aChar == 'f'){
+                        aChar = '\f';
+                    }
+                    buffer.append(aChar);
                 }
+
+            }else{
+                buffer.append(aChar);
             }
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
         }
-        hostIP = ip;
+        return buffer.toString();
     }
 
-    /**
-     * 获取本地IP
-     * 通过获取系统所有的networkInterface网络接口，然后遍历
-     * 每个网络下的InterfaceAddress组。
-     * 获得符合<code>InetAddress instanceof Inet4Address</code>条件的一个IpV4地址
-     * @return
-     */
-    public static String localIp() {
-        return hostIP;
-    }
-
-    public static String getRealIp() {
-        String localIp = null;
-        String netIp = null;
-
+    private static String getResult(String urlStr,String params,String encoding) {
+        URL url = null;
+        HttpURLConnection connection = null;
         try {
-            Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
-            InetAddress ip = null;
+            url = new URL(urlStr);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(3000);
+            connection.setReadTimeout(3000);
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setRequestMethod("POST");
+            connection.setUseCaches(false);
+            connection.connect();
 
-            boolean finded = Boolean.FALSE;
+            DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+            out.writeBytes(params);
+            out.flush();
+            out.close();
 
-            while (netInterfaces.hasMoreElements() && !finded) {
-                NetworkInterface ni = netInterfaces.nextElement();
-                Enumeration<InetAddress> addresses = ni.getInetAddresses();
-                while (addresses.hasMoreElements()) {
-                    ip = addresses.nextElement();
-                    if(!ip.isSiteLocalAddress()
-                            && !ip.isLoopbackAddress()
-                            && !ip.getHostAddress().contains(":")) {
-                        //外网
-                        netIp = ip.getHostAddress();
-                        finded = Boolean.TRUE;
-                        break;
-                    } else if(ip.isSiteLocalAddress()
-                            && !ip.isLoopbackAddress()
-                            && !ip.getHostAddress().contains(":")){
-                        //内网
-                        localIp = ip.getHostAddress();
-                    }
-                }
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(),encoding));
+            StringBuffer buffer = new StringBuffer();
+            String line = "";
+            while ((line = reader.readLine())!= null) {
+                buffer.append(line);
             }
-
-            if (org.springframework.util.StringUtils.hasText(netIp)) {
-                return netIp;
-            } else {
-                return localIp;
-            }
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
+            reader.close();
+            return buffer.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            connection.disconnect();
         }
-    }
-
-    /**
-     * 获取主机第一个有效ip<br/>
-     * 如果没有效ip，返回空串
-     *
-     * @return
-     */
-    public static String getHostFirstIp() {
-        return hostIP;
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        //System.out.println(localIp());
-        System.out.println(getRealIp());
-        System.out.println(getHostFirstIp());
+        return null;
     }
 }
