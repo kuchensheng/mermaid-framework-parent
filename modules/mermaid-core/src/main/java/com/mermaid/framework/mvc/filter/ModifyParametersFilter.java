@@ -27,12 +27,6 @@ import java.util.*;
 @Configuration
 public class ModifyParametersFilter extends OncePerRequestFilter {
 
-    @Value("${spring.application.name:core}")
-    private String applicationName;
-
-    @Value("${spring.application.index:19000}")
-    private String applicationIndex;
-
     @Bean
     public FilterRegistrationBean registrationBean() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
@@ -58,7 +52,7 @@ public class ModifyParametersFilter extends OncePerRequestFilter {
         Environment environment = getEnvironment();
         String appName = environment.getProperty("spring.application.name");
         String port = environment.getProperty("spring.application.index");
-        String traceId = applicationName+"-"+applicationIndex+"-"+currentTime;
+        String traceId = appName+"-"+port+"-"+currentTime;
         modifyParametersWrapper.putHeader("traceId",traceId);
 
         response.setHeader("currentReqTime",currentTime);
