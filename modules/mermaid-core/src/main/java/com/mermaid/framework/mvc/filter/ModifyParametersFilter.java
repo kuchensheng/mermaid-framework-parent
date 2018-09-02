@@ -32,7 +32,7 @@ public class ModifyParametersFilter extends OncePerRequestFilter {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(new ModifyParametersFilter());
         registrationBean.addUrlPatterns("/*");
-        registrationBean.setOrder(Integer.MAX_VALUE);
+        registrationBean.setOrder(1);
         registrationBean.setName("modifyParametersFilter");
         return registrationBean;
     }
@@ -57,6 +57,10 @@ public class ModifyParametersFilter extends OncePerRequestFilter {
 
         response.setHeader("currentReqTime",currentTime);
         response.setHeader("traceId",traceId);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+
+        response.setHeader("Access-Control-Allow-Methods", "GET,PUT,DELETE");
+        response.setHeader("Access-Control-Allow-Headers", "Content-type");
         filterChain.doFilter(modifyParametersWrapper,response);
     }
 
