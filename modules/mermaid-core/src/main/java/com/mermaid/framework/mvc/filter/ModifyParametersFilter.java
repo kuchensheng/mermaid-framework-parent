@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,6 +27,7 @@ import java.util.*;
  * version 1.0
  */
 @Configuration
+@Order(Integer.MIN_VALUE)
 public class ModifyParametersFilter extends OncePerRequestFilter {
 
     @Bean
@@ -59,8 +62,12 @@ public class ModifyParametersFilter extends OncePerRequestFilter {
         response.setHeader("traceId",traceId);
         response.setHeader("Access-Control-Allow-Origin", "*");
 
-        response.setHeader("Access-Control-Allow-Methods", "GET,PUT,DELETE");
-        response.setHeader("Access-Control-Allow-Headers", "Content-type");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with, X-Custom-Header, Authorization");
+        if(RequestMethod.OPTIONS.name().equals(request.getMethod())) {
+            response.setStatus(HttpStatus.OK.value());
+        }
         filterChain.doFilter(modifyParametersWrapper,response);
     }
 
