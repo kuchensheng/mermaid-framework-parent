@@ -34,7 +34,7 @@ public class ModifyParametersFilter extends OncePerRequestFilter {
     public FilterRegistrationBean registrationBean() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(new ModifyParametersFilter());
-        registrationBean.addUrlPatterns("/*");
+        registrationBean.addUrlPatterns("/**");
         registrationBean.setOrder(1);
         registrationBean.setName("modifyParametersFilter");
         return registrationBean;
@@ -67,6 +67,7 @@ public class ModifyParametersFilter extends OncePerRequestFilter {
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with, X-Custom-Header, Authorization");
         if(RequestMethod.OPTIONS.name().equals(request.getMethod())) {
             response.setStatus(HttpStatus.OK.value());
+            return;
         }
         filterChain.doFilter(modifyParametersWrapper,response);
     }
