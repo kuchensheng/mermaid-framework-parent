@@ -52,26 +52,22 @@ public class MybatisConfig implements EnvironmentAware{
         return mapperScannerConfigurer;
     }
 
-//    @Bean
-//    public PageHelper pageHelper() {
-////        mermaid.pagehelper.helperDialect=mysql
-////        mermaid.pagehelper.offsetAsPageNum=true
-////        mermaid.pagehelper.rowBoundsWithCount=true
-////        mermaid.pagehelper.reasonable=true
-//        String helperDialect = environment.getProperty("mermaid.pagehelper.helperDialect","mysql");
-//        String offsetAsPageNum = environment.getProperty("mermaid.pagehelper.offsetAsPageNum","true");
-//        String rowBoundsWithCount = environment.getProperty("mermaid.pagehelper.rowBoundsWithCount","true");
-//        String reasonable = environment.getProperty("mermaid.pagehelper.reasonable","true");
-//        PageHelper pageHelper = new PageHelper();
-//        Properties properties = new Properties();
-//        properties.setProperty("offsetAsPageNum",offsetAsPageNum);
-//        properties.setProperty("rowBoundsWithCount",rowBoundsWithCount);
-//        properties.setProperty("reasonable",reasonable);
-//        properties.setProperty("dialect",helperDialect);
-//        properties.setProperty("returnPageInfo","check");
-//        properties.setProperty("params","count=countSql");
-//        pageHelper.setProperties(properties);
-//        return pageHelper;
-//    }
+    @Bean
+    public PageHelper pageHelper() {
+        String helperDialect = environment.getProperty("mermaid.pagehelper.helperDialect","mysql");
+        String offsetAsPageNum = environment.getProperty("mermaid.pagehelper.offsetAsPageNum","true");
+        String rowBoundsWithCount = environment.getProperty("mermaid.pagehelper.rowBoundsWithCount","true");
+        String reasonable = environment.getProperty("mermaid.pagehelper.reasonable","true");
+        PageHelper pageHelper = new PageHelper();
+        Properties properties = new Properties();
+        properties.setProperty("offsetAsPageNum",offsetAsPageNum);
+        properties.setProperty("rowBoundsWithCount",rowBoundsWithCount);
+        properties.setProperty("reasonable",reasonable);
+        properties.setProperty("dialect",helperDialect);
+        properties.setProperty("returnPageInfo","check");
+        properties.setProperty("params","count=countSql");
+        pageHelper.setProperties(properties);
+        return pageHelper;
+    }
 
 }

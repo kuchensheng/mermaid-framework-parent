@@ -94,22 +94,23 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>1.3.1</version>
         </dependency>
+        <!-- 分页 -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
-            <version>5.1.2</version>
+            <version>4.1.6</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-autoconfigure</artifactId>
-            <version>1.2.5</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.github.pagehelper</groupId>-->
+            <!--<artifactId>pagehelper-spring-boot-autoconfigure</artifactId>-->
+            <!--<version>1.2.5</version>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.2.5</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.github.pagehelper</groupId>-->
+            <!--<artifactId>pagehelper-spring-boot-starter</artifactId>-->
+            <!--<version>1.2.5</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>com.alibaba</groupId>
