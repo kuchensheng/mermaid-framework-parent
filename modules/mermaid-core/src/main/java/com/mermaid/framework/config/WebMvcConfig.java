@@ -41,11 +41,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(new MermaidOptionsInterceptor()).addPathPatterns("/**");
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedMethods("*","OPTIONS","PUT","DELETE","GET","POST")
-                .allowedHeaders("Content-Type, x-requested-with, X-Custom-Header, Authorization")
-                .maxAge(3600);
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedMethods("*","OPTIONS","PUT","DELETE","GET","POST")
+//                .allowedHeaders("Content-Type, x-requested-with, X-Custom-Header, Authorization")
+//                .maxAge(3600);
+//    }
 }
