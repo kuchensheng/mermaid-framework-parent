@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -38,6 +39,11 @@ public class ModifyParametersFilter extends OncePerRequestFilter {
         registrationBean.setOrder(1);
         registrationBean.setName("modifyParametersFilter");
         return registrationBean;
+    }
+
+    @Bean
+    public HttpPutFormContentFilter httpPutFormContentFilter() {
+        return new HttpPutFormContentFilter();
     }
 
     @Override
