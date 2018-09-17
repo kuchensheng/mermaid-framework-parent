@@ -20,10 +20,10 @@
     <module>modules/mermaid-websocket</module>
     <module>modules/mermaid-eureka-server</module>
     <module>modules/mermaid-jenkins</module>
-    <module>modules/mermaid-sdk</module>
     <module>modules/mermaid-zuul</module>
     <module>modules/mermaid-redis</module>
     <module>modules/mermaid-plugin</module>
+    <module>modules/mermaid-auth</module>
   </modules>
 
   <scm>
