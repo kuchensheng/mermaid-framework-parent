@@ -30,8 +30,8 @@ public class MultipartFileConfiguration implements EnvironmentAware {
         String maxFileSize = "1024MB";
         String maxRequestSize="1024MB";
         if(null != environment) {
-            maxFileSize = environment.getProperty("mermaid.multipart.maxFileSize");
-            maxRequestSize = environment.getProperty("mermaid.multipart.maxRequestSize");
+            maxFileSize = environment.getProperty("mermaid.multipart.maxFileSize",maxFileSize);
+            maxRequestSize = environment.getProperty("mermaid.multipart.maxRequestSize",maxRequestSize);
             logger.info("读取配置mermaid.multipart.maxFileSize={}",maxFileSize);
             logger.info("读取配置mermaid.multipart.maxRequestSize={}",maxRequestSize);
         }
