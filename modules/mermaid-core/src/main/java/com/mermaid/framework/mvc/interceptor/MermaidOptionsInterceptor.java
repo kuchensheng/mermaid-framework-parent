@@ -2,6 +2,7 @@ package com.mermaid.framework.mvc.interceptor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,10 @@ import java.util.Enumeration;
  * @author Chensheng.Ku
  * @version 创建时间：2018/9/3 9:09
  */
-public class MermaidOptionsInterceptor implements HandlerInterceptor,EnvironmentAware {
+public class MermaidOptionsInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(MermaidOptionsInterceptor.class);
+
+    @Autowired
     private Environment environment;
 
     @Override
@@ -37,14 +40,16 @@ public class MermaidOptionsInterceptor implements HandlerInterceptor,Environment
     }
 
     private void addTraceId(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        String appName = environment.getProperty("spring.application.name");
-        String index = environment.getProperty("spring.application.index");
-        if(!(StringUtils.isEmpty(appName) || StringUtils.isEmpty(index))) {
-            long threadId = Thread.currentThread().getId();
-            long timestamp = System.currentTimeMillis();
-            String traceId = appName+"_"+index+"_"+threadId+"_"+timestamp;
-            httpServletResponse.addHeader("traceId",traceId);
-            httpServletRequest.setAttribute("traceId",traceId);
+        if(null != environment) {
+            String appName = environment.getProperty("spring.application.name");
+            String index = environment.getProperty("spring.application.index");
+            if(!(StringUtils.isEmpty(appName) || StringUtils.isEmpty(index))) {
+                long threadId = Thread.currentThread().getId();
+                long timestamp = System.currentTimeMillis();
+                String traceId = appName+"_"+index+"_"+threadId+"_"+timestamp;
+                httpServletResponse.addHeader("traceId",traceId);
+                httpServletRequest.setAttribute("traceId",traceId);
+            }
         }
     }
 
@@ -58,8 +63,4 @@ public class MermaidOptionsInterceptor implements HandlerInterceptor,Environment
 
     }
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
 }
