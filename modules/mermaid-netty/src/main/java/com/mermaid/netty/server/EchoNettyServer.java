@@ -12,7 +12,11 @@ import java.net.InetSocketAddress;
 
 /**
  * Desription:
- *
+ * 创建一个ServerBootStrap的实例以引导和绑定服务器
+ * 创建并分配一个NIOEventLoopGroup实例以进行事件的处理，如接受新连接以及读/写数据
+ * 指定服务器绑定的本地InetSocketAddress
+ * 使用一个EchoServerHandler的实例初始化每一个新的Channel
+ * 调用ServerBootStrap.bind()方法以绑定服务器
  * @author:Hui CreateDate:2018/10/21 23:27
  * version 1.0
  */
@@ -46,6 +50,9 @@ public class EchoNettyServer {
             bootstrap.group(group)
                     .channel(NioServerSocketChannel.class)
                     .localAddress(new InetSocketAddress(port))
+                    //ChannelInitializer的作用，当一个新的连接被接受时，将会创建一个新的Channel。
+                    //而ChannelInitializer将会把你的EchoServerHandler的实例添加到该Channel的ChannelPipeline中
+                    //这个ChannelHandler将会受到有关入站消息的通知
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
