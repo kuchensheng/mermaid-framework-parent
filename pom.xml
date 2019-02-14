@@ -23,9 +23,13 @@
     <module>modules/mermaid-zuul</module>
     <module>modules/mermaid-redis</module>
     <module>modules/mermaid-plugin</module>
+<<<<<<< HEAD
     <module>modules/mermaid-auth</module>
     <module>modules/mermaid-rabbitmq</module>
     <module>modules/mermaid-dubbo</module>
+=======
+      <module>modules/mermaid-netty</module>
+>>>>>>> 5e20bd3a045ff313f45eeb50d61a09bba16a05a4
   </modules>
 
   <scm>
@@ -42,7 +46,7 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>mermaid-snaphost</id>
+      <id>mermaid-snapshot</id>
       <url>http://118.178.186.33:9098/nexus/content/repositories/mermaid-snaphost</url>
     </snapshotRepository>
     <repository>
@@ -57,6 +61,7 @@
     <jedis.version>2.9.0</jedis.version>
     <zookeeper.version>3.4.11</zookeeper.version>
     <jackson.version>2.9.2</jackson.version>
+    <netty.version>5.0.0.Alpha2</netty.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -116,6 +121,11 @@
         <groupId>org.mybatis.generator</groupId>
         <artifactId>mybatis-generator-core</artifactId>
         <version>1.3.7</version>
+      </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-all</artifactId>
+        <version>${netty.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
