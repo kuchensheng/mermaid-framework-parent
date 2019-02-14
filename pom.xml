@@ -23,13 +23,9 @@
     <module>modules/mermaid-zuul</module>
     <module>modules/mermaid-redis</module>
     <module>modules/mermaid-plugin</module>
-<<<<<<< HEAD
-    <module>modules/mermaid-auth</module>
     <module>modules/mermaid-rabbitmq</module>
     <module>modules/mermaid-dubbo</module>
-=======
-      <module>modules/mermaid-netty</module>
->>>>>>> 5e20bd3a045ff313f45eeb50d61a09bba16a05a4
+    <module>modules/mermaid-netty</module>
   </modules>
 
   <scm>
