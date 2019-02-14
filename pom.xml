@@ -24,6 +24,8 @@
     <module>modules/mermaid-redis</module>
     <module>modules/mermaid-plugin</module>
     <module>modules/mermaid-auth</module>
+    <module>modules/mermaid-rabbitmq</module>
+    <module>modules/mermaid-dubbo</module>
   </modules>
 
   <scm>
