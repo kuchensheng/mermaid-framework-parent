@@ -2,6 +2,7 @@ package com.mermaid.framework;
 
 import com.mermaid.framework.config.AnnotaionProxyFactoryBean;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -33,7 +34,6 @@ public class MermaidApplicationEntry {
     private static final String CLASSPATH_CONFIG_MODEL_NAME="classpath*:META-INF/mermaid-framework*.properties";
 
     public static void main(String[] args) {
-
         Properties properties = detectApplicationProperties(CLASSPATH_CONFIG_MODEL_NAME);
         SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
         springApplication.setDefaultProperties(properties);
