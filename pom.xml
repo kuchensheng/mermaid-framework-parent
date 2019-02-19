@@ -55,7 +55,7 @@
     <jedis.version>2.9.0</jedis.version>
     <zookeeper.version>3.4.11</zookeeper.version>
     <jackson.version>2.9.2</jackson.version>
-    <netty.version>5.0.0.Alpha2</netty.version>
+    <netty.version>5.0.0.Alpha1</netty.version>
   </properties>
   <dependencyManagement>
     <dependencies>
