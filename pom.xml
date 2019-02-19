@@ -26,6 +26,7 @@
     <module>modules/mermaid-rabbitmq</module>
     <module>modules/mermaid-dubbo</module>
     <module>modules/mermaid-netty</module>
+      <module>modules/mermaid-im</module>
   </modules>
 
   <scm>
@@ -122,6 +123,11 @@
         <groupId>io.netty</groupId>
         <artifactId>netty-all</artifactId>
         <version>${netty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.dubbo.springboot</groupId>
+        <artifactId>spring-boot-starter-dubbo</artifactId>
+        <version>1.0.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
