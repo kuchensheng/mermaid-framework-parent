@@ -14,6 +14,6 @@ public class MarshallingEncoder {
     private Marshaller marshaller;
 
     public MarshallingEncoder() {
-        marshaller = MarshallingCodecFactory.buildMarshalling();
+        marshaller = (Marshaller) MarshallingCodecFactory.buildMarshalling();
     }
 }

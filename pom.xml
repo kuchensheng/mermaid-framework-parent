@@ -27,6 +27,7 @@
     <module>modules/mermaid-dubbo</module>
     <module>modules/mermaid-netty</module>
       <module>modules/mermaid-im</module>
+      <module>modules/mermaid-kafka</module>
   </modules>
 
   <scm>
@@ -59,6 +60,7 @@
     <zookeeper.version>3.4.11</zookeeper.version>
     <jackson.version>2.9.2</jackson.version>
     <netty.version>5.0.0.Alpha1</netty.version>
+    <kafka.version>2.0.1.RELEASE</kafka.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -128,6 +130,11 @@
         <groupId>io.dubbo.springboot</groupId>
         <artifactId>spring-boot-starter-dubbo</artifactId>
         <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.kafka</groupId>
+        <artifactId>spring-kafka</artifactId>
+        <version>${kafka.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
