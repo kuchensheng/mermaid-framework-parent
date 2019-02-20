@@ -1,8 +1,8 @@
 package com.mermaid.framework.controller;
 
 import com.mermaid.framework.ApplicationTest;
+import com.mermaid.framework.core.controller.CoreController;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -13,8 +13,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 /**
  * @version 1.0

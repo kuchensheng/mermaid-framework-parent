@@ -28,6 +28,7 @@
     <module>modules/mermaid-netty</module>
       <module>modules/mermaid-im</module>
       <module>modules/mermaid-kafka</module>
+      <module>modules/mermaid-zookeeper</module>
   </modules>
 
   <scm>
