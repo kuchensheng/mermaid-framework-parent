@@ -1,5 +1,7 @@
 package com.mermaid.framework.core.application;
 
+import org.apache.zookeeper.data.Stat;
+
 /**
  * Desription:
  *
@@ -7,6 +9,9 @@ package com.mermaid.framework.core.application;
  * version 1.0
  */
 public class ApplicationInfo implements ApplicationDescriptor {
+
+    /**服务超时时间，1000毫秒*/
+    public static final Long timeout = 1000l;
 
     protected String appId;
 
@@ -20,28 +25,21 @@ public class ApplicationInfo implements ApplicationDescriptor {
 
     protected String appContextPath = "/";
 
-    protected String sweetFrameworkVersion;
-
     protected int pid;
 
     //系统启动时间, 近似于ApplicationInfo实例创建时间
     protected long launchTime;
 
-    protected static volatile ApplicationInfo instance = null;
+    /**服务权重*/
+    protected int weight;
+
+    protected static volatile ApplicationInfo instance = new ApplicationInfo();
+
+    private ApplicationInfo(){}
 
     public static ApplicationInfo getInstance() {
-        //全局唯一
-        if(null == instance) {
-            synchronized (ApplicationInfo.class) {
-                if(null == instance) {
-                    instance = new ApplicationInfo();
-                }
-            }
-        }
         return instance;
     }
-
-
     @Override
     public String getAppName() {
         return null;
@@ -50,5 +48,69 @@ public class ApplicationInfo implements ApplicationDescriptor {
     @Override
     public String getAppId() {
         return null;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
+    public String getAppHost() {
+        return appHost;
+    }
+
+    public void setAppHost(String appHost) {
+        this.appHost = appHost;
+    }
+
+    public int getAppPort() {
+        return appPort;
+    }
+
+    public void setAppPort(int appPort) {
+        this.appPort = appPort;
+    }
+
+    public String getAppContextPath() {
+        return appContextPath;
+    }
+
+    public void setAppContextPath(String appContextPath) {
+        this.appContextPath = appContextPath;
+    }
+
+    public int getPid() {
+        return pid;
+    }
+
+    public void setPid(int pid) {
+        this.pid = pid;
+    }
+
+    public long getLaunchTime() {
+        return launchTime;
+    }
+
+    public void setLaunchTime(long launchTime) {
+        this.launchTime = launchTime;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 }

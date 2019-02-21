@@ -1,5 +1,8 @@
 package com.mermaid.framework.core;
 
+import com.mermaid.framework.core.application.ApplicationInfo;
+import com.mermaid.framework.core.util.IPAddressUtils;
+import com.mermaid.framework.core.util.RuntimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +16,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import sun.rmi.runtime.RuntimeUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,8 +39,26 @@ public class MermaidApplicationEntry {
         Properties properties = detectApplicationProperties(CLASSPATH_CONFIG_MODEL_NAME);
         SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
         springApplication.setDefaultProperties(properties);
+        ApplicationInfo applicationInfo = buildApplicationInfo(properties);
+
         printConfigInfo(properties);
         springApplication.run(args);
+    }
+
+    private static ApplicationInfo buildApplicationInfo(Properties properties) {
+        try {
+            ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
+            applicationInfo.setAppContextPath("/*");
+            applicationInfo.setAppHost(IPAddressUtils.getLocalIP());
+            applicationInfo.setAppName(properties.getProperty("spring.application.name"));
+            applicationInfo.setAppId(properties.getProperty("spring.application.index"));
+            applicationInfo.setAppPort(Integer.parseInt(applicationInfo.getAppId()));
+            applicationInfo.setLaunchTime(System.currentTimeMillis());
+            applicationInfo.setPid(RuntimeUtils.getCurrentPID());
+            return applicationInfo;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void printConfigInfo(Properties properties) {
