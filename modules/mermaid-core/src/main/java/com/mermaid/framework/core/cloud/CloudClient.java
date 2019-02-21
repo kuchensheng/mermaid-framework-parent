@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.mermaid.framework.core.application.ApplicationInfo;
 import com.mermaid.framework.core.cloud.common.CloudZnodePattern;
 import com.mermaid.framework.core.cloud.constant.CloudZonePattern;
+import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.ZkClient;
 
 import java.util.ArrayList;
@@ -47,6 +48,13 @@ public class CloudClient {
         if(!zkClient.exists(nodePath)) {
             zkClient.createEphemeral(nodePath,ApplicationInfo.getInstance());
             addProvider(ApplicationInfo.getInstance().getAppName(),ApplicationInfo.getInstance());
+            /**注册监听服务的变化，同时更新到本地缓存*/
+            zkClient.subscribeChildChanges(nodePath, new IZkChildListener() {
+                @Override
+                public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
+
+                }
+            });
         }else {
             throw new RuntimeException("端口已被占用");
         }
