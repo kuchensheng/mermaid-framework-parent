@@ -31,19 +31,17 @@ public class MybatisConfig implements EnvironmentAware{
 
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer() throws ClassNotFoundException {
-        String mybatisMapperScanBasePackage = environment.getProperty("mermaid.framework.mybatis.mapper.scan.basePackages");
-        String mybatisMapperAnnotation = environment.getProperty("mermaid.framework.mybatis.mapper.scan.annotation");
+        String mybatisMapperScanBasePackage = environment.getProperty("mermaid.framework.mybatis.mapper.scan.basePackages","com.mermaid");
+        String mybatisMapperAnnotation = environment.getProperty("mermaid.framework.mybatis.mapper.scan.annotation","org.apache.ibatis.annotations.Mapper");
         if(!StringUtils.hasText(mybatisMapperScanBasePackage)) {
             //hack code to avoid mapper scan error
             logger.info("未读取到mermaid.framework.mybatis.mapper.scan.basePackages的值，设置为默认值={}","com.mermaid");
-            mybatisMapperScanBasePackage = "com.mermaid";
         }
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
         mapperScannerConfigurer.setBasePackage(mybatisMapperScanBasePackage);
         if(!StringUtils.hasText(mybatisMapperAnnotation)) {
             logger.info("未读取到mermaid.framework.mybatis.mapper.scan.annotation，设置默认值={}","org.apache.ibatis.annotations.Mapper");
-            mybatisMapperAnnotation="org.apache.ibatis.annotations.Mapper";
         }
         mapperScannerConfigurer.setAnnotationClass(Class.forName(mybatisMapperAnnotation).asSubclass(java.lang.annotation.Annotation.class));
 
