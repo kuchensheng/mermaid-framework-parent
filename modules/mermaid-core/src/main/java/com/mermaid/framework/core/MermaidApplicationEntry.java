@@ -1,12 +1,14 @@
 package com.mermaid.framework.core;
 
 import com.mermaid.framework.core.application.ApplicationInfo;
+import com.mermaid.framework.core.cloud.CloudClient;
 import com.mermaid.framework.core.util.IPAddressUtils;
 import com.mermaid.framework.core.util.RuntimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
@@ -23,12 +25,8 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
-@EnableDiscoveryClient
-@SpringBootApplication
-@EnableFeignClients(basePackages = {"com","cn","net"})
-@ComponentScan(basePackages = {"com","cn","net"})
 @Slf4j
-@EnableWebMvc
+@SpringBootApplication
 public class MermaidApplicationEntry {
 
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME = "application.properties";
@@ -39,13 +37,15 @@ public class MermaidApplicationEntry {
         Properties properties = detectApplicationProperties(CLASSPATH_CONFIG_MODEL_NAME);
         SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
         springApplication.setDefaultProperties(properties);
-        ApplicationInfo applicationInfo = buildApplicationInfo(properties);
-
+        buildApplicationInfo(properties);
+        CloudClient cloudClient = new CloudClient(properties);
+        cloudClient.connect();
         printConfigInfo(properties);
         springApplication.run(args);
+
     }
 
-    private static ApplicationInfo buildApplicationInfo(Properties properties) {
+    private static void buildApplicationInfo(Properties properties) {
         try {
             ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
             applicationInfo.setAppContextPath("/*");
@@ -55,7 +55,6 @@ public class MermaidApplicationEntry {
             applicationInfo.setAppPort(Integer.parseInt(applicationInfo.getAppId()));
             applicationInfo.setLaunchTime(System.currentTimeMillis());
             applicationInfo.setPid(RuntimeUtils.getCurrentPID());
-            return applicationInfo;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

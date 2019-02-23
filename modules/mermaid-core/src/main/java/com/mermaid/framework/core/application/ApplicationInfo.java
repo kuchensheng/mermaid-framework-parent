@@ -33,7 +33,7 @@ public class ApplicationInfo implements ApplicationDescriptor {
     /**服务权重*/
     protected int weight;
 
-    protected static volatile ApplicationInfo instance = new ApplicationInfo();
+    protected static final ApplicationInfo instance = new ApplicationInfo();
 
     private ApplicationInfo(){}
 
@@ -42,12 +42,12 @@ public class ApplicationInfo implements ApplicationDescriptor {
     }
     @Override
     public String getAppName() {
-        return null;
+        return this.appName;
     }
 
     @Override
     public String getAppId() {
-        return null;
+        return this.appId;
     }
 
     public void setAppId(String appId) {
