@@ -1,6 +1,10 @@
 package com.mermaid.framework.core.cloud.configuration;
 
+import com.mermaid.framework.core.application.ApplicationInfo;
+import com.mermaid.framework.core.cloud.interceptor.InvocationInterceptor;
+import com.mermaid.framework.core.cloud.interceptor.InvocationInterceptorChain;
 import feign.Contract;
+import feign.RequestTemplate;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
 import org.springframework.beans.factory.ObjectFactory;
@@ -69,5 +73,12 @@ public class FeignConfiguration {
     }
 
     @Bean
-    public InvocationInte
+    public InvocationInterceptor requestTraceInvocationInterceptor(final ApplicationInfo applicationInfo) {
+        return new InvocationInterceptor() {
+            @Override
+            public void intercept(String cloudServiceName, String url, RequestTemplate requestTemplate, InvocationInterceptorChain chain) {
+
+            }
+        };
+    }
 }
