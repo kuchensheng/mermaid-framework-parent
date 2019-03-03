@@ -56,4 +56,9 @@ public class CoreController {
 
         throw BusinessException.withErrorCode("TEStdsfdd").withErrorMessageArguments("dddd");
     }
+
+    @RequestMapping("/test")
+    public String test() {
+        return "I am comming";
+    }
 }
