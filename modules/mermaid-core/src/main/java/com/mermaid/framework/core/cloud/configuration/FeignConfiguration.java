@@ -72,13 +72,13 @@ public class FeignConfiguration {
         return conversionService;
     }
 
-    @Bean
-    public InvocationInterceptor requestTraceInvocationInterceptor(final ApplicationInfo applicationInfo) {
-        return new InvocationInterceptor() {
-            @Override
-            public void intercept(String cloudServiceName, String url, RequestTemplate requestTemplate, InvocationInterceptorChain chain) {
-
-            }
-        };
-    }
+//    @Bean
+//    public InvocationInterceptor requestTraceInvocationInterceptor(final ApplicationInfo applicationInfo) {
+//        return new InvocationInterceptor() {
+//            @Override
+//            public void intercept(String cloudServiceName, String url, RequestTemplate requestTemplate, InvocationInterceptorChain chain) {
+//
+//            }
+//        };
+//    }
 }

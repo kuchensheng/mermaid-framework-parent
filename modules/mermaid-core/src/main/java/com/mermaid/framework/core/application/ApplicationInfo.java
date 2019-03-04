@@ -1,5 +1,6 @@
 package com.mermaid.framework.core.application;
 
+import com.mermaid.framework.core.cloud.CloudClient;
 import org.apache.zookeeper.data.Stat;
 
 /**
@@ -11,7 +12,7 @@ import org.apache.zookeeper.data.Stat;
 public class ApplicationInfo implements ApplicationDescriptor {
 
     /**服务超时时间，1000毫秒*/
-    public static final Long timeout = 1000l;
+    public static final long timeout = 1000;
 
     protected String appId;
 
@@ -32,6 +33,8 @@ public class ApplicationInfo implements ApplicationDescriptor {
 
     /**服务权重*/
     protected int weight;
+
+    private CloudClient cloudClient;
 
     protected static final ApplicationInfo instance = new ApplicationInfo();
 
@@ -112,5 +115,13 @@ public class ApplicationInfo implements ApplicationDescriptor {
 
     public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public CloudClient getCloudClient() {
+        return cloudClient;
+    }
+
+    public void setCloudClient(CloudClient cloudClient) {
+        this.cloudClient = cloudClient;
     }
 }

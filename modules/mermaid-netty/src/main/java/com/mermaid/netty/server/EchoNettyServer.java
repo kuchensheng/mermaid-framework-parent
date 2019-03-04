@@ -1,12 +1,15 @@
 package com.mermaid.netty.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.MessageToByteEncoder;
 
 import java.net.InetSocketAddress;
 
@@ -56,6 +59,12 @@ public class EchoNettyServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast("msg decoder", new MessageToByteEncoder<String>() {
+                                @Override
+                                protected void encode(ChannelHandlerContext channelHandlerContext, String s, ByteBuf byteBuf) throws Exception {
+
+                                }
+                            });
                             ch.pipeline().addLast(serverHandler);
                         }
                     });
