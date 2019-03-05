@@ -15,7 +15,12 @@ public abstract class AbstractRabbitMessageListener<T> implements ConcurrentRabb
     private int acknowledgeMode = ACK_MODE_AUTO;
 
     public AbstractRabbitMessageListener(String targetQueueName) {
+        this(targetQueueName,ACK_MODE_AUTO);
+    }
+
+    public AbstractRabbitMessageListener(String targetQueueName, int acknowledgeMode) {
         this.targetQueueName = targetQueueName;
+        this.acknowledgeMode = acknowledgeMode;
     }
 
     @Override

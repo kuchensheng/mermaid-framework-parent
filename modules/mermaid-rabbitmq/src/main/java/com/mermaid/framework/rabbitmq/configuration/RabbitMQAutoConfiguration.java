@@ -84,7 +84,7 @@ public class RabbitMQAutoConfiguration implements ApplicationContextAware,Initia
 
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if(autoListen) {
             Collection<RabbitMessageListener> rabbitListeners = applicationContext.getBeansOfType(RabbitMessageListener.class).values();
             RabbitMQService rabbitMQService = applicationContext.getBean(RabbitMQService.class);
