@@ -7,6 +7,7 @@
 + [mermaid-framework-plugin](modules/mermaid-plugin/README.md) -> 框架插件支撑
 + [mermaid-framework-websocket](modules/mermaid-websocket/README.md) -> WebSocket组件
 + [mermaid-framework-zuul](modules/mermaid-zuul/README.md) -> 网关组件
++ [mermaid-framework-rabbitmq](modules/mermaid-rabbitmq.md) ->消息队列组件
 + [mermaid-framework-sdk](modules/mermaid-sdk/README.md) -> 基础服务调用组件
 
 ## Quick Start

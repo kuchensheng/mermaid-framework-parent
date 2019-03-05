@@ -16,10 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Desription:
@@ -47,6 +44,7 @@ public class CloudClient {
     private ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
 
     private BlockingQueue<Span>  spanBlockingQueue = null;
+    private FutureTask<LinkedBlockingQueue<Span>> futureTask;
 
     public CloudClient(Properties properties) {
         this.zkServers = properties.getProperty("mermaid.zookeeper.connection","10.190.35.123:2181");
@@ -204,16 +202,39 @@ public class CloudClient {
         }
     }
 
-
+    private static BlockingQueue<Span> templateBlockingQueue = new LinkedBlockingQueue<>(1024);
     public void writeRequestTraceLog() {
         //先写入本地的阻塞队列，然后再消费
         ThreadLocalProcessorTracer tracer = ThreadLocalProcessorTracer.get();
         Span spanInfo = tracer.getSpanInfo();
         logger.info("将traceLog消息放到阻塞队列，等待消费");
-        boolean offer = spanBlockingQueue.offer(spanInfo);
-        if(!offer) {
-            logger.info("请求跟踪日志已满");
-        }
+        String queueSize = System.getProperty("mermaid.request.trace.long.queue.size","10000");
+        final int resize = (int) (Integer.parseInt(queueSize) * 0.9);
+        if(spanBlockingQueue.size() >= resize) {
+            logger.info("阻塞队列已达到满额的3/4,启动概率清除事件");
+            final LinkedBlockingQueue arrayBlockingQueue = (LinkedBlockingQueue) spanBlockingQueue;
+            spanBlockingQueue.clear();
+            FutureTask<LinkedBlockingQueue<Span>> futureTask = new FutureTask<>(new Callable() {
+                @Override
+                public Object call(){
 
+                    for (int i=0;i<resize * 0.9;i++) {
+                        int index = (int) (Math.random()*resize);
+                        arrayBlockingQueue.remove(index);
+                    }
+                    return arrayBlockingQueue;
+                }
+            });
+            try {
+                spanBlockingQueue.addAll(futureTask.get());
+            } catch (Exception e) {
+                logger.error("清理线程异常"+e.getMessage(),e);
+            }
+        }else {
+            boolean offer = spanBlockingQueue.offer(spanInfo);
+            if(!offer) {
+                logger.info("请求跟踪日志已满");
+            }
+        }
     }
 }
