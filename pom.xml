@@ -29,6 +29,7 @@
       <module>modules/mermaid-im</module>
       <module>modules/mermaid-kafka</module>
       <module>modules/mermaid-zookeeper</module>
+      <module>modules/mermaid-socket</module>
   </modules>
 
   <scm>
@@ -128,14 +129,19 @@
         <version>${netty.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.dubbo.springboot</groupId>
-        <artifactId>spring-boot-starter-dubbo</artifactId>
-        <version>1.0.0</version>
+        <groupId>com.alibaba.spring.boot</groupId>
+        <artifactId>dubbo-spring-boot-starter</artifactId>
+        <version>2.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.kafka</groupId>
         <artifactId>spring-kafka</artifactId>
         <version>${kafka.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.redisson</groupId>
+        <artifactId>redisson</artifactId>
+        <version>3.3.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

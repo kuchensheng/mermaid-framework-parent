@@ -7,9 +7,9 @@ package com.mermaid.framework.rabbitmq;
  */
 public interface RabbitMQService {
 
-    void send(String queueName,byte[] data);
+    void send(String queueName,Object data);
 
-    void send(RabbitMQMessageTarget target,byte[] data);
+    void send(RabbitMQMessageTarget target,Object data);
 
     void listen(RabbitMessageListener listener);
 
