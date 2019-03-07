@@ -87,14 +87,12 @@ public class CloudClient {
         final String path = CloudZnodePattern.ZNODE_INSTANCE_GROUP.replace("${appName}",applicationInfo.getAppName());
         if(!zkClient.exists("/applications")) {
             logger.info("创建父节点");
-
             zkClient.createPersistent("/applications");
-            if(!zkClient.exists("/applications/"+applicationInfo.getAppName())) {
-                zkClient.createPersistent("/applications/"+applicationInfo.getAppName());
-            }
         }
 
-        initProviderMap();
+        if(!zkClient.exists("/applications/"+applicationInfo.getAppName())) {
+            zkClient.createPersistent("/applications/"+applicationInfo.getAppName());
+        }
 
         /**注册监听服务的变化，同时更新到本地缓存*/
         zkClient.subscribeChildChanges(path, new IZkChildListener() {
@@ -141,8 +139,9 @@ public class CloudClient {
             }
         });
 
+
         logger.info("应用[{}]的实例[{}]已上线",applicationInfo.getAppName(),applicationInfo.getAppId());
-        refreshInstance(path);
+        initProviderMap();
         zkClient.subscribeStateChanges(new IZkStateListener() {
             @Override
             public void handleStateChanged(Watcher.Event.KeeperState keeperState) throws Exception {
