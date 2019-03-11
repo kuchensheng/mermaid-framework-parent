@@ -1,7 +1,10 @@
 package com.mermaid.framework.core.application;
 
 import com.mermaid.framework.core.cloud.CloudClient;
+import com.mermaid.framework.core.config.factory.ConfigFactory;
 import org.apache.zookeeper.data.Stat;
+
+import java.util.Properties;
 
 /**
  * Desription:
@@ -35,6 +38,8 @@ public class ApplicationInfo implements ApplicationDescriptor {
     protected int weight;
 
     private CloudClient cloudClient;
+
+    private ConfigFactory runtimeProperties;
 
     protected static final ApplicationInfo instance = new ApplicationInfo();
 
@@ -123,5 +128,13 @@ public class ApplicationInfo implements ApplicationDescriptor {
 
     public void setCloudClient(CloudClient cloudClient) {
         this.cloudClient = cloudClient;
+    }
+
+    public ConfigFactory getRuntimeProperties() {
+        return runtimeProperties;
+    }
+
+    public void setRuntimeProperties(ConfigFactory runtimeProperties) {
+        this.runtimeProperties = runtimeProperties;
     }
 }

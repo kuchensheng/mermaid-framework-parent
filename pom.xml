@@ -24,12 +24,11 @@
     <module>modules/mermaid-redis</module>
     <module>modules/mermaid-plugin</module>
     <module>modules/mermaid-rabbitmq</module>
-    <module>modules/mermaid-dubbo</module>
     <module>modules/mermaid-netty</module>
       <module>modules/mermaid-im</module>
       <module>modules/mermaid-kafka</module>
-      <module>modules/mermaid-zookeeper</module>
       <module>modules/mermaid-socket</module>
+      <module>modules/mermaid-registry</module>
   </modules>
 
   <scm>
@@ -142,6 +141,21 @@
         <groupId>org.redisson</groupId>
         <artifactId>redisson</artifactId>
         <version>3.3.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.mermaid.framework</groupId>
+        <artifactId>mermaid-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>${zookeeper.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.101tec</groupId>
+        <artifactId>zkclient</artifactId>
+        <version>0.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

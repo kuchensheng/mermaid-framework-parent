@@ -2,6 +2,10 @@ package com.mermaid.framework.core;
 
 import com.mermaid.framework.core.application.ApplicationInfo;
 import com.mermaid.framework.core.cloud.CloudClient;
+import com.mermaid.framework.core.config.factory.CommandLineConfigFactory;
+import com.mermaid.framework.core.config.factory.GlobalRuntimeConfigFactory;
+import com.mermaid.framework.core.config.factory.LocalFileConfigFactory;
+import com.mermaid.framework.core.config.factory.ModulesConfigFactory;
 import com.mermaid.framework.core.util.IPAddressUtils;
 import com.mermaid.framework.core.util.RuntimeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -27,37 +31,49 @@ import java.util.Properties;
 
 @Slf4j
 @SpringBootApplication
+@ComponentScan({"com.mermaid.framework","${mermaid.modules.basePackages:}"})
 public class MermaidApplicationEntry {
 
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME = "application.properties";
 
     private static final String CLASSPATH_CONFIG_MODEL_NAME="classpath*:META-INF/mermaid-framework*.properties";
 
-    public static void main(String[] args) {
-        Properties properties = detectApplicationProperties(CLASSPATH_CONFIG_MODEL_NAME);
-        SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
-        springApplication.setDefaultProperties(properties);
-        buildApplicationInfo(properties);
-        CloudClient cloudClient = new CloudClient(properties);
-        cloudClient.connect();
-        printConfigInfo(properties);
-        springApplication.run(args);
+    private static CommandLineConfigFactory commandLineConfigFactory;
 
+    public static void main(String[] args) throws Exception {
+        commandLineConfigFactory = new CommandLineConfigFactory(args);
+        ApplicationInfo applicationInfo = buildApplicationInfo();
+        buildGlobalRuntimeConfig(applicationInfo);
+
+        GlobalRuntimeConfigFactory globalRuntimeConfigFactory = GlobalRuntimeConfigFactory.getInstance();
+        applicationInfo.setRuntimeProperties(globalRuntimeConfigFactory);
+
+        SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
+        CloudClient cloudClient = new CloudClient(globalRuntimeConfigFactory.getProperties());
+        cloudClient.connect();
+        printConfigInfo(globalRuntimeConfigFactory.getProperties());
+        springApplication.run(args);
+        log.info("**MERMAID[{}]**应用{}:{}启动成功",applicationInfo.getAppVersion(),applicationInfo.getAppName(),applicationInfo.getAppPort());
     }
 
-    private static void buildApplicationInfo(Properties properties) {
-        try {
-            ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
-            applicationInfo.setAppContextPath("/*");
-            applicationInfo.setAppHost(IPAddressUtils.getLocalIP());
-            applicationInfo.setAppName(properties.getProperty("spring.application.name"));
-            applicationInfo.setAppId(properties.getProperty("spring.application.index"));
-            applicationInfo.setAppPort(Integer.parseInt(applicationInfo.getAppId()));
-            applicationInfo.setLaunchTime(System.currentTimeMillis());
-            applicationInfo.setPid(RuntimeUtils.getCurrentPID());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    private static void buildGlobalRuntimeConfig(ApplicationInfo applicationInfo) {
+        ModulesConfigFactory modulesConfigFactory = new ModulesConfigFactory();
+        GlobalRuntimeConfigFactory.getInstance().mergeConfig(modulesConfigFactory).mergeConfig(applicationInfo.getRuntimeProperties());
+    }
+
+    private static ApplicationInfo buildApplicationInfo() throws Exception {
+        LocalFileConfigFactory factory = new LocalFileConfigFactory(null);
+        ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
+        applicationInfo.setAppContextPath("/*");
+        applicationInfo.setAppHost(IPAddressUtils.getLocalIP());
+        applicationInfo.setAppName(factory.getValue("spring.application.name"));
+        applicationInfo.setAppId(factory.getValue("spring.application.index"));
+        applicationInfo.setAppPort(Integer.parseInt(applicationInfo.getAppId()));
+        applicationInfo.setLaunchTime(System.currentTimeMillis());
+        applicationInfo.setPid(RuntimeUtils.getCurrentPID());
+        applicationInfo.setAppVersion(factory.getValue("mermaid.framework.version"));
+        applicationInfo.setRuntimeProperties(factory);
+        return applicationInfo;
     }
 
     private static void printConfigInfo(Properties properties) {
