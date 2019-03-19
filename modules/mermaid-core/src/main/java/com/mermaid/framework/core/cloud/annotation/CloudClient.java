@@ -18,8 +18,4 @@ public @interface CloudClient {
 
     String value();
 
-    @AliasFor("value")
-    String serviceName();
-
-
 }

@@ -13,6 +13,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 /**
  * @version 1.0
@@ -41,6 +43,7 @@ public class CoreControllerTest extends ApplicationTest {
 
     @Test
     public void getCoreConfigByBalence() throws Exception {
+        ReentrantLock lock = new ReentrantLock();
     }
 
 }
