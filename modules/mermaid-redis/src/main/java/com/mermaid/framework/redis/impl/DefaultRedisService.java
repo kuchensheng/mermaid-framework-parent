@@ -1,5 +1,7 @@
 package com.mermaid.framework.redis.impl;
 
+import com.mermaid.framework.redis.RedisDistributeLockObject;
+import com.mermaid.framework.redis.RedisDistributeLockResult;
 import com.mermaid.framework.redis.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,29 +153,25 @@ public class DefaultRedisService implements RedisService {
             logger.error("已存在该锁="+lockName);
             return false;
         }
-        return lock(lockName,expire,TimeUnit.SECONDS);
+        RedisDistributeLockObject dlock = new RedisDistributeLockObject(lockName,expire);
+        return lock(dlock);
     }
 
-    private boolean lock(String lockName, long expire, TimeUnit seconds) {
+    @Override
+    public RedisDistributeLockResult acquireLock(RedisDistributeLockObject dlock) {
+        return new RedisDistributeLockResult(dlock.getLockName(),lock(dlock),dlock.getIdentifier(),dlock);
+    }
+
+    private boolean lock(final RedisDistributeLockObject dlock) {
         boolean flag = false;
-        if(expire > 0) {
-            switch (seconds) {
-                case SECONDS:
-                    expire *= 1000;
-                    break;
-                default:
-                    break;
-            }
-        }
         try {
-            final byte[] key = str2Bytes(lockName);
-            final long finalExpire = expire;
+            final byte[] key = str2Bytes(dlock.getLockName());
             flag = (Boolean)redisTemplate.execute(new RedisCallback() {
                 @Override
                 public Object doInRedis(RedisConnection connection) throws DataAccessException {
-                    Boolean flag = connection.setNX(key, str2Bytes("" + System.currentTimeMillis()));
-                    if(flag && finalExpire > 0) {
-                        connection.expire(key, finalExpire);
+                    Boolean flag = connection.setNX(key, str2Bytes(dlock.getIdentifier()));
+                    if(flag && dlock.getSelfReleaseExpired() > 0) {
+                        connection.expire(key, dlock.getSelfReleaseExpired());
                     }
                     return flag;
                 }
@@ -182,6 +180,20 @@ public class DefaultRedisService implements RedisService {
             logger.error("redis lock error",e);
         }
         return flag;
+    }
+
+    @Override
+    public void unlock(final RedisDistributeLockResult result) {
+        redisTemplate.execute(new RedisCallback<Long>() {
+            @Override
+            public Long doInRedis(RedisConnection connection) throws DataAccessException {
+                byte[] lockName = str2Bytes(result.getLockName());
+                if(str2Bytes(result.getIdenfier()).equals(connection.get(lockName))) {
+                    connection.del(lockName);
+                }
+                return 0L;
+            }
+        });
     }
 
     @Override

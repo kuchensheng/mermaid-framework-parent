@@ -21,11 +21,16 @@ public interface RedisDistributedLockService {
      * @param expire
      * @return
      */
+    @Deprecated
     boolean lock(String lockName,long expire);
 
+    RedisDistributeLockResult acquireLock(RedisDistributeLockObject dlock);
     /**
      * 解锁
      * @param lockName
      */
+    @Deprecated
     void unlock(String lockName);
+
+    void unlock(RedisDistributeLockResult result);
 }
