@@ -29,6 +29,7 @@
       <module>modules/mermaid-kafka</module>
       <module>modules/mermaid-socket</module>
       <module>modules/mermaid-registry</module>
+      <module>modules/mermaid-fescar</module>
   </modules>
 
   <scm>
@@ -62,6 +63,7 @@
     <jackson.version>2.9.2</jackson.version>
     <netty.version>5.0.0.Alpha1</netty.version>
     <kafka.version>2.0.1.RELEASE</kafka.version>
+    <fescar.version>0.4.0</fescar.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -156,6 +158,11 @@
         <groupId>com.101tec</groupId>
         <artifactId>zkclient</artifactId>
         <version>0.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.fescar</groupId>
+        <artifactId>fescar-all</artifactId>
+        <version>${fescar.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
