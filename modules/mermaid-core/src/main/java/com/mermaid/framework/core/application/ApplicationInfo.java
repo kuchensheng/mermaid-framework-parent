@@ -43,6 +43,8 @@ public class ApplicationInfo implements ApplicationDescriptor {
 
     protected static final ApplicationInfo instance = new ApplicationInfo();
 
+    private State state = State.Starting;
+
     private ApplicationInfo(){}
 
     public static ApplicationInfo getInstance() {
@@ -136,5 +138,24 @@ public class ApplicationInfo implements ApplicationDescriptor {
 
     public void setRuntimeProperties(ConfigFactory runtimeProperties) {
         this.runtimeProperties = runtimeProperties;
+    }
+
+    //服务状态
+    public enum State {
+        Starting/**表示应用实例正在启动, 不接受请求*/
+        ,
+        Running/**表示应用实例处于运行状态, 不接受请求*/
+        ,
+        HangingUp/**表示应用实例处于挂起状态, 不接受请求*/
+        ,
+        Halt/**表示应用实例处于停机状态, 此状态为虚拟状态, 使用Zookeeper的临时ZNode管理*/
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }

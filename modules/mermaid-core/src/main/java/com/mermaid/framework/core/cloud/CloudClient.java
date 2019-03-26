@@ -13,6 +13,7 @@ import org.I0Itec.zkclient.serialize.ZkSerializer;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -235,5 +236,28 @@ public class CloudClient {
                 logger.info("请求跟踪日志已满");
             }
         }
+    }
+
+    public void registerApplicationInfoResources(ApplicationContext applicationContext) {
+        //TODO 注册应用信息
+    }
+
+    public void activeApplication() {
+        //TODO 激活应用信息，写临时节点
+    }
+
+    public void reportApplicationConfigurationMetadata() {
+        //TODO 写应用配置元数据到zk
+    }
+
+    public void passivateApplication() {
+        this.applicationInfo.setState(ApplicationInfo.State.Halt);
+        logger.info("应用[{}]服务状态已变更为[{}]状态",this.applicationInfo.getAppName(),ApplicationInfo.State.Halt);
+        writeInstanceState(this.applicationInfo);
+
+    }
+
+    public void writeInstanceState(ApplicationInfo applicationInfo) {
+        //TODO 向zk标明服务状态
     }
 }

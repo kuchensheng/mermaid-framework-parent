@@ -43,6 +43,11 @@ public class CloudClientScanner extends ClassPathBeanDefinitionScanner {
         this.initFilters();
     }
 
+    @Override
+    public Set<BeanDefinitionHolder> doScan(String... basePackages) {
+        return super.doScan(basePackages);
+    }
+
     private void initFilters() {
         this.addIncludeFilter(new AnnotationTypeFilter(CloudClient.class));
     }
