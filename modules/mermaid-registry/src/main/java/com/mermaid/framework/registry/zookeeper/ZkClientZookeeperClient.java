@@ -1,6 +1,7 @@
 package com.mermaid.framework.registry.zookeeper;
 
 import com.mermaid.framework.serialize.ISerializer;
+import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkStateListener;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
@@ -82,8 +83,21 @@ public class ZkClientZookeeperClient extends AbstractZkclient {
 
     @Override
     public void removeChildListener(String path, IChildListener listener) {
-
+        client.unsubscribeChildChanges(path, new IZkChildListener() {
+            @Override
+            public void handleChildChange(String s, List<String> list) throws Exception {
+                listener.doChildChange(s,list);
+            }
+        });
     }
 
-
+    @Override
+    protected List<String> doAddChildListener(String path, IChildListener childListener) {
+        return client.subscribeChildChanges(path, new IZkChildListener() {
+            @Override
+            public void handleChildChange(String s, List<String> list) throws Exception {
+                childListener.doChildChange(s,list);
+            }
+        });
+    }
 }

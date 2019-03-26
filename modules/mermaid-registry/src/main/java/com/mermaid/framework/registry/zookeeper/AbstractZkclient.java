@@ -65,7 +65,7 @@ public abstract class AbstractZkclient implements ZookeeperClient{
 
     @Override
     public List<String> addChildListener(String path, IChildListener childListener) {
-        return null;
+        return doAddChildListener(path,childListener);
     }
 
     @Override
@@ -102,4 +102,7 @@ public abstract class AbstractZkclient implements ZookeeperClient{
     protected abstract void createEphemeral(String path);
 
     protected abstract void createPersistent(String path);
+
+    protected abstract List<String> doAddChildListener(String path, IChildListener childListener);
+
 }
