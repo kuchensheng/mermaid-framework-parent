@@ -4,6 +4,7 @@ import com.mermaid.framework.registry.zookeeper.AbstractZkclient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -93,6 +94,24 @@ public abstract class AbstractRegistry implements Registry{
     @Override
     public boolean isConnected() {
         return !closed;
+    }
+
+    @Override
+    public List<?> lookup(String serviceNamePath) {
+        List<String> children = getChildren(serviceNamePath);
+        if(null == children || children.size() == 0) {
+            logger.info("节点path -> {},无子节点信息，请检查",serviceNamePath);
+            return null;
+        }
+        List<Object> result = new ArrayList<>();
+        for (String child : children) {
+            Object data = getData(child);
+            if(null != data) {
+                result.add(data);
+            }
+
+        }
+        return result;
     }
 
     protected abstract void doClose();

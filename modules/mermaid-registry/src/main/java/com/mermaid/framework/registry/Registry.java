@@ -74,4 +74,11 @@ public interface Registry {
     void addDataListener(String path,IDataListener dataListener);
 
     boolean isConnected();
+
+    /**
+     * 获取某节点下的所有子节点信息及其配置
+     * @param serviceNamePath
+     * @return
+     */
+    List<?> lookup(String serviceNamePath);
 }

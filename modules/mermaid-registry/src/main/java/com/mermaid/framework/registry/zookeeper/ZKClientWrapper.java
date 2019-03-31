@@ -94,17 +94,17 @@ public class ZKClientWrapper {
     }
 
     public void delete(String path) {
-        Assert.assertNotNull(getZkClient());
+        Assert.assertTrue(exists(path));
         getZkClient().delete(path);
     }
 
     public List<String> getChildren(String path) {
-        Assert.assertNotNull(getZkClient());
+        Assert.assertTrue(exists(path));
         return getZkClient().getChildren(path);
     }
 
     public <T> T getData(String path) {
-        Assert.assertNotNull(getZkClient());
+        Assert.assertTrue(exists(path));
         return getZkClient().readData(path);
     }
 
