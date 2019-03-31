@@ -1,4 +1,4 @@
-package com.mermaid.framework.registry.zookeeper;
+package com.mermaid.framework.registry;
 
 import java.util.List;
 

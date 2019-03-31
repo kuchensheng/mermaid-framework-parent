@@ -103,7 +103,7 @@ public class ZKClientWrapper {
         return getZkClient().getChildren(path);
     }
 
-    public String getData(String path) {
+    public <T> T getData(String path) {
         Assert.assertNotNull(getZkClient());
         return getZkClient().readData(path);
     }
@@ -150,6 +150,16 @@ public class ZKClientWrapper {
         } else {
             this.zkClient =zkClient;
         }
+    }
+
+    public void subscribeDataChanges(String path,IZkDataListener zkDataListener) {
+        Assert.assertNotNull(getZkClient());
+        this.zkClient.subscribeDataChanges(path, zkDataListener);
+    }
+
+    public void unSubscribeDataChanges(String path,IZkDataListener zkDataListener) {
+        Assert.assertNotNull(getZkClient());
+        this.zkClient.unsubscribeDataChanges(path,zkDataListener);
     }
 
 }
