@@ -65,7 +65,7 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
     private void handleHttpRequest(FullHttpRequest req) {
         //如果HTTP解码失败，返回HTTP异常
-        if(!req.decoderResult().isSuccess() || (!"websocket".equals(req.headers().get("Upgrade")))) {
+        if(!req.getDecoderResult().isSuccess() || (!"websocket".equals(req.headers().get("Upgrade")))) {
             sendHttpResponse(req,new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
             return;
         }
@@ -74,7 +74,7 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object> 
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory("ws://localhost:8080/websocket", null, false);
         this.handshaker = wsFactory.newHandshaker(req);
         if (this.handshaker == null) {
-            WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(this.ctx.channel());
+            WebSocketServerHandshakerFactory.sendUnsupportedWebSocketVersionResponse(this.ctx.channel());
         }else {
             handshaker.handshake(this.ctx.channel(),req);
         }
@@ -82,16 +82,16 @@ public class WebsocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
     private void sendHttpResponse(FullHttpRequest req, FullHttpResponse response) {
         //返回应答给客户
-        if(response.status()!= HttpResponseStatus.OK) {
-            ByteBuf buf = Unpooled.copiedBuffer(response.status().toString(), CharsetUtil.UTF_8);
+        if(response.getStatus()!= HttpResponseStatus.OK) {
+            ByteBuf buf = Unpooled.copiedBuffer(response.getStatus().toString(), CharsetUtil.UTF_8);
             response.content().writeBytes(buf);
             buf.release();
-            HttpHeaderUtil.setContentLength(response,response.content().readableBytes());
+            HttpHeaders.setContentLength(response,response.content().readableBytes());
         }
 
         //如果是非Keep-Alive，关闭连接
         ChannelFuture future = this.ctx.writeAndFlush(response);
-        if(!isKeepAlive(req) || response.status().code() != HttpResponseStatus.OK.code()) {
+        if(!isKeepAlive(req) || response.getStatus().code() != HttpResponseStatus.OK.code()) {
             future.addListener(ChannelFutureListener.CLOSE);
         }
     }

@@ -1,6 +1,5 @@
 package com.mermaid.framework.rabbitmq;
 
-import jdk.internal.util.xml.PropertiesDefaultHandler;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

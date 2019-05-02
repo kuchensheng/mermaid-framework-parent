@@ -26,6 +26,5 @@ public class MarshallingCodecFactory {
         return encoder;
     }
 
-    public static io.netty.handler.codec.marshalling.MarshallingDecoder un
 
 }
