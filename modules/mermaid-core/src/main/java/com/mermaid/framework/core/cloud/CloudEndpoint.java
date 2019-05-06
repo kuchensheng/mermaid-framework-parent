@@ -56,7 +56,7 @@ public class CloudEndpoint implements ResourceLoaderAware,BeanDefinitionRegistry
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        logger.info("项目启动，想应用中心注册资源");
+        logger.info("项目启动，向应用中心注册资源");
         applicationInfo.getCloudClient().registerApplicationInfoResources(contextRefreshedEvent.getApplicationContext());
 
         applicationInfo.getCloudClient().activeApplication();
