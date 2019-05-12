@@ -64,6 +64,7 @@
     <netty.version>5.0.0.Alpha1</netty.version>
     <kafka.version>2.0.1.RELEASE</kafka.version>
     <fescar.version>0.4.0</fescar.version>
+    <spring-cloud-alibaba-dependencies.version>0.2.1.RELEASE</spring-cloud-alibaba-dependencies.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -163,6 +164,14 @@
         <groupId>com.alibaba.fescar</groupId>
         <artifactId>fescar-all</artifactId>
         <version>${fescar.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+        <version>${spring-cloud-alibaba-dependencies.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

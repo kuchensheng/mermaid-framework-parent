@@ -32,6 +32,7 @@ import java.util.Properties;
 @Slf4j
 @SpringBootApplication
 @ComponentScan({"com.mermaid.framework","${mermaid.modules.basePackages:}"})
+@EnableDiscoveryClient
 public class MermaidApplicationEntry {
 
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME = "application.properties";
@@ -49,8 +50,8 @@ public class MermaidApplicationEntry {
         applicationInfo.setRuntimeProperties(globalRuntimeConfigFactory);
 
         SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
-        CloudClient cloudClient = new CloudClient(globalRuntimeConfigFactory.getProperties());
-        cloudClient.connect();
+//        CloudClient cloudClient = new CloudClient(globalRuntimeConfigFactory.getProperties());
+//        cloudClient.connect();
         printConfigInfo(globalRuntimeConfigFactory.getProperties());
         springApplication.run(args);
         log.info("**MERMAID[{}]**应用{}:{}启动成功",applicationInfo.getAppVersion(),applicationInfo.getAppName(),applicationInfo.getAppPort());
