@@ -3,7 +3,12 @@ package com.mermaid.framework.core.config.sharding;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.shardingsphere.core.api.ShardingDataSourceFactory;
+import io.shardingsphere.core.api.config.ShardingRuleConfiguration;
+import io.shardingsphere.core.api.config.strategy.InlineShardingStrategyConfiguration;
+import io.shardingsphere.core.keygen.KeyGenerator;
 
+import io.shardingsphere.core.routing.strategy.ShardingStrategy;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +34,7 @@ import java.util.Map;
  * version 1.0
  */
 @Configuration
-@ConditionalOnExpression("${mermaid.datsource.sharding.enable:false} == true")
+@ConditionalOnExpression("${mermaid.datasource.sharding.enable:false} == true")
 @Slf4j
 public class DataSourceConfig {
 
@@ -37,6 +42,35 @@ public class DataSourceConfig {
 
     @Value("classpath:META-INF/mermaid-framework-sharding.json")
     private Resource resource;
+
+    @Value("${mermaid.datasource.sharding.shardingColumn:user_id}")
+    private String shardingColumn;
+
+    @Value("${mermaid.datasource.sharding.algorithmExpression:db_${user_id % 2}}")
+    private String algorithmExpression;
+
+    @Bean
+    public ShardingStrategy shardingStrategy() {
+        return null;
+    }
+
+    @Bean
+    public DataSource getShardingDataSource() throws Exception{
+        return ShardingDataSourceFactory.createDataSource(dataSourceHashMap(dataSources()),createShardingRuleConfiguration(),new HashMap<String,Object>(),null);
+    }
+
+    private ShardingRuleConfiguration createShardingRuleConfiguration() {
+        ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
+        shardingRuleConfiguration.setDefaultKeyGenerator(new KeyGenerator() {
+            @Override
+            public Number generateKey() {
+                return null;
+            }
+        });
+        shardingRuleConfiguration.setDefaultDatabaseShardingStrategyConfig(new InlineShardingStrategyConfiguration(shardingColumn,algorithmExpression));
+        return shardingRuleConfiguration;
+    }
+
 
     @Bean
     public List<Database> dataSources() {
