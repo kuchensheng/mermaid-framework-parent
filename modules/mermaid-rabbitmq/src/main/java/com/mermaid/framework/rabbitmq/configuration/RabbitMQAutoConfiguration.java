@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -24,12 +25,8 @@ import java.util.Iterator;
  * @version 创建时间：2019/3/5 8:44
  */
 @Configuration
-public class RabbitMQAutoConfiguration implements ApplicationContextAware,InitializingBean{
-
-    @Value("${mermaid.framework.rabbitmq.autoListen:true}")
-    private boolean autoListen;
-
-    private ApplicationContext applicationContext;
+@ConditionalOnExpression("${mermaid.framework.mq.protocol:rabbitmq}=='rabbitmq'")
+public class RabbitMQAutoConfiguration extends AbstractMQAutoConfiguration{
 
     @Value("${mermaid.framework.rabbitmq.host:127.0.0.1}")
     private String host;
@@ -80,23 +77,5 @@ public class RabbitMQAutoConfiguration implements ApplicationContextAware,Initia
     @Bean
     public RabbitMQService rabbitMQService(ConnectionFactory connectionFactory) {
         return new SimpleRabbitMQServiceImpl(connectionFactory,new RabbitTemplate(connectionFactory),new RabbitAdmin(connectionFactory));
-    }
-
-
-    @Override
-    public void afterPropertiesSet() {
-        if(autoListen) {
-            Collection<RabbitMessageListener> rabbitListeners = applicationContext.getBeansOfType(RabbitMessageListener.class).values();
-            RabbitMQService rabbitMQService = applicationContext.getBean(RabbitMQService.class);
-            Iterator<RabbitMessageListener> iterator = rabbitListeners.iterator();
-            while (iterator.hasNext()) {
-                rabbitMQService.listen(iterator.next());
-            }
-        }
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 }

@@ -38,6 +38,17 @@
             <artifactId>metrics-core</artifactId>
             <version>3.0.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>3.6.2.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mermaid.framework</groupId>
+            <artifactId>mermaid-common</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
