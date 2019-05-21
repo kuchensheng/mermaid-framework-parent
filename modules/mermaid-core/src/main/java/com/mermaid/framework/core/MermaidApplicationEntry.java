@@ -11,6 +11,7 @@ import com.mermaid.framework.core.util.RuntimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -30,7 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @ComponentScan({"com.mermaid.framework","${mermaid.modules.basePackages:}"})
 @EnableDiscoveryClient
 public class MermaidApplicationEntry {
