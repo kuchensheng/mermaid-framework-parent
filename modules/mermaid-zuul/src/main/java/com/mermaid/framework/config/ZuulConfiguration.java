@@ -15,23 +15,23 @@ import org.springframework.context.annotation.Configuration;
 @EnableZuulProxy
 @EnableConfigurationProperties({FilterConfiguration.class})
 public class ZuulConfiguration {
-    @Bean
-    public AccessFilter accessFilter(){
-        return new AccessFilter();
-    }
-    @Bean
-    public FilterLoader filterLoader(FilterConfiguration filterConfiguration) {
-        FilterLoader filterLoader = FilterLoader.getInstance();
-        filterLoader.setCompiler(new GroovyCompiler());
-        FilterFileManager.setFilenameFilter(new GroovyFileFilter());
-        try {
-            FilterFileManager.init(
-                    filterConfiguration.getInterval(),
-                    filterConfiguration.getRoot()+"/pre",
-                    filterConfiguration.getRoot()+"/post");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return filterLoader;
-    }
+//    @Bean
+//    public AccessFilter accessFilter(){
+//        return new AccessFilter();
+//    }
+//    @Bean
+//    public FilterLoader filterLoader(FilterConfiguration filterConfiguration) {
+//        FilterLoader filterLoader = FilterLoader.getInstance();
+//        filterLoader.setCompiler(new GroovyCompiler());
+//        FilterFileManager.setFilenameFilter(new GroovyFileFilter());
+//        try {
+//            FilterFileManager.init(
+//                    filterConfiguration.getInterval(),
+//                    filterConfiguration.getRoot()+"/pre",
+//                    filterConfiguration.getRoot()+"/post");
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//        return filterLoader;
+//    }
 }

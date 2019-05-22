@@ -9,6 +9,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 /**
@@ -25,10 +26,27 @@ public class ModulesConfigFactory extends AbstractConfigFactory {
         try {
             Resource[] resources = pathMatchingResourcePatternResolver.getResources(MODULES_CONFIG_RESOURCE_NAME);
             for (Resource resource : resources) {
-                String filePath = resource.getFile().getCanonicalPath();
-                logger.info("正在读取本地配置文件->{}",filePath);
-                Properties properties = PropertiesLoaderUtils.loadProperties(resource);
-                addConfigs(properties);
+                Properties properties = new Properties();
+                InputStream is = null;
+                try {
+                    String resourcePath;
+                    URL path = resource.getURL();
+                    if (path == null) {
+                        resourcePath = resource.getFilename();
+                    } else {
+                        resourcePath = path.getPath();
+                    }
+                    logger.info("mermaid正在加载模块[{}]...",resourcePath);
+                    is = resource.getInputStream();
+                    if (is != null) {
+                        properties.load(is);
+                    }
+                    addConfigs(properties);
+                } catch (IOException e) {
+                    logger.error(e.getMessage(),e);
+                } finally {
+                    is.close();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

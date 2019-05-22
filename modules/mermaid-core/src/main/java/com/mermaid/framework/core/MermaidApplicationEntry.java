@@ -10,6 +10,7 @@ import com.mermaid.framework.core.util.IPAddressUtils;
 import com.mermaid.framework.core.util.RuntimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -31,9 +32,9 @@ import java.util.Map;
 import java.util.Properties;
 
 @Slf4j
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringCloudApplication
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 @ComponentScan({"com.mermaid.framework","${mermaid.modules.basePackages:}"})
-@EnableDiscoveryClient
 public class MermaidApplicationEntry {
 
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME = "application.properties";
