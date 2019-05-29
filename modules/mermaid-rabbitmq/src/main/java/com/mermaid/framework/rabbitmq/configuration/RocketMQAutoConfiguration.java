@@ -119,6 +119,7 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
     public DefaultMQPushConsumer defaultMQPushConsumer() {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer(pushConsumer);
 //        defaultMQPushConsumer.resetClientConfig(clientConfig());
+        defaultMQPushConsumer.resetClientConfig(clientConfig());
         defaultMQPushConsumer.setMessageModel(messageModel);
         defaultMQPushConsumer.setConsumeFromWhere(consumeFromWhere);
 //        defaultMQPushConsumer.registerMessageListener(new MessageListenerConcurrently() {
