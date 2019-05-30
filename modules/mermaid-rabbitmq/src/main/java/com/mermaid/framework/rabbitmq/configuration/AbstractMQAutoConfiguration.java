@@ -34,7 +34,7 @@ public class AbstractMQAutoConfiguration  implements ApplicationContextAware,Ini
 
     protected Environment environment;
 
-    @Value("${mermaid.framework.mq.protocol:RABBITMQ}")
+    @Value("${mermaid.framework.mq.protocol:ROCKETMQ}")
     private ProtocolEnum mqProtocol;
 
     @Override

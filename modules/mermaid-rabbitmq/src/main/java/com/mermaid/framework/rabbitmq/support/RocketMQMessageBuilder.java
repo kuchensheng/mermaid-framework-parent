@@ -62,8 +62,13 @@ public class RocketMQMessageBuilder {
 
     public Message build() {
         Message message = new Message(topic,tag,key,data);
-        message.setFlag(flag);
-        message.setDelayTimeLevel(delaytimeLevel);
+        if(null != flag) {
+            message.setFlag(flag);
+        }
+        if(null != delaytimeLevel) {
+            message.setDelayTimeLevel(delaytimeLevel);
+        }
+
         return message;
     }
 

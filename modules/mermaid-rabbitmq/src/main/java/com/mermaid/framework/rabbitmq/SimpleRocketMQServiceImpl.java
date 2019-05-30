@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * 杭州蓝诗网络科技有限公司 版权所有 © Copyright 2018<br>
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @CreateDate Created in 2019/5/29 17:35 <br>
  * @Author:<a href ="kuchensheng@quannengzhanggui.cn">kuchensheng</a>
  */
+@Service
 public class SimpleRocketMQServiceImpl implements RocketMQService {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleRocketMQServiceImpl.class);

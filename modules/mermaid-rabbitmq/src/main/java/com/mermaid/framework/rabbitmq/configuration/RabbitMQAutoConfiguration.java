@@ -24,8 +24,8 @@ import java.util.Iterator;
  * @author Chensheng.Ku
  * @version 创建时间：2019/3/5 8:44
  */
-@Configuration
-@ConditionalOnExpression("${mermaid.framework.mq.protocol:rabbitmq}=='rabbitmq'")
+//@Configuration
+//@ConditionalOnExpression("${mermaid.framework.mq.protocol:rabbitmq}=='rabbitmq'")
 public class RabbitMQAutoConfiguration extends AbstractMQAutoConfiguration{
 
     @Value("${mermaid.framework.rabbitmq.host:127.0.0.1}")
@@ -56,6 +56,10 @@ public class RabbitMQAutoConfiguration extends AbstractMQAutoConfiguration{
 
     @Value("${mermaid.framework.rabbitmq.topologyRecoveryEnabled:true}")
     private boolean topologyRecoveryEnabled;
+
+    @Value("{mermaid.framework.mq.protocol:rabbitmq}")
+    private String rabbitmq;
+
 
     @Bean
     public ConnectionFactory rabbitMqConnectionFactory() {

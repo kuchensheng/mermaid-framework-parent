@@ -21,10 +21,10 @@ import java.util.List;
  * version 1.0
  */
 @Configuration
-@ConditionalOnExpression("${mermaid.framework.mq.protocol:rabbitmq}=='rocketmq'")
+//@ConditionalOnExpression("${mermaid.framework.mq.protocol:rabbitmq}=='rocketmq'")
 public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
 
-    @Value("${mermaid.framework.rocketmq.namesrvAddr:114.55.59.0:30005}")
+    @Value("${mermaid.framework.rocketmq.namesrvAddr:39.98.239.1:30001}")
     private String namesrvAddr;
 
     @Value("${mermaid.framework.rocketmq.producer.producerGroup:Producer}")
@@ -39,7 +39,7 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
     @Value("${mermaid.framework.rocketmq.producer.persistConsumerOffsetInterval:5000}")
     private int persistConsumerOffsetInterval;
 
-    @Value("${mermaid.framework.rocketmq.producer.vipChannelEnabled:true}")
+    @Value("${mermaid.framework.rocketmq.producer.vipChannelEnabled:false}")
     private boolean vipChannelEnabled;
 
     @Value("${mermaid.framework.rocketmq.producer.createTopicKey:DEFAULT}")
@@ -95,7 +95,7 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
     @ConditionalOnBean(ClientConfig.class)
     public DefaultMQProducer defaultMQProducer() throws Exception {
         DefaultMQProducer mqProducer = new DefaultMQProducer(producerGroup);
-
+        mqProducer.resetClientConfig(clientConfig());
         mqProducer.setCreateTopicKey(createTopicKey);
         mqProducer.setDefaultTopicQueueNums(topicQueueNums);
         mqProducer.setSendMsgTimeout(sendMsgTimeout);

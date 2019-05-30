@@ -48,7 +48,7 @@ public interface RocketMQService {
      * @param listener 监听器 
      * @Return  
      * @Decription:  
-     * @CreateDate: Created in 2019/5/30 17:27
+     * @CreateDate: Created in 2019/5/30 17:35
      * @Author: <a href="kuchensheng@quannengzhanggui.cn">kucs</a> 
      * @Modify:  
      */
