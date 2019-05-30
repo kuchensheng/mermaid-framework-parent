@@ -1,12 +1,13 @@
 package com.mermaid.framework.rabbitmq;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
-import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
-import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
-import com.alibaba.rocketmq.client.exception.MQClientException;
-import com.alibaba.rocketmq.common.message.MessageExt;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListener;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.common.message.MessageExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import java.util.List;
  * @CreateDate Created in 2019/5/29 09:32 <br>
  * @Author:<a href ="kuchensheng@quannengzhanggui.cn">kuchensheng</a>
  */
-public abstract class AbstractRocketMessageListener<T> implements MessageListenerConcurrently {
+public abstract class AbstractRocketMessageListener implements RocketMessageListener {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractRocketMessageListener.class);
 
@@ -32,13 +33,15 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
     @Autowired
     private DefaultMQPushConsumer mqConsumer;
 
+    private String topic;
+
     public AbstractRocketMessageListener(String topic,String subExpression,String filterClassSource) {
         if(!StringUtils.hasText(topic)) {
             throw new RuntimeException("topic不能为空");
         }
         logger.info("rocketmq consumer[{}]开始初始化...", JSON.toJSON(mqConsumer.cloneClientConfig()));
         try {
-            mqConsumer.registerMessageListener(this);
+//            mqConsumer.registerMessageListener(this);
             if(StringUtils.isEmpty(subExpression)) {
                 subExpression = DEFAULT_SUBEXPRESS;
             }
@@ -48,8 +51,8 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
                 mqConsumer.subscribe(topic,subExpression);
             }
 
-            mqConsumer.start();
-            logger.info("初始化完成，并已启动,订阅主题{},subExpress={}");
+//            mqConsumer.start();
+            logger.info("初始化完成");
         } catch (MQClientException e) {
             logger.error("rocket mq 初始化失败",e);
         }
@@ -59,6 +62,8 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
         this(topic,subExpression,null);
     }
 
+
+
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
         if (CollectionUtils.isEmpty(msgs)) {
@@ -66,11 +71,37 @@ public abstract class AbstractRocketMessageListener<T> implements MessageListene
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         }
 
-        msgs.stream().forEach(msg ->{
+        for (MessageExt msg : msgs) {
             logger.info("receive msgId={},tags={},topic={}",msg.getMsgId(),msg.getTags(),msg.getTopic());
-//            T messageBody =
-        });
+            if(!processMessage(msg)) {
+                logger.warn("consumer fail,ask for re-consume,msgId:{}",msg.getMsgId());
+                return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+            }
+        }
 
-        return null;
+        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+    }
+
+    /**
+     * @param msg 接受到的消息体
+     * @Return
+     * @Decription:
+     * @CreateDate: Created in 2019/5/29 17:25
+     * @Author: <a href="kuchensheng@quannengzhanggui.cn">kucs</a>
+     * @Modify:
+     */
+    protected abstract boolean processMessage(MessageExt msg);
+
+    @Override
+    public String getListenerTopic() {
+        return this.getTopic();
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }

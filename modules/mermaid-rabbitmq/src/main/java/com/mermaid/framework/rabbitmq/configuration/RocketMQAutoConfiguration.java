@@ -1,16 +1,11 @@
 package com.mermaid.framework.rabbitmq.configuration;
 
-import com.alibaba.rocketmq.client.ClientConfig;
-import com.alibaba.rocketmq.client.consumer.AllocateMessageQueueStrategy;
-import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
-import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
-import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
-import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
-import com.alibaba.rocketmq.common.consumer.ConsumeFromWhere;
-import com.alibaba.rocketmq.common.message.MessageExt;
-import com.alibaba.rocketmq.common.protocol.heartbeat.MessageModel;
-import com.alibaba.rocketmq.remoting.common.RemotingUtil;
+import org.apache.rocketmq.client.ClientConfig;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
+import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
+import org.apache.rocketmq.remoting.common.RemotingUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -89,7 +84,7 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
 
         clientConfig.setInstanceName(environment.getProperty("spring.application.name","DEFAULT"));
         clientConfig.setClientCallbackExecutorThreads(Runtime.getRuntime().availableProcessors());
-        clientConfig.setPollNameServerInteval(pollNameServerinteval);
+        clientConfig.setPollNameServerInterval(pollNameServerinteval);
         clientConfig.setHeartbeatBrokerInterval(heartbeatBrokerInterval);
         clientConfig.setPersistConsumerOffsetInterval(persistConsumerOffsetInterval);
         clientConfig.setVipChannelEnabled(vipChannelEnabled);

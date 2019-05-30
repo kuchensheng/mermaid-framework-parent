@@ -39,9 +39,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.alibaba.rocketmq</groupId>
+            <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
-            <version>3.6.2.Final</version>
+            <version>4.5.1</version>
         </dependency>
 
         <dependency>
