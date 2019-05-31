@@ -2,6 +2,7 @@ package com.mermaid.framework.rabbitmq;
 
 import com.alibaba.fastjson.JSON;
 import com.mermaid.framework.rabbitmq.support.RocketMQMessageBuilder;
+import com.mermaid.framework.serialize.JsonSerializer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.junit.Assert;
@@ -24,7 +25,7 @@ import static org.junit.Assert.*;
  * @Author:<a href ="kuchensheng@quannengzhanggui.cn">kuchensheng</a>
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestApplicationContext.class)
+@SpringBootTest
 public class RocketMQServiceTest {
 
     @Resource
@@ -32,10 +33,13 @@ public class RocketMQServiceTest {
 
     @Test
     public void sendMessageTest() {
+        JsonSerializer serializer = new JsonSerializer();
+        byte[] bytes = serializer.serialize("哈哈哈哈");
         Message message = RocketMQMessageBuilder.create()
                 .topic("item_recal_cost_task")
                 .tag("item_rcal_cost_task")
                 .key("itemRecalCostTask_"+1+"_"+System.currentTimeMillis())
+                .data(bytes)
                 .build();
         SendResult sendResult = service.sendMessage(message);
         System.out.println(JSON.toJSONString(sendResult));

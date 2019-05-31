@@ -1,5 +1,6 @@
 package com.mermaid.framework.rabbitmq.configuration;
 
+import com.mermaid.framework.rabbitmq.support.RunTimeUtil;
 import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
@@ -88,6 +89,7 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
         clientConfig.setHeartbeatBrokerInterval(heartbeatBrokerInterval);
         clientConfig.setPersistConsumerOffsetInterval(persistConsumerOffsetInterval);
         clientConfig.setVipChannelEnabled(vipChannelEnabled);
+        clientConfig.setInstanceName(RunTimeUtil.getRocketMqUniqeInstanceName());
         return clientConfig;
     }
 
