@@ -20,19 +20,22 @@ import org.springframework.stereotype.Service;
  * @CreateDate Created in 2019/5/29 17:35 <br>
  * @Author:<a href ="kuchensheng@quannengzhanggui.cn">kuchensheng</a>
  */
-@Service
+//@Service
 public class SimpleRocketMQServiceImpl implements RocketMQService {
 
     private static final Logger logger = LoggerFactory.getLogger(SimpleRocketMQServiceImpl.class);
 
-    @Autowired
     private DefaultMQPushConsumer mqPushConsumer;
 
-    @Autowired
     private DefaultMQProducer mqProducer;
 
     @Value("${mermaid.framework.rocketmq.producer.timeout:3000}")
     private long timeout;
+
+    public SimpleRocketMQServiceImpl(DefaultMQPushConsumer mqPushConsumer, DefaultMQProducer mqProducer) {
+        this.mqPushConsumer = mqPushConsumer;
+        this.mqProducer = mqProducer;
+    }
 
     @Override
     public SendResult sendMessage(String topic, byte[] data) {

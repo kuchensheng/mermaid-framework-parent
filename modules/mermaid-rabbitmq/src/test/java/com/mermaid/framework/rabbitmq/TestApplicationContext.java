@@ -5,9 +5,13 @@ import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 
 /**
  * @author Chensheng.Ku
@@ -42,10 +46,11 @@ public class TestApplicationContext {
         return producer;
     }
 
-//    @Bean
-//    public DefaultMQPushConsumer defaultMQPushConsumer() {
-//        DefaultMQPushConsumer pushConsumer = new DefaultMQPushConsumer();
-//        pushConsumer.resetClientConfig(clientConfig());
-//        return pushConsumer;
-//    }
+    @Bean
+    public DefaultMQPushConsumer defaultMQPushConsumer() {
+        DefaultMQPushConsumer pushConsumer = new DefaultMQPushConsumer();
+        pushConsumer.resetClientConfig(clientConfig());
+        pushConsumer.setConsumerGroup("local_pufang_producer");
+        return pushConsumer;
+    }
 }

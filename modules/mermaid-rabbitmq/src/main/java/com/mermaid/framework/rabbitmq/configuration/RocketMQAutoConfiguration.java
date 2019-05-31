@@ -1,12 +1,16 @@
 package com.mermaid.framework.rabbitmq.configuration;
 
+import com.mermaid.framework.rabbitmq.RocketMQService;
+import com.mermaid.framework.rabbitmq.SimpleRocketMQServiceImpl;
 import com.mermaid.framework.rabbitmq.support.RunTimeUtil;
 import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.apache.rocketmq.remoting.common.RemotingUtil;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -94,8 +98,7 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
     }
 
     @Bean
-    @ConditionalOnBean(ClientConfig.class)
-    public DefaultMQProducer defaultMQProducer() throws Exception {
+    public DefaultMQProducer defaultMQProducer() {
         DefaultMQProducer mqProducer = new DefaultMQProducer(producerGroup);
         mqProducer.resetClientConfig(clientConfig());
         mqProducer.setCreateTopicKey(createTopicKey);
@@ -106,27 +109,26 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
         mqProducer.setRetryTimesWhenSendAsyncFailed(retryTimesWhenSendAsyncFailed);
         mqProducer.setRetryAnotherBrokerWhenNotStoreOK(retryAnotherBrokerWhenNotStoreOK);
         mqProducer.setMaxMessageSize(maxMessageSize);
-        mqProducer.start();
+        try {
+            mqProducer.start();
+        } catch (MQClientException e) {
+            throw new RuntimeException(e);
+        }
 
         return mqProducer;
     }
 
     @Bean
-    @ConditionalOnBean(ClientConfig.class)
     public DefaultMQPushConsumer defaultMQPushConsumer() {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer(pushConsumer);
-//        defaultMQPushConsumer.resetClientConfig(clientConfig());
         defaultMQPushConsumer.resetClientConfig(clientConfig());
         defaultMQPushConsumer.setMessageModel(messageModel);
         defaultMQPushConsumer.setConsumeFromWhere(consumeFromWhere);
-//        defaultMQPushConsumer.registerMessageListener(new MessageListenerConcurrently() {
-//            @Override
-//            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
-//                return null;
-//            }
-//        });
-//        defaultMQPushConsumer.setConsumeTimestamp("yyyyMMddhhmmss");
-//        defaultMQPushConsumer.setAllocateMessageQueueStrategy(AllocateMessageQueueStrategy);
         return defaultMQPushConsumer;
+    }
+
+    @Bean
+    public RocketMQService rocketMQService() {
+        return new SimpleRocketMQServiceImpl(defaultMQPushConsumer(),defaultMQProducer());
     }
 }

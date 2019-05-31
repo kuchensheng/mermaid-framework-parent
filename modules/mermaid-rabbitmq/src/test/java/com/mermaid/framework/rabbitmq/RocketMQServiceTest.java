@@ -3,6 +3,7 @@ package com.mermaid.framework.rabbitmq;
 import com.alibaba.fastjson.JSON;
 import com.mermaid.framework.rabbitmq.support.RocketMQMessageBuilder;
 import com.mermaid.framework.serialize.JsonSerializer;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
 import org.junit.Assert;
@@ -13,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -25,11 +28,14 @@ import static org.junit.Assert.*;
  * @Author:<a href ="kuchensheng@quannengzhanggui.cn">kuchensheng</a>
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = {TestApplicationContext.class})
 public class RocketMQServiceTest {
 
-    @Resource
+    @Autowired
     private RocketMQService service;
+
+    @Autowired
+    private DefaultMQPushConsumer defaultMQPushConsumer;
 
     @Test
     public void sendMessageTest() {
@@ -43,7 +49,30 @@ public class RocketMQServiceTest {
                 .build();
         SendResult sendResult = service.sendMessage(message);
         System.out.println(JSON.toJSONString(sendResult));
-        Assert.assertNotNull(sendResult);
+        RocketMessageListener rocketMessageListener = new RocketListenerTest(defaultMQPushConsumer,"item_recal_cost_task",null);
+        service.listen(rocketMessageListener);
+        while (true) {
+            try {
+                System.out.println("休息5s");
+                TimeUnit.SECONDS.sleep(5);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+//        Assert.assertNotNull(sendResult);
+    }
+
+    @Test
+    public void listenerTest() {
+        RocketMessageListener rocketMessageListener = new RocketListenerTest(defaultMQPushConsumer,"item_recal_cost_task",null);
+        while (true) {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

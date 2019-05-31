@@ -9,6 +9,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
@@ -27,7 +28,7 @@ import java.util.Iterator;
 @Configuration
 public class AbstractMQAutoConfiguration  implements ApplicationContextAware,InitializingBean,EnvironmentAware {
 
-    @Value("${mermaid.framework.autoListen:true}")
+    @Value("${mermaid.framework.autoListen:false}")
     private boolean autoListen;
 
     protected ApplicationContext applicationContext;

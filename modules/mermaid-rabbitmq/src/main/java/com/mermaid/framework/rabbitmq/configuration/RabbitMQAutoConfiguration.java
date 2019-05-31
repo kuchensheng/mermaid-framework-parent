@@ -24,7 +24,7 @@ import java.util.Iterator;
  * @author Chensheng.Ku
  * @version 创建时间：2019/3/5 8:44
  */
-//@Configuration
+@Configuration
 //@ConditionalOnExpression("${mermaid.framework.mq.protocol:rabbitmq}=='rabbitmq'")
 public class RabbitMQAutoConfiguration extends AbstractMQAutoConfiguration{
 

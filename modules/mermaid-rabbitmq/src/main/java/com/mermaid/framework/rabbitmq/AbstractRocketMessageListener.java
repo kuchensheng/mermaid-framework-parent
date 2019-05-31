@@ -30,12 +30,10 @@ public abstract class AbstractRocketMessageListener implements RocketMessageList
 
     protected static final String DEFAULT_SUBEXPRESS = "*";
 
-    @Autowired
-    private DefaultMQPushConsumer mqConsumer;
-
     private String topic;
 
-    public AbstractRocketMessageListener(String topic,String subExpression,String filterClassSource) {
+
+    public AbstractRocketMessageListener(DefaultMQPushConsumer mqConsumer,String topic,String subExpression,String filterClassSource) {
         if(!StringUtils.hasText(topic)) {
             throw new RuntimeException("topic不能为空");
         }
@@ -58,8 +56,8 @@ public abstract class AbstractRocketMessageListener implements RocketMessageList
         }
     }
 
-    public AbstractRocketMessageListener(String topic,String subExpression) {
-        this(topic,subExpression,null);
+    public AbstractRocketMessageListener(DefaultMQPushConsumer mqConsumer,String topic,String subExpression) {
+        this(mqConsumer,topic,subExpression,null);
     }
 
 

@@ -1,6 +1,10 @@
 package com.mermaid.framework.rabbitmq;
 
+import com.alibaba.fastjson.JSON;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 杭州蓝诗网络科技有限公司 版权所有 © Copyright 2018<br>
@@ -12,12 +16,34 @@ import org.apache.rocketmq.common.message.MessageExt;
  */
 public class RocketListenerTest extends AbstractRocketMessageListener {
 
-    public RocketListenerTest(String topic, String subExpression) {
-        super(topic, subExpression);
+    private String topic;
+    private String subExpression;
+
+    public RocketListenerTest(DefaultMQPushConsumer mqConsumer,String topic, String subExpression) {
+        super(mqConsumer,topic, subExpression);
     }
 
     @Override
     protected boolean processMessage(MessageExt msg) {
-        return false;
+        System.out.println(JSON.toJSONString(msg));
+        return true;
+    }
+
+    @Override
+    public String getTopic() {
+        return topic;
+    }
+
+    @Override
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public String getSubExpression() {
+        return subExpression;
+    }
+
+    public void setSubExpression(String subExpression) {
+        this.subExpression = subExpression;
     }
 }
