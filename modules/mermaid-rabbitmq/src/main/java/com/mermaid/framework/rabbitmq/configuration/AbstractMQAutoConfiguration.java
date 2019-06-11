@@ -2,10 +2,14 @@ package com.mermaid.framework.rabbitmq.configuration;
 
 import com.mermaid.framework.rabbitmq.RabbitMQService;
 import com.mermaid.framework.rabbitmq.RabbitMessageListener;
+import com.mermaid.framework.rabbitmq.RocketMQService;
+import com.mermaid.framework.rabbitmq.RocketMessageListener;
+import com.mermaid.framework.rabbitmq.constant.ProtocolEnum;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
@@ -24,25 +28,32 @@ import java.util.Iterator;
 @Configuration
 public class AbstractMQAutoConfiguration  implements ApplicationContextAware,InitializingBean,EnvironmentAware {
 
-    @Value("${mermaid.framework.autoListen:true}")
+    @Value("${mermaid.framework.autoListen:false}")
     private boolean autoListen;
 
     protected ApplicationContext applicationContext;
 
     protected Environment environment;
 
-    @Value("${mermaid.framework.mq.protocol:rabbitmq}")
-    private String mqProtocol;
+    @Value("${mermaid.framework.mq.protocol:ROCKETMQ}")
+    private ProtocolEnum mqProtocol;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         if(autoListen) {
-            if("rabbitmq".equals(mqProtocol)) {
+            if (ProtocolEnum.RABBITMQ.equals(mqProtocol)) {
                 Collection<RabbitMessageListener> rabbitListeners = applicationContext.getBeansOfType(RabbitMessageListener.class).values();
                 RabbitMQService rabbitMQService = applicationContext.getBean(RabbitMQService.class);
                 Iterator<RabbitMessageListener> iterator = rabbitListeners.iterator();
                 while (iterator.hasNext()) {
                     rabbitMQService.listen(iterator.next());
+                }
+            } else if (ProtocolEnum.ROCKETMQ.equals(mqProtocol)) {
+                Collection<RocketMessageListener> rocketMessageListeners = applicationContext.getBeansOfType(RocketMessageListener.class).values();
+                RocketMQService rocketMQService = applicationContext.getBean(RocketMQService.class);
+                Iterator<RocketMessageListener> iterator = rocketMessageListeners.iterator();
+                while (iterator.hasNext()) {
+                    rocketMQService.listen(iterator.next());
                 }
             }
 

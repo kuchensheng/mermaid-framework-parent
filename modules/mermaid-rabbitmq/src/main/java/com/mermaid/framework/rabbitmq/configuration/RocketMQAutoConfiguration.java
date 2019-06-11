@@ -1,16 +1,16 @@
 package com.mermaid.framework.rabbitmq.configuration;
 
-import com.alibaba.rocketmq.client.ClientConfig;
-import com.alibaba.rocketmq.client.consumer.AllocateMessageQueueStrategy;
-import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
-import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
-import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import com.alibaba.rocketmq.client.consumer.listener.MessageListenerConcurrently;
-import com.alibaba.rocketmq.client.producer.DefaultMQProducer;
-import com.alibaba.rocketmq.common.consumer.ConsumeFromWhere;
-import com.alibaba.rocketmq.common.message.MessageExt;
-import com.alibaba.rocketmq.common.protocol.heartbeat.MessageModel;
-import com.alibaba.rocketmq.remoting.common.RemotingUtil;
+import com.mermaid.framework.rabbitmq.RocketMQService;
+import com.mermaid.framework.rabbitmq.SimpleRocketMQServiceImpl;
+import com.mermaid.framework.rabbitmq.support.RunTimeUtil;
+import org.apache.rocketmq.client.ClientConfig;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
+import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
+import org.apache.rocketmq.remoting.common.RemotingUtil;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -26,10 +26,10 @@ import java.util.List;
  * version 1.0
  */
 @Configuration
-@ConditionalOnExpression("${mermaid.framework.mq.protocol:rabbitmq}=='rocketmq'")
+//@ConditionalOnExpression("${mermaid.framework.mq.protocol:rabbitmq}=='rocketmq'")
 public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
 
-    @Value("${mermaid.framework.rocketmq.namesrvAddr:114.55.59.0:30005}")
+    @Value("${mermaid.framework.rocketmq.namesrvAddr:39.98.239.1:30001}")
     private String namesrvAddr;
 
     @Value("${mermaid.framework.rocketmq.producer.producerGroup:Producer}")
@@ -44,7 +44,7 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
     @Value("${mermaid.framework.rocketmq.producer.persistConsumerOffsetInterval:5000}")
     private int persistConsumerOffsetInterval;
 
-    @Value("${mermaid.framework.rocketmq.producer.vipChannelEnabled:true}")
+    @Value("${mermaid.framework.rocketmq.producer.vipChannelEnabled:false}")
     private boolean vipChannelEnabled;
 
     @Value("${mermaid.framework.rocketmq.producer.createTopicKey:DEFAULT}")
@@ -89,18 +89,18 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
 
         clientConfig.setInstanceName(environment.getProperty("spring.application.name","DEFAULT"));
         clientConfig.setClientCallbackExecutorThreads(Runtime.getRuntime().availableProcessors());
-        clientConfig.setPollNameServerInteval(pollNameServerinteval);
+        clientConfig.setPollNameServerInterval(pollNameServerinteval);
         clientConfig.setHeartbeatBrokerInterval(heartbeatBrokerInterval);
         clientConfig.setPersistConsumerOffsetInterval(persistConsumerOffsetInterval);
         clientConfig.setVipChannelEnabled(vipChannelEnabled);
+        clientConfig.setInstanceName(RunTimeUtil.getRocketMqUniqeInstanceName());
         return clientConfig;
     }
 
     @Bean
-    @ConditionalOnBean(ClientConfig.class)
-    public DefaultMQProducer defaultMQProducer() throws Exception {
+    public DefaultMQProducer defaultMQProducer() {
         DefaultMQProducer mqProducer = new DefaultMQProducer(producerGroup);
-
+        mqProducer.resetClientConfig(clientConfig());
         mqProducer.setCreateTopicKey(createTopicKey);
         mqProducer.setDefaultTopicQueueNums(topicQueueNums);
         mqProducer.setSendMsgTimeout(sendMsgTimeout);
@@ -109,26 +109,26 @@ public class RocketMQAutoConfiguration extends AbstractMQAutoConfiguration{
         mqProducer.setRetryTimesWhenSendAsyncFailed(retryTimesWhenSendAsyncFailed);
         mqProducer.setRetryAnotherBrokerWhenNotStoreOK(retryAnotherBrokerWhenNotStoreOK);
         mqProducer.setMaxMessageSize(maxMessageSize);
-        mqProducer.start();
+        try {
+            mqProducer.start();
+        } catch (MQClientException e) {
+            throw new RuntimeException(e);
+        }
 
         return mqProducer;
     }
 
     @Bean
-    @ConditionalOnBean(ClientConfig.class)
     public DefaultMQPushConsumer defaultMQPushConsumer() {
         DefaultMQPushConsumer defaultMQPushConsumer = new DefaultMQPushConsumer(pushConsumer);
-//        defaultMQPushConsumer.resetClientConfig(clientConfig());
+        defaultMQPushConsumer.resetClientConfig(clientConfig());
         defaultMQPushConsumer.setMessageModel(messageModel);
         defaultMQPushConsumer.setConsumeFromWhere(consumeFromWhere);
-//        defaultMQPushConsumer.registerMessageListener(new MessageListenerConcurrently() {
-//            @Override
-//            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
-//                return null;
-//            }
-//        });
-//        defaultMQPushConsumer.setConsumeTimestamp("yyyyMMddhhmmss");
-//        defaultMQPushConsumer.setAllocateMessageQueueStrategy(AllocateMessageQueueStrategy);
         return defaultMQPushConsumer;
+    }
+
+    @Bean
+    public RocketMQService rocketMQService() {
+        return new SimpleRocketMQServiceImpl(defaultMQPushConsumer(),defaultMQProducer());
     }
 }

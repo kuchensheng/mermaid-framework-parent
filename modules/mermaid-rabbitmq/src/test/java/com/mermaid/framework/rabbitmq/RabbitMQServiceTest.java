@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestApplicationContext.class)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = TestApplicationContext.class)
 public class RabbitMQServiceTest {
 
     @Autowired

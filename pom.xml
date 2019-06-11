@@ -30,7 +30,7 @@
       <module>modules/mermaid-socket</module>
       <module>modules/mermaid-registry</module>
       <module>modules/mermaid-fescar</module>
-    <module>modules/mermaid-response</module>
+      <module>modules/mermaid-response</module>
   </modules>
 
   <scm>
@@ -62,7 +62,7 @@
     <jedis.version>2.9.0</jedis.version>
     <zookeeper.version>3.4.11</zookeeper.version>
     <jackson.version>2.9.2</jackson.version>
-    <netty.version>5.0.0.Alpha1</netty.version>
+    <netty.version>4.1.36.Final</netty.version>
     <kafka.version>2.0.1.RELEASE</kafka.version>
     <fescar.version>0.4.0</fescar.version>
     <spring-cloud-alibaba-dependencies.version>0.2.1.RELEASE</spring-cloud-alibaba-dependencies.version>
@@ -132,9 +132,9 @@
         <version>${netty.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.alibaba.spring.boot</groupId>
-        <artifactId>dubbo-spring-boot-starter</artifactId>
-        <version>1.1.5</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <version>1.5.8.RELEASE</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.kafka</groupId>
