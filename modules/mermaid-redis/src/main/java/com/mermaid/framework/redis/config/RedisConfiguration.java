@@ -1,14 +1,12 @@
 package com.mermaid.framework.redis.config;
 
 import com.mermaid.framework.redis.impl.DefaultRedisService;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -46,13 +44,14 @@ public class RedisConfiguration extends CachingConfigurerSupport{
     private Integer timeout;
     @Value("${mermaid.redis.pool.maxTotal:8}")
     private Integer maxTotal;
+
     @Autowired
     RedisConnectionFactory redisConnectionFactory;
 
-    @Bean
-    public CacheManager cacheManager(RedisTemplate<?,?> redisTemplate) {
-        CacheManager cacheManager = new RedisCacheManager(redisTemplate);
-        return cacheManager;
+    @Override
+    public CacheManager cacheManager() {
+        RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.builder(redisConnectionFactory);
+        return builder.build();
     }
 
     @Bean

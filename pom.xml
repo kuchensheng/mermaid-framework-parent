@@ -11,20 +11,19 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.8.RELEASE</version>
+    <version>2.0.5.RELEASE</version>
     <relativePath /><!-- lookup parent from repository -->
   </parent>
 
   <modules>
     <module>modules/mermaid-core</module>
+    <module>modules/mermaid-core-dubbo</module>
     <module>modules/mermaid-websocket</module>
     <module>modules/mermaid-eureka-server</module>
     <module>modules/mermaid-jenkins</module>
-    <module>modules/mermaid-zuul</module>
     <module>modules/mermaid-redis</module>
     <module>modules/mermaid-plugin</module>
     <module>modules/mermaid-rabbitmq</module>
-    <module>modules/mermaid-netty</module>
       <module>modules/mermaid-im</module>
       <module>modules/mermaid-kafka</module>
       <module>modules/mermaid-socket</module>
@@ -63,7 +62,7 @@
     <zookeeper.version>3.4.11</zookeeper.version>
     <jackson.version>2.9.2</jackson.version>
     <netty.version>4.1.36.Final</netty.version>
-    <kafka.version>2.0.1.RELEASE</kafka.version>
+    <kafka.version>2.2.7.RELEASE</kafka.version>
     <fescar.version>0.4.0</fescar.version>
     <spring-cloud-alibaba-dependencies.version>0.2.1.RELEASE</spring-cloud-alibaba-dependencies.version>
   </properties>
@@ -72,7 +71,7 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
-        <version>Dalston.SR4</version>
+        <version>Finchley.SR3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -101,11 +100,7 @@
         <artifactId>jedis</artifactId>
         <version>${jedis.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.zookeeper</groupId>
-        <artifactId>zookeeper</artifactId>
-        <version>${zookeeper.version}</version>
-      </dependency>
+
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
@@ -161,19 +156,8 @@
         <artifactId>zkclient</artifactId>
         <version>0.2</version>
       </dependency>
-      <dependency>
-        <groupId>com.alibaba.fescar</groupId>
-        <artifactId>fescar-all</artifactId>
-        <version>${fescar.version}</version>
-      </dependency>
 
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-        <version>${spring-cloud-alibaba-dependencies.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

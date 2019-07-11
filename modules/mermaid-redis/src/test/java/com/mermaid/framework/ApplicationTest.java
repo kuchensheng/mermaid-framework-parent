@@ -34,12 +34,6 @@ import redis.clients.jedis.JedisShardInfo;
 public class ApplicationTest {
 
     @Bean
-    public CacheManager cacheManager(RedisTemplate<?,?> redisTemplate) {
-        CacheManager cacheManager = new RedisCacheManager(redisTemplate);
-        return cacheManager;
-    }
-
-    @Bean
     public RedisTemplate<String,Object> redisTemplate() {
         RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
         initDomainRedisTemplate(redisTemplate,redisConnectionFactory());

@@ -1,9 +1,8 @@
 package com.mermaid.framework.core.config;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -15,16 +14,13 @@ import org.springframework.util.StringUtils;
  * version 1.0
  */
 @Component
-public class ServerPortConfig implements EmbeddedServletContainerCustomizer {
+public class ServerPortConfig implements WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
 
     @Autowired
     private Environment env;
 
     @Override
-    public void customize(ConfigurableEmbeddedServletContainer container) {
-        String port = env.getProperty("spring.application.index");
-        if (StringUtils.hasText(port)) {
-            container.setPort(Integer.valueOf(port));
-        }
+    public void customize(TomcatServletWebServerFactory factory) {
+//        factory.setPort(env.getProperty(""));
     }
 }

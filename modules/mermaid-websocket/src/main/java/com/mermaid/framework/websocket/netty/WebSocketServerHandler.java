@@ -27,7 +27,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
         this.port = port;
     }
 
-    @Override
+//    @Override
     protected void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
         //传统HTTP接入
         if(msg instanceof FullHttpRequest) {
@@ -111,5 +111,10 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
         ctx.close();
+    }
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
+
     }
 }

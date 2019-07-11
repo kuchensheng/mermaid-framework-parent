@@ -1,37 +1,31 @@
 package com.mermaid.framework.core;
 
 import com.mermaid.framework.core.application.ApplicationInfo;
-import com.mermaid.framework.core.cloud.CloudClient;
-import com.mermaid.framework.core.config.factory.CommandLineConfigFactory;
 import com.mermaid.framework.core.config.factory.GlobalRuntimeConfigFactory;
 import com.mermaid.framework.core.config.factory.LocalFileConfigFactory;
 import com.mermaid.framework.core.config.factory.ModulesConfigFactory;
 import com.mermaid.framework.core.util.IPAddressUtils;
 import com.mermaid.framework.core.util.RuntimeUtils;
-import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.SpringCloudApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import sun.rmi.runtime.RuntimeUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
-@Slf4j
 @SpringCloudApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
 @ComponentScan({"com.mermaid.framework","${mermaid.modules.basePackages:}"})
@@ -40,11 +34,9 @@ public class MermaidApplicationEntry {
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME = "application.properties";
 
     private static final String CLASSPATH_CONFIG_MODEL_NAME="classpath*:META-INF/mermaid-framework*.properties";
-
-    private static CommandLineConfigFactory commandLineConfigFactory;
+    private static final Logger log = LoggerFactory.getLogger(MermaidApplicationEntry.class);
 
     public static void main(String[] args) throws Exception {
-        commandLineConfigFactory = new CommandLineConfigFactory(args);
         ApplicationInfo applicationInfo = buildApplicationInfo();
         buildGlobalRuntimeConfig(applicationInfo);
 
@@ -52,8 +44,6 @@ public class MermaidApplicationEntry {
         applicationInfo.setRuntimeProperties(globalRuntimeConfigFactory);
 
         SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
-//        CloudClient cloudClient = new CloudClient(globalRuntimeConfigFactory.getProperties());
-//        cloudClient.connect();
         printConfigInfo(globalRuntimeConfigFactory.getProperties());
         springApplication.run(args);
         log.info("**MERMAID[{}]**应用{}:{}启动成功",applicationInfo.getAppVersion(),applicationInfo.getAppName(),applicationInfo.getAppPort());
@@ -70,7 +60,7 @@ public class MermaidApplicationEntry {
         applicationInfo.setAppContextPath("/*");
         applicationInfo.setAppHost(IPAddressUtils.getLocalIP());
         applicationInfo.setAppName(factory.getValue("spring.application.name"));
-        applicationInfo.setAppId(factory.getValue("spring.application.index"));
+        applicationInfo.setAppId(factory.getValue("server.port"));
         applicationInfo.setAppPort(Integer.parseInt(applicationInfo.getAppId()));
         applicationInfo.setLaunchTime(System.currentTimeMillis());
         applicationInfo.setPid(RuntimeUtils.getCurrentPID());
