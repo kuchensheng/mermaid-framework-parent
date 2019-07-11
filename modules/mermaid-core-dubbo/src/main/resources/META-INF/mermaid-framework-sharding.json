@@ -1,0 +1,13 @@
+[{
+    "name":"db_0",
+    "url":"jdbc:mysql://localhost:3306/db_0",
+    "username":"root",
+    "password":"root",
+    "driveClassName":"com.mysql.jdbc.Driver"
+  },{
+    "name":"db_1",
+    "url":"jdbc:mysql://localhost:3306/db_1",
+    "username":"root",
+    "password":"root",
+    "driveClassName":"com.mysql.jdbc.Driver"
+}]
