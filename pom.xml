@@ -62,7 +62,7 @@
     <zookeeper.version>3.4.11</zookeeper.version>
     <jackson.version>2.9.2</jackson.version>
     <netty.version>4.1.36.Final</netty.version>
-    <kafka.version>2.2.7.RELEASE</kafka.version>
+    <kafka.version>2.2.7</kafka.version>
     <fescar.version>0.4.0</fescar.version>
     <spring-cloud-alibaba-dependencies.version>0.2.1.RELEASE</spring-cloud-alibaba-dependencies.version>
   </properties>

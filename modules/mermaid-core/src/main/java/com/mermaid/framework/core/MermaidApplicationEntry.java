@@ -23,8 +23,11 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 @SpringCloudApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
@@ -47,6 +50,10 @@ public class MermaidApplicationEntry {
         printConfigInfo(globalRuntimeConfigFactory.getProperties());
         springApplication.run(args);
         log.info("**MERMAID[{}]**应用{}:{}启动成功",applicationInfo.getAppVersion(),applicationInfo.getAppName(),applicationInfo.getAppPort());
+        while (true) {
+            log.info("測試代碼，時間{}", LocalDateTime.now().toString());
+            TimeUnit.SECONDS.sleep(2);
+        }
     }
 
     private static void buildGlobalRuntimeConfig(ApplicationInfo applicationInfo) {

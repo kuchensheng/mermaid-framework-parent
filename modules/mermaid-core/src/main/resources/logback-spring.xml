@@ -144,55 +144,55 @@
         </filter>
     </appender>
 
-    <springProperty scope="context" name="logName" source="spring.application.name" defaultValue="localhost.log"/>
+    <!--<springProperty scope="context" name="logName" source="spring.application.name" defaultValue="mermaid-core"/>-->
     <!-- 时间滚动输出到kafka -->
     <appender name="kafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender">
-        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder" >
-            <customFields>{"appname":"mermaid-core"}</customFields>
-            <includeMdc>true</includeMdc>
-            <includeContext>true</includeContext>
-            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
-                <maxDepthPerThrowable>30</maxDepthPerThrowable>
-                <rootCauseFirst>true</rootCauseFirst>
-            </throwableConverter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-        <topic>${logName}_info</topic>
-        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.HostNameKeyingStrategy" />
+        <topic>${logName}-info</topic>
+        <!-- we don't care how the log messages will be partitioned  -->
+        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy" />
+
+        <!-- use async delivery. the application threads are not blocked by logging -->
         <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
-        <producerConfig>bootstrap.servers=192.168.0.33:9092</producerConfig>
+
+        <!-- each <producerConfig> translates to regular kafka-client config (format: key=value) -->
+        <!-- producer configs are documented here: https://kafka.apache.org/documentation.html#newproducerconfigs -->
+        <!-- bootstrap.servers is the only mandatory producerConfig -->
+        <producerConfig>bootstrap.servers=192.168.1.102:9092</producerConfig>
         <!-- don't wait for a broker to ack the reception of a batch.  -->
         <producerConfig>acks=0</producerConfig>
         <!-- wait up to 1000ms and collect log messages before sending them as a batch -->
-        <producerConfig>linger.ms=1000</producerConfig>
+        <!--<producerConfig>linger.ms=1000</producerConfig>-->
         <!-- even if the producer buffer runs full, do not block the application but start to drop messages -->
-        <!--<producerConfig>max.block.ms=0</producerConfig>-->
-        <producerConfig>block.on.buffer.full=false</producerConfig>
-        <!-- kafka连接失败后，使用下面配置进行日志输出 -->
-<!--        <appender-ref ref="STDOUT" />-->
+        <producerConfig>max.block.ms=0</producerConfig>
+        <!-- define a client-id that you use to identify yourself against the kafka broker -->
+        <producerConfig>client.id=logback-relaxed</producerConfig>
+
     </appender>
 
+    <root level="info">
+        <appender-ref ref="kafkaAppender" />
+    </root>
+
     <appender name="kafkaAppenderERROR" class="com.github.danielwegener.logback.kafka.KafkaAppender">
-        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder" >
-            <customFields>{"appname":"mermaid-core"}</customFields>
-            <includeMdc>true</includeMdc>
-            <includeContext>true</includeContext>
-            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
-                <maxDepthPerThrowable>30</maxDepthPerThrowable>
-                <rootCauseFirst>true</rootCauseFirst>
-            </throwableConverter>
+        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-        <topic>${logName}_error</topic>
+
+        <topic>${logName}-error</topic>
         <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.HostNameKeyingStrategy" />
         <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
         <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.BlockingDeliveryStrategy">
             <!-- wait indefinitely until the kafka producer was able to send the message -->
             <timeout>0</timeout>
         </deliveryStrategy>
-        <producerConfig>bootstrap.servers=192.168.0.33:9092</producerConfig>
+        <producerConfig>bootstrap.servers=192.168.1.102:9092</producerConfig>
         <!-- don't wait for a broker to ack the reception of a batch.  -->
         <producerConfig>acks=0</producerConfig>
         <!-- wait up to 1000ms and collect log messages before sending them as a batch -->
-        <producerConfig>linger.ms=1000</producerConfig>
+        <producerConfig>linger.ms=10</producerConfig>
         <!-- even if the producer buffer runs full, do not block the application but start to drop messages -->
         <producerConfig>max.block.ms=0</producerConfig>
 <!--        <appender-ref ref="STDOUT" />-->
@@ -203,9 +203,13 @@
         </filter>
     </appender>
 
+    <root level="error">
+        <appender-ref ref="kafkaAppenderERROR" />
+    </root>
     <logger name="Application_ERROR" additivity="false">
 <!--        <appender-ref ref="STDOUT" />-->
         <appender-ref ref="kafkaAppender" />
+        <appender-ref ref="kafkaAppenderERROR" />
     </logger>
     <!--
         <logger>用来设置某一个包或者具体的某一个类的日志打印级别、
@@ -232,11 +236,6 @@
         不能设置为INHERITED或者同义词NULL。默认是DEBUG
         可以包含零个或多个元素，标识这个appender将会添加到这个logger。
     -->
-
-    <!--开发环境:打印控制台-->
-    <springProfile name="dev">
-        <logger name="com.nmys.view" level="debug"/>
-    </springProfile>
 
     <root level="info">
         <appender-ref ref="CONSOLE" />
