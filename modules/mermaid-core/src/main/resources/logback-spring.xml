@@ -160,7 +160,7 @@
         <!-- each <producerConfig> translates to regular kafka-client config (format: key=value) -->
         <!-- producer configs are documented here: https://kafka.apache.org/documentation.html#newproducerconfigs -->
         <!-- bootstrap.servers is the only mandatory producerConfig -->
-        <producerConfig>bootstrap.servers=192.168.1.102:9092</producerConfig>
+        <producerConfig>bootstrap.servers=118.31.175.223:19093</producerConfig>
         <!-- don't wait for a broker to ack the reception of a batch.  -->
         <producerConfig>acks=0</producerConfig>
         <!-- wait up to 1000ms and collect log messages before sending them as a batch -->
@@ -169,6 +169,9 @@
         <producerConfig>max.block.ms=0</producerConfig>
         <!-- define a client-id that you use to identify yourself against the kafka broker -->
         <producerConfig>client.id=logback-relaxed</producerConfig>
+        <producerConfig>sasl.mechanism=PLAIN</producerConfig>
+        <producerConfig>security.protocol=SASL_PLAINTEXT</producerConfig>
+        <producerConfig>sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="06lR@E";</producerConfig>
 
     </appender>
 

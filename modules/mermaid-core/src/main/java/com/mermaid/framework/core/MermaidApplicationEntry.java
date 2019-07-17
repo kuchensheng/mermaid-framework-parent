@@ -46,6 +46,7 @@ public class MermaidApplicationEntry {
         GlobalRuntimeConfigFactory globalRuntimeConfigFactory = GlobalRuntimeConfigFactory.getInstance();
         applicationInfo.setRuntimeProperties(globalRuntimeConfigFactory);
 
+        args = globalRuntimeConfigFactory.getLaunchArgs();
         SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
         printConfigInfo(globalRuntimeConfigFactory.getProperties());
         springApplication.run(args);
