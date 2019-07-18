@@ -162,6 +162,7 @@
         <producerConfig>sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="06lR@E";</producerConfig>
         <!-- this is the fallback appender if kafka is not available. -->
         <appender-ref ref="INFO_FILE" />
+        <!-- 这里未作过滤，所有的日志都send到logName-info这个topic上去 -->
     </appender>
 
     <root level="info">
@@ -171,7 +172,6 @@
     <logger name="Application_ERROR" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="kafkaAppender" />
-<!--        <appender-ref ref="kafkaAppenderERROR" />-->
     </logger>
 
     // 关闭每次显示kafka设置信息

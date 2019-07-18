@@ -7,6 +7,7 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.security.auth.SecurityProtocol;
 import org.apache.kafka.common.serialization.StringSerializer;
 
+import java.time.LocalDateTime;
 import java.util.Properties;
 import java.util.Random;
 
@@ -29,8 +30,8 @@ public class KafkaSender {
 
         try {
             while (true) {
-                String msg = "Hello," + new Random().nextInt(100);
-                ProducerRecord<String, String> record = new ProducerRecord<String, String>("sxc_test", msg);
+                String msg = "Hello," + new Random().nextInt(100) + LocalDateTime.now().toString();
+                ProducerRecord<String, String> record = new ProducerRecord<String, String>("info.gateway-biz", msg);
                 kafkaProducer.send(record);
                 System.out.println(kafkaProducer.toString());
                 System.out.println("消息发送成功:" + msg);
