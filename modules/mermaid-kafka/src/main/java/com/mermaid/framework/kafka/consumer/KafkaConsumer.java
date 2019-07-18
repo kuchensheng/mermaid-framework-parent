@@ -20,13 +20,13 @@ import java.util.Properties;
 public class KafkaConsumer {
     public static void main(String[] args) {
         Properties p = new Properties();
-        p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "118.31.175.223:19093");
+        p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         p.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         p.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         p.put(ConsumerConfig.GROUP_ID_CONFIG, "duanjt_test");
-        p.put(SaslConfigs.SASL_MECHANISM,"PLAIN");
-        p.put("security.protocol", SecurityProtocol.SASL_PLAINTEXT.name);
-        p.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"06lR@E\";");
+//        p.put(SaslConfigs.SASL_MECHANISM,"PLAIN");
+//        p.put("security.protocol", SecurityProtocol.SASL_PLAINTEXT.name);
+//        p.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"06lR@E\";");
         org.apache.kafka.clients.consumer.KafkaConsumer<String, String> kafkaConsumer = new org.apache.kafka.clients.consumer.KafkaConsumer<String, String>(p);
         kafkaConsumer.subscribe(Collections.singletonList("mermaid-core-info"));// 订阅消息
 
