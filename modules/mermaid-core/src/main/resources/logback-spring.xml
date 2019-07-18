@@ -150,16 +150,17 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
         <topic>${logName}-info</topic>
-        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy" />
+        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.HostNameKeyingStrategy" />
         <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
-        <producerConfig>bootstrap.servers=localhost:9092</producerConfig>
+        <producerConfig>bootstrap.servers=118.31.175.223:19093</producerConfig>
         <producerConfig>acks=0</producerConfig>
         <!--<producerConfig>linger.ms=1000</producerConfig>-->
         <producerConfig>max.block.ms=0</producerConfig>
         <producerConfig>client.id=${HOSTNAME}-${CONTEXT_NAME}-logback-relaxed</producerConfig>
-<!--        <producerConfig>sasl.mechanism=PLAIN</producerConfig>-->
-<!--        <producerConfig>security.protocol=SASL_PLAINTEXT</producerConfig>-->
-<!--        <producerConfig>sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="06lR@E";</producerConfig>-->
+        <producerConfig>sasl.mechanism=PLAIN</producerConfig>
+        <producerConfig>security.protocol=SASL_PLAINTEXT</producerConfig>
+        <producerConfig>sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="06lR@E";</producerConfig>
+        <!-- this is the fallback appender if kafka is not available. -->
         <appender-ref ref="INFO_FILE" />
     </appender>
 
@@ -167,61 +168,14 @@
         <appender-ref ref="kafkaAppender" />
     </root>
 
-    <appender name="kafkaAppenderERROR" class="com.github.danielwegener.logback.kafka.KafkaAppender">
-        <encoder charset="UTF-8" class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-
-        <topic>${logName}-error</topic>
-        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.HostNameKeyingStrategy" />
-        <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
-        <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.BlockingDeliveryStrategy">
-            <!-- wait indefinitely until the kafka producer was able to send the message -->
-            <timeout>0</timeout>
-        </deliveryStrategy>
-        <producerConfig>bootstrap.servers=192.168.1.102:9092</producerConfig>
-        <!-- don't wait for a broker to ack the reception of a batch.  -->
-        <producerConfig>acks=0</producerConfig>
-        <!-- wait up to 1000ms and collect log messages before sending them as a batch -->
-        <producerConfig>linger.ms=10</producerConfig>
-        <!-- even if the producer buffer runs full, do not block the application but start to drop messages -->
-        <producerConfig>max.block.ms=0</producerConfig>
-<!--        <appender-ref ref="STDOUT" />-->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
-            <level>ERROR</level>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-    </appender>
-
-    <root level="error">
-        <appender-ref ref="kafkaAppenderERROR" />
-    </root>
     <logger name="Application_ERROR" additivity="false">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="kafkaAppender" />
 <!--        <appender-ref ref="kafkaAppenderERROR" />-->
     </logger>
 
-
-    <root level="info">
-        <appender-ref ref="kafkaAppender" />
-    </root>
-    <root level="warn">
-        <appender-ref ref="kafkaAppenderWARN"/>
-    </root>
     // 关闭每次显示kafka设置信息
     <logger name="org.apache.kafka" level="OFF"/>
 
-    <!--生产环境:输出到文件-->
-    <!--<springProfile name="pro">-->
-    <!--<root level="info">-->
-    <!--<appender-ref ref="CONSOLE" />-->
-    <!--<appender-ref ref="DEBUG_FILE" />-->
-    <!--<appender-ref ref="INFO_FILE" />-->
-    <!--<appender-ref ref="ERROR_FILE" />-->
-    <!--<appender-ref ref="WARN_FILE" />-->
-    <!--</root>-->
-    <!--</springProfile>-->
 
 </configuration>
