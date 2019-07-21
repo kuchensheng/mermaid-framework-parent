@@ -5,8 +5,8 @@ import com.mermaid.framework.core.config.factory.GlobalRuntimeConfigFactory;
 import com.mermaid.framework.core.config.factory.LocalFileConfigFactory;
 import com.mermaid.framework.core.config.factory.ModulesConfigFactory;
 import com.mermaid.framework.core.util.IPAddressUtils;
-import com.mermaid.framework.core.util.RuntimeUtils;
 
+import com.mermaid.framework.util.RuntimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

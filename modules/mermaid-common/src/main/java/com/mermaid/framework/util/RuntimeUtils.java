@@ -1,4 +1,4 @@
-package com.mermaid.framework.core.util;
+package com.mermaid.framework.util;
 
 /**
  * Created by zlbbq on 2017/10/18.
