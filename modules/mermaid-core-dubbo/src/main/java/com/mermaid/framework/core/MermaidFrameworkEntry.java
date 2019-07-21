@@ -10,8 +10,11 @@ import com.mermaid.framework.util.RuntimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -25,6 +28,8 @@ import java.util.Properties;
 
 @EnableDubbo
 @SpringBootApplication
+@EnableAutoConfiguration
+@ComponentScan({"com.mermaid.framework","${mermaid.modules.basePackages:}"})
 public class MermaidFrameworkEntry {
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME = "application.properties";
 
@@ -39,9 +44,9 @@ public class MermaidFrameworkEntry {
         applicationInfo.setRuntimeProperties(globalRuntimeConfigFactory);
 
         args = globalRuntimeConfigFactory.getLaunchArgs();
-        SpringApplication springApplication = new SpringApplicationBuilder(MermaidFrameworkEntry.class).web(true).build();
+//        SpringApplication springApplication = new SpringApplicationBuilder(MermaidFrameworkEntry.class).web(true).build();
         printConfigInfo(globalRuntimeConfigFactory.getProperties());
-        springApplication.run(args);
+        SpringApplication.run(MermaidFrameworkEntry.class,args);
         log.info("**MERMAID[{}]**应用{}:{}启动成功",applicationInfo.getAppVersion(),applicationInfo.getAppName(),applicationInfo.getAppPort());
     }
 
