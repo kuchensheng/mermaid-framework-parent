@@ -26,7 +26,7 @@ import java.util.Properties;
 
 @EnableDubbo
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-//@ComponentScan({"com.mermaid.framework","${mermaid.modules.basePackages:}"})
+@ComponentScan({"com.mermaid.framework","${mermaid.modules.basePackages:}"})
 public class MermaidFrameworkEntry {
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME = "application.properties";
 
