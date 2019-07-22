@@ -46,12 +46,12 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>sxc-snapshot</id>
-      <url>http://nexus.songxiaocai.com/repository/sxc-snapshots/</url>
+      <id>sxc-snapshots</id>
+      <url>http://121.40.208.242:8081/repository/sxc-snapshots/</url>
     </snapshotRepository>
     <repository>
       <id>sxc-release</id>
-      <url>http://nexus.songxiaocai.com/repository/sxc-release/</url>
+      <url>http://121.40.208.242:8081/repository/sxc-release/</url>
     </repository>
   </distributionManagement>
 
