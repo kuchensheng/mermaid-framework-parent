@@ -46,12 +46,12 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>mermaid-snapshot</id>
-      <url>http://118.178.186.33:9098/nexus/content/repositories/mermaid-snaphost</url>
+      <id>sxc-snapshot</id>
+      <url>http://nexus.songxiaocai.com/repository/sxc-snapshots/</url>
     </snapshotRepository>
     <repository>
-      <id>mermaid-release</id>
-      <url>http://118.178.186.33:9098/nexus/content/repositories/mermaid-release/</url>
+      <id>sxc-release</id>
+      <url>http://nexus.songxiaocai.com/repository/sxc-release/</url>
     </repository>
   </distributionManagement>
 
