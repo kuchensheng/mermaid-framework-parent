@@ -6,7 +6,7 @@
   <groupId>com.mermaid.framework</groupId>
   <artifactId>mermaid-framework-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -37,7 +37,7 @@
     <connection>scm:git:https://github.com/kuchensheng/mermaid-framework-parent.git</connection>
     <developerConnection>scm:git:https://github.com/kuchensheng/mermaid-framework-parent.git</developerConnection>
     <url>https://github.com/kuchensheng/mermaid-framework-parent</url>
-    <tag>HEAD</tag>
+    <tag>1.2</tag>
   </scm>
 
   <name>Maven</name>
