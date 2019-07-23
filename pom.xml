@@ -66,6 +66,7 @@
     <kafka.version>2.2.7</kafka.version>
     <fescar.version>0.4.0</fescar.version>
     <spring-cloud-alibaba-dependencies.version>0.2.1.RELEASE</spring-cloud-alibaba-dependencies.version>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
   </properties>
   <dependencyManagement>
     <dependencies>
