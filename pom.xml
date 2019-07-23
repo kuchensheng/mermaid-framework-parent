@@ -16,6 +16,7 @@
   </parent>
 
   <modules>
+    <module>modules/mermaid-common</module>
     <module>modules/mermaid-core</module>
     <module>modules/mermaid-core-dubbo</module>
     <module>modules/mermaid-websocket</module>
