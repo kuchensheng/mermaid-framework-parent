@@ -2,9 +2,14 @@ package com.mermaid.framework.core.config.factory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -18,7 +23,7 @@ import java.util.Properties;
  * @author Chensheng.Ku
  * @version 创建时间：2019/3/11 10:24
  */
-public class LocalFileConfigFactory extends AbstractConfigFactory{
+public class LocalFileConfigFactory extends AbstractConfigFactory {
     private Logger logger = LoggerFactory.getLogger(LocalFileConfigFactory.class);
 
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME="application.properties";
@@ -39,7 +44,6 @@ public class LocalFileConfigFactory extends AbstractConfigFactory{
                 is = classPathResource.getInputStream();
             }
             properties.load(is);
-            properties.setProperty("mermaid.framework.version",getMermaidFrameworkVersion());
             if("true".equals(properties.getProperty("mermaid.framework.cloud.enable","false"))) {
                 logger.info("连接统一配置中心，并获取云平台的配置信息");
                 connect2Cloud(properties);
@@ -66,11 +70,12 @@ public class LocalFileConfigFactory extends AbstractConfigFactory{
     private String getMermaidFrameworkVersion() throws IOException {
         String version = "UNKNOWN";
         PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
-        Resource[] resource = pathMatchingResourcePatternResolver.getResources("classpath*:META-INFO/maven/com.mermaid.framework/com.mermaid.framework.core/mermaid-core/pom.properties");
-        if(null != resource && resource.length == 1) {
+//        Resource[] resource = pathMatchingResourcePatternResolver.getResources("classpath*:META-INFO/mermaid-framework-core.properties");
+        Resource resource = pathMatchingResourcePatternResolver.getResource("classpath*:META-INFO/mermaid-framework-core.properties");
+        if(null != resource ) {
             Properties properties = new Properties();
-            properties.load(resource[0].getInputStream());
-            version = properties.getProperty("version");
+            properties.load(resource.getInputStream());
+            version = properties.getProperty("mermaid.framework.version");
         }
         return version;
 

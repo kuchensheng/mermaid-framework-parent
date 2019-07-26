@@ -3,6 +3,7 @@ package com.mermaid.framework.core.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EnvironmentAware;
@@ -19,8 +20,7 @@ import java.util.Map;
  * @author Chensheng.Ku
  * @version 创建时间：2018/8/29 11:22
  */
-@Configuration
-public class AnnotaionProxyFactoryBean implements ApplicationContextAware,EnvironmentAware {
+public class AnnotaionProxyFactoryBean implements ApplicationContextAware,EnvironmentAware, InitializingBean {
 
     private static String BASE_PACKAGES="com,cn,org,gov";
 
@@ -31,9 +31,14 @@ public class AnnotaionProxyFactoryBean implements ApplicationContextAware,Enviro
     private ApplicationContext applicationContext;
 
     @Override
+    public void afterPropertiesSet() throws Exception {
+
+    }
+
+    @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
-//        setComonetScanValue();
+        BASE_PACKAGES = environment.getProperty("mermaid.framework.component.scan.basePackages",BASE_PACKAGES);
     }
 
     private void setComonetScanValue() {
@@ -84,6 +89,6 @@ public class AnnotaionProxyFactoryBean implements ApplicationContextAware,Enviro
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-//        setComonetScanValue();
+        setComonetScanValue();
     }
 }
