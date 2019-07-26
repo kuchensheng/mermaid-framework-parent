@@ -35,6 +35,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DubboServiceConfig implements ApplicationContextAware, InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(DubboServiceConfig.class);
+
+    private static final String CONSUMER_VERSION="*";
     @Value("${mermaid.provider.group:test}")
     private String group;
 
@@ -65,7 +67,10 @@ public class DubboServiceConfig implements ApplicationContextAware, Initializing
 
             try {
                 ReferenceConfig referenceConfig = ((AnnotationConfigServletWebServerApplicationContext) this.applicationContext).getBeanFactory().getBean(ReferenceConfig.class);
-                referenceConfig.setVersion("*");
+                referenceConfig.setVersion(CONSUMER_VERSION);
+                if (!StringUtils.isEmpty(group)) {
+                    referenceConfig.setGroup(group);
+                }
             } catch (Exception e) {
                 logger.warn("dubbo reference config not found,may be it is not a dubbo consumer",e.getMessage());
             }
