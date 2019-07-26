@@ -1,28 +1,21 @@
 package com.mermaid.framework.core.config;
 
 import com.alibaba.dubbo.config.ApplicationConfig;
-import com.alibaba.dubbo.config.ProviderConfig;
+
+import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.ServiceConfig;
 
-import com.alibaba.dubbo.config.spring.ServiceBean;
 import com.mermaid.framework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 
 /**
  * ClassName:DubboServerConfig
@@ -41,7 +34,7 @@ import javax.annotation.Resource;
  */
 @Component
 public class DubboServiceConfig implements ApplicationContextAware, InitializingBean {
-
+    private static final Logger logger = LoggerFactory.getLogger(DubboServiceConfig.class);
     @Value("${mermaid.provider.group:test}")
     private String group;
 
@@ -54,8 +47,8 @@ public class DubboServiceConfig implements ApplicationContextAware, Initializing
     ApplicationContext applicationContext;
     @Override
     public void afterPropertiesSet() throws Exception {
-        if(((AnnotationConfigServletWebServerApplicationContext) this.applicationContext).getBeanFactory().containsBean(ServiceConfig.class.getSimpleName())) {
-            ServiceConfig serviceBean = ((AnnotationConfigServletWebServerApplicationContext) this.applicationContext).getBeanFactory().getBean(ServiceConfig.class);
+            try {
+                ServiceConfig serviceBean = ((AnnotationConfigServletWebServerApplicationContext) this.applicationContext).getBeanFactory().getBean(ServiceConfig.class);
                 if (!StringUtils.isEmpty(appliation)) {
                     serviceBean.setApplication(new ApplicationConfig(appliation));
                 }
@@ -66,11 +59,18 @@ public class DubboServiceConfig implements ApplicationContextAware, Initializing
                 if (!StringUtils.isEmpty(providerVersion)) {
                     serviceBean.setVersion(providerVersion);
                 }
-        }
+            } catch (Exception e) {
+                logger.warn("dubbo service config not found,may be it is not a dubbo provider",e.getMessage());
+            }
+
+            try {
+                ReferenceConfig referenceConfig = ((AnnotationConfigServletWebServerApplicationContext) this.applicationContext).getBeanFactory().getBean(ReferenceConfig.class);
+                referenceConfig.setVersion("*");
+            } catch (Exception e) {
+                logger.warn("dubbo reference config not found,may be it is not a dubbo consumer",e.getMessage());
+            }
 
     }
-
-
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
