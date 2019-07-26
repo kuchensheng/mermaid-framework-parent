@@ -10,6 +10,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author Chensheng.Ku
  * @version 创建时间：2018/8/29 11:22
  */
+@Component
 public class AnnotaionProxyFactoryBean implements ApplicationContextAware,EnvironmentAware, InitializingBean {
 
     private static String BASE_PACKAGES="com,cn,org,gov";
@@ -32,7 +34,7 @@ public class AnnotaionProxyFactoryBean implements ApplicationContextAware,Enviro
 
     @Override
     public void afterPropertiesSet() throws Exception {
-
+        setComonetScanValue();
     }
 
     @Override
@@ -89,6 +91,5 @@ public class AnnotaionProxyFactoryBean implements ApplicationContextAware,Enviro
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-        setComonetScanValue();
     }
 }
