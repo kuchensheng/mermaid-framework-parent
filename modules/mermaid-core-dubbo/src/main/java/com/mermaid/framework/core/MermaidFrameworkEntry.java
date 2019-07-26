@@ -38,7 +38,7 @@ public class MermaidFrameworkEntry {
 
         GlobalRuntimeConfigFactory globalRuntimeConfigFactory = GlobalRuntimeConfigFactory.getInstance();
         applicationInfo.setRuntimeProperties(globalRuntimeConfigFactory);
-
+        applicationInfo.setAppVersion(globalRuntimeConfigFactory.getValue("mermaid.framework.version"));
         args = globalRuntimeConfigFactory.getLaunchArgs();
         printConfigInfo(globalRuntimeConfigFactory.getProperties());
         SpringApplication.run(MermaidFrameworkEntry.class,args);
@@ -60,7 +60,7 @@ public class MermaidFrameworkEntry {
         applicationInfo.setAppPort(Integer.parseInt(applicationInfo.getAppId()));
         applicationInfo.setLaunchTime(System.currentTimeMillis());
         applicationInfo.setPid(RuntimeUtils.getCurrentPID());
-        applicationInfo.setAppVersion(factory.getValue("mermaid.framework.version"));
+//        applicationInfo.setAppVersion(factory.getValue("mermaid.framework.version"));
         applicationInfo.setRuntimeProperties(factory);
         return applicationInfo;
     }

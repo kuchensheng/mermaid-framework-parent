@@ -17,7 +17,7 @@ import java.util.Map;
 public class JenkinPipelineUtil {
     private static final Logger logger = LoggerFactory.getLogger(JenkinPipelineUtil.class);
 
-    private static final String TEMP_DIR="F:\\javaproj\\mermaid-framework-parent\\mermaid-jenkins\\src\\main\\resources\\static\\template";
+    private static final String TEMP_DIR="src/main/resources/template";
 
     enum TemplatePathEnum {
         MAVEN("pipeline_template_maven.ftl")
