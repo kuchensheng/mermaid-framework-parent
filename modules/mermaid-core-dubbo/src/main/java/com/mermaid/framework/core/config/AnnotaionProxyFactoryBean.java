@@ -71,7 +71,7 @@ public class AnnotaionProxyFactoryBean implements ApplicationContextAware,Enviro
         }
         String[] basePackages = BASE_PACKAGES.split(",");
         try {
-            Class<?> className = Class.forName("com.mermaid.framework.MermaidApplicationEntry");
+            Class<?> className = Class.forName("com.mermaid.framework.core.MermaidFrameworkEntry");
             ComponentScan annotation = className.getAnnotation(ComponentScan.class);
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
             Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
