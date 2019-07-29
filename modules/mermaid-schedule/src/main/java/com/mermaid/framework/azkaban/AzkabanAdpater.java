@@ -1,15 +1,15 @@
 package com.mermaid.framework.azkaban;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.mermaid.framework.util.SSLUtils;
+import com.mermaid.framework.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -33,8 +33,6 @@ public class AzkabanAdpater {
     private static final Logger logger = LoggerFactory.getLogger(AzkabanAdpater.class);
 
     private String uri;
-    private String userName;
-    private String password;
 
     private static RestTemplate restTemplate = restTemplate();
 
@@ -62,12 +60,12 @@ public class AzkabanAdpater {
      * 登陆azkaban
      * @throws Exception
      */
-    private void login() throws Exception{
+    private void login(){
         try {
             Properties properties = new Properties();
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/azkaban.properties");
             properties.load(resourceAsStream);
-            login(properties.getProperty("mermaid.azkaban.username"),properties.getProperty("mermaid.azkaban.uri"),properties.getProperty("mermaid.azkaban.password"));
+            login(properties.getProperty("mermaid.azkaban.uri"),properties.getProperty("mermaid.azkaban.username"),properties.getProperty("mermaid.azkaban.password"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,8 +95,6 @@ public class AzkabanAdpater {
             logger.warn("azkabna login failure:{}", resJson);
         }
         this.uri = uri;
-        this.userName = userName;
-        this.password = password;
     }
 
     /**
@@ -106,7 +102,7 @@ public class AzkabanAdpater {
      * @param projectName 项目名称
      * @return 创建结果 json字符串
      */
-    private String createProjects(String projectName) {
+    private Boolean createProjects(String projectName) {
         return createProjects(projectName,projectName);
     }
 
@@ -116,17 +112,25 @@ public class AzkabanAdpater {
      * @param description 描述
      * @return 创建结果 json字符串
      */
-    private String createProjects(String projectName, String description) {
+    private Boolean createProjects(String projectName, String description) {
         LinkedMultiValueMap<String, String> linkedMultiValueMap = new LinkedMultiValueMap<String, String>();
+        if(null == sessionId) {
+            login();
+        }
         linkedMultiValueMap.add("session.id", sessionId);
         linkedMultiValueMap.add("action", "create");
         linkedMultiValueMap.add("name", projectName);
         linkedMultiValueMap.add("description", description);
         HttpEntity<LinkedMultiValueMap<String, String>> httpEntity = new HttpEntity<>(linkedMultiValueMap, hs);
         deleteProject(projectName);
-        String res = restTemplate.postForObject(uri + "/manager", httpEntity, String.class);
-        logger.info("azkaban create project:{}", res);
-        return res;
+        ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.postForEntity(uri + "/manager", httpEntity, JSONObject.class);
+        if(HttpStatus.OK.value() == jsonObjectResponseEntity.getStatusCode().value()) {
+            JSONObject body = jsonObjectResponseEntity.getBody();
+            logger.info("azkaban create project info :{}",body.toJSONString());
+            return "success".equals(body.getString("status"));
+        }
+        logger.info("azkaban create project failure:{}",JSONObject.toJSONString(jsonObjectResponseEntity));
+        return false;
     }
 
     /**
@@ -135,6 +139,9 @@ public class AzkabanAdpater {
      * @return 删除结果
      */
     private boolean deleteProject(String projectName) {
+        if(null == sessionId) {
+            login();
+        }
         Map<String, String> map = new HashMap<>();
         map.put("id", sessionId);
         map.put("project", projectName);
@@ -156,6 +163,9 @@ public class AzkabanAdpater {
     }
      */
     public String uploadZip(String zipFilePath, String projectName) {
+        if(null == sessionId) {
+            login();
+        }
         FileSystemResource resource = new FileSystemResource(new File(zipFilePath));
         LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
         linkedMultiValueMap.add("session.id", sessionId);
@@ -182,6 +192,9 @@ public class AzkabanAdpater {
     }
      */
     public String fetchProjectFlows(String projectName) {
+        if(null == sessionId) {
+            login();
+        }
         String res = restTemplate
                 .getForObject(uri + "/manager?ajax=fetchprojectflows&session.id={1}&project={2}"
                         , String.class, sessionId, projectName
@@ -219,6 +232,9 @@ public class AzkabanAdpater {
     }
      */
     public String fetchJobsFlow(String projectName,String flowId) {
+        if(null == sessionId) {
+            login();
+        }
         String res = restTemplate
                 .getForObject(uri + "/manager?ajax=fetchflowgraph&session.id={1}&project={2}&flow={3}"
                         , String.class, sessionId, projectName,flowId
@@ -228,18 +244,66 @@ public class AzkabanAdpater {
     }
 
     /**
-     *
+     * 获取溜的执行列表
      * @param projectName
      * @param flowId
      * @param start
      * @param length
      * @return
+     *
+     * {
+     *   "executions" : [ {
+     *     "startTime" : 1407779928865,
+     *     "submitUser" : "1",
+     *     "status" : "FAILED",
+     *     "submitTime" : 1407779928829,
+     *     "execId" : 306,
+     *     "projectId" : 192,
+     *     "endTime" : 1407779950602,
+     *     "flowId" : "test"
+     *   }, {
+     *     "startTime" : 1407779877807,
+     *     "submitUser" : "1",
+     *     "status" : "FAILED",
+     *     "submitTime" : 1407779877779,
+     *     "execId" : 305,
+     *     "projectId" : 192,
+     *     "endTime" : 1407779899599,
+     *     "flowId" : "test"
+     *   }, {
+     *     "startTime" : 1407779473354,
+     *     "submitUser" : "1",
+     *     "status" : "FAILED",
+     *     "submitTime" : 1407779473318,
+     *     "execId" : 304,
+     *     "projectId" : 192,
+     *     "endTime" : 1407779495093,
+     *     "flowId" : "test"
+     *   } ],
+     *   "total" : 16,
+     *   "project" : "azkaban-test-project",
+     *   "length" : 3,
+     *   "from" : 0,
+     *   "flow" : "test",
+     *   "projectId" : 192
+     * }
      */
     public String fetchFlowExecutions(String projectName,String flowId,Integer start,Integer length) {
-        String res = restTemplate
-                .getForObject(uri + "/manager?ajax=fetchFlowExecutions&session.id={1}&project={2}&flow={3}"
-                        , String.class, sessionId, projectName,flowId
-                );
+        if(null == sessionId) {
+            login();
+        }
+        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
+        linkedMultiValueMap.add("session.id", sessionId);
+        linkedMultiValueMap.add("ajax", "fetchFlowExecutions");
+        linkedMultiValueMap.add("project", projectName);
+        linkedMultiValueMap.add("flow", flowId);
+        linkedMultiValueMap.add("start",null == start ? 0 : start);
+        if(null != length || 0 != length) {
+            linkedMultiValueMap.add("length",length);
+        }
+
+        String res = restTemplate.getForObject(uri + "/manager",String.class,linkedMultiValueMap);
+
         logger.info("azkban fetch project flows:{}", res);
         return res;
     }
@@ -254,6 +318,9 @@ public class AzkabanAdpater {
     }
      */
     public String getRunning(String projectName,String flowId) {
+        if(null == sessionId) {
+            login();
+        }
         String res = restTemplate
                 .getForObject(uri + "/executor?ajax=getRunning&session.id={1}&project={2}&flow={3}"
                         , String.class, sessionId, projectName,flowId
@@ -292,16 +359,29 @@ public class AzkabanAdpater {
     }
      */
     public String executorFlow(String projectName,String flowId,String[] disableExectionIds ) {
+        if(null == sessionId) {
+            login();
+        }
         LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
         linkedMultiValueMap.add("session.id", sessionId);
         linkedMultiValueMap.add("ajax", "executeFlow");
         linkedMultiValueMap.add("project", projectName);
         linkedMultiValueMap.add("flow", flowId);
-        String res = restTemplate().postForObject(" /executor", linkedMultiValueMap,String.class);
+        if(null != disableExectionIds && disableExectionIds.length > 0) {
+            linkedMultiValueMap.add("disabled",disableExectionIds);
+        }
+
+        String res = restTemplate().postForObject(uri + "/executor", linkedMultiValueMap,String.class);
         return res;
     }
 
-    public boolean cancleFlow(String projectName,String execId) {
+    /**
+     * 取消执行flow
+     * @param projectName 项目名
+     * @param execId exceid
+     * @return
+     */
+    public boolean cancleExecutorFlow(String projectName,String execId) {
         String res = restTemplate
                 .getForObject(uri + " /executor?ajax=cancelFlow&session.id={1}&execid={2}"
                         , String.class, sessionId,execId
@@ -310,10 +390,128 @@ public class AzkabanAdpater {
         return res.contains("error");
     }
 
-    public String scheduleFlow(String projectId,String flowId,String scheduleTime,String scheduleDate, Integer period,PeriodEnum periodEnum) {
-        return null;
+    /**
+     * 定时执行任务
+     * @param projectName
+     * @param flowName
+     * @param scheduleTime
+     * @param scheduleDate
+     * @param period
+     * @param periodEnum
+     * @return
+     */
+    public String scheduleFlow(String projectName,String flowName,String scheduleTime,String scheduleDate, Integer period,PeriodEnum periodEnum) {
+        if(null == sessionId) {
+            login();
+        }
+        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
+        linkedMultiValueMap.add("session.id", sessionId);
+        linkedMultiValueMap.add("ajax", "scheduleFlow");
+        linkedMultiValueMap.add("projectName", projectName);
+        linkedMultiValueMap.add("flowName", flowName);
+        linkedMultiValueMap.add("is_recurring","on");
+        if (!StringUtils.isEmpty(scheduleTime)) {
+            linkedMultiValueMap.add("scheduleTime",scheduleTime);
+
+        }
+        if (!StringUtils.isEmpty(scheduleDate)) {
+            linkedMultiValueMap.add("scheduleDate",scheduleDate);
+        }
+
+        if(null != period && null != periodEnum) {
+            linkedMultiValueMap.add("period",period + periodEnum.getValue());
+        }
+
+        String res = restTemplate.getForObject("/schedule",String.class,linkedMultiValueMap);
+        return res;
     }
 
+    public String scheduleFlow(String projectName,String flowName,String cron) {
+        if(null == sessionId) {
+            login();
+        }
+        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
+        linkedMultiValueMap.add("session.id", sessionId);
+        linkedMultiValueMap.add("ajax", "scheduleFlow");
+        linkedMultiValueMap.add("projectName", projectName);
+        linkedMultiValueMap.add("flow", flowName);
+        linkedMultiValueMap.add("cronExpression",cron);
+
+        return restTemplate.getForObject("/schedule",String.class,linkedMultiValueMap);
+    }
+
+    /**
+     *
+     * @param projectId
+     * @param flowId
+     * @return
+     * {
+     *   "schedule" : {
+     *     "cronExpression" : "0 * 9 ? * *",
+     *     "nextExecTime" : "2017-04-01 09:00:00",
+     *     "period" : "null",
+     *     "submitUser" : "azkaban",
+     *     "executionOptions" : {
+     *       "notifyOnFirstFailure" : false,
+     *       "notifyOnLastFailure" : false,
+     *       "failureEmails" : [ ],
+     *       "successEmails" : [ ],
+     *       "pipelineLevel" : null,
+     *       "queueLevel" : 0,
+     *       "concurrentOption" : "skip",
+     *       "mailCreator" : "default",
+     *       "memoryCheck" : true,
+     *       "flowParameters" : {
+     *       },
+     *       "failureAction" : "FINISH_CURRENTLY_RUNNING",
+     *       "failureEmailsOverridden" : false,
+     *       "successEmailsOverridden" : false,
+     *       "pipelineExecutionId" : null,
+     *       "disabledJobs" : [ ]
+     *     },
+     *     "scheduleId" : "3",
+     *     "firstSchedTime" : "2017-03-31 11:45:21"
+     *   }
+     * }
+     */
+    public String fetchSchecule(String projectId,String flowId) {
+        if(null == sessionId) {
+            login();
+        }
+        String res = restTemplate
+                .getForObject(uri + "ajax=fetchSchedule&session.id={1}&&projectId={2}&flowId={3}"
+                        , String.class, sessionId,projectId,flowId
+                );
+        logger.info("azkban schedule info:{}", res);
+        return res;
+    }
+
+    public String removeSched(String scheduleId) {
+        if(null == sessionId) {
+            login();
+        }
+        String res = restTemplate
+                .getForObject(uri + "action=removeSched&session.id={1}&&scheduleId={2}"
+                        , String.class, sessionId,scheduleId
+                );
+        return res;
+    }
+
+    /**
+     * 给定一个执行ID，此API调用获取该执行的所有详细信息，包括所有作业执行的列表。
+     * @param execid 执行id
+     * @return
+     */
+    public String fetchexecflow(String execid) {
+        if(null == sessionId) {
+            login();
+        }
+        String res = restTemplate
+                .getForObject(uri + "/executor?ajax=fetchexecflow&session.id={1}&execid={2}"
+                        , String.class, sessionId,execid
+                );
+        return res;
+    }
 
     private static void disableChecks() {
         try {
@@ -332,15 +530,37 @@ public class AzkabanAdpater {
 
     public static void main(String[] args) throws Exception {
         AzkabanAdpater adpater = new AzkabanAdpater();
-        adpater.login();
+        String projectFlows = adpater.fetchProjectFlows("abc");
+        System.out.println(projectFlows);
+        JSONObject jsonObject = JSONObject.parseObject(projectFlows);
+        JSONArray flows = jsonObject.getJSONArray("flows");
+        String flowId = ((JSONObject) flows.get(0)).getString("flowId");
+        System.out.println("flowId = " + flowId);
+
+//        String fetchJobsFlow = adpater.fetchJobsFlow(jsonObject.getString("project"),flowId);
+//        System.out.println(fetchJobsFlow);
+
+        String executorFlow = adpater.executorFlow(jsonObject.getString("project"), flowId);
+        System.out.println(executorFlow);
+
+        String fetchexecflow = adpater.fetchexecflow(JSONObject.parseObject(executorFlow).getString("execid"));
+        System.out.println(fetchexecflow);
     }
 
     enum PeriodEnum{
         MONTH("M"),WEEK("w"),DAYS("d"),HOURS("h"),MINUTES("m"),SECONDS("s");
-        private String values;
+        private String value;
 
         PeriodEnum(String value) {
-            this.values = value;
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
         }
     }
 
