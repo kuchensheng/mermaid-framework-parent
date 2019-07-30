@@ -377,17 +377,16 @@ public class AzkabanAdpater {
 
     /**
      * 取消执行flow
-     * @param projectName 项目名
      * @param execId exceid
      * @return
      */
-    public boolean cancleExecutorFlow(String projectName,String execId) {
+    public boolean cancleExecutorFlow(String execId) {
         String res = restTemplate
                 .getForObject(uri + " /executor?ajax=cancelFlow&session.id={1}&execid={2}"
                         , String.class, sessionId,execId
                 );
         logger.info("azkban executions that are currently running:{}", res);
-        return res.contains("error");
+        return !res.contains("error");
     }
 
     /**
@@ -426,6 +425,18 @@ public class AzkabanAdpater {
         return res;
     }
 
+    /**
+     * 定时执行任务
+     * cron表达式
+     * @param projectName 工程名
+     * @param flowName 流名称
+     * @param cron cron表达式
+     * @return
+     * {
+    "message" : "PROJECT_NAME.FLOW_NAME scheduled.",
+    "status" : "success"
+    }
+     */
     public String scheduleFlow(String projectName,String flowName,String cron) {
         if(null == sessionId) {
             login();
@@ -439,6 +450,50 @@ public class AzkabanAdpater {
 
         return restTemplate.getForObject("/schedule",String.class,linkedMultiValueMap);
     }
+
+    /**
+     * 取消定时任务
+     * @param scheduleId
+     * @return
+     */
+    public Boolean removeSchedule(String scheduleId) {
+        String res = restTemplate
+                .getForObject(uri + " /executor?ajax=removeSched&session.id={1}&scheduleId={2}"
+                        , String.class, sessionId,scheduleId
+                );
+        logger.info("azkban executions that are currently running:{}", res);
+        return "success".equals(JSONObject.parseObject(res).getString("status"));
+    }
+
+    /**
+     * 暂停流执行
+     * @param execId
+     * @return
+     */
+    public Boolean pauseFlow(String execId) {
+        String res = restTemplate
+                .getForObject(uri + " /executor?ajax=pauseFlow&session.id={1}&execid={2}"
+                        , String.class, sessionId,execId
+                );
+        logger.info("azkban executions that are currently running:{}", res);
+        return !res.contains("error");
+    }
+
+    /**
+     * 暂停流执行
+     * @param execId
+     * @return
+     */
+    public Boolean resumeFlow(String execId) {
+        String res = restTemplate
+                .getForObject(uri + " /executor?ajax=resumeFlow&session.id={1}&execid={2}"
+                        , String.class, sessionId,execId
+                );
+        logger.info("azkban executions that are currently running:{}", res);
+        return !res.contains("error");
+    }
+
+
 
     /**
      *
@@ -513,6 +568,68 @@ public class AzkabanAdpater {
         return res;
     }
 
+    /**
+     * 调用相应作业的日志
+     * @param execid 执行id
+     * @param jobId 作业id
+     * @param offset 偏移量
+     * @param length 日志长度
+     * @return
+     */
+    public String fetchExecJobLogs(String execid,String jobId,Integer offset,Integer length) {
+        if(null == sessionId) {
+            login();
+        }
+        String res = restTemplate
+                .getForObject(uri + "/executor?ajax=fetchExecJobLogs&session.id={1}&execid={2}&jobId={3}&offset={4}&length={5}"
+                        , String.class, sessionId,execid,jobId,offset,length);
+        return res;
+    }
+
+    /**
+     * 根据lastUpdateTime筛查流
+     * @param execid
+     * @return {@See https://azkaban.github.io/azkaban/docs/2.5/#api-execute-a-flow}
+     *
+     */
+    public String fetchexecflowupdate(String execid) {
+        return fetchexecflowupdate(execid,"-1");
+    }
+
+    /**
+     * 根据lastUpdateTime筛查流
+     * @param execid
+     * @param lastUpdateTime
+     * @return {@See https://azkaban.github.io/azkaban/docs/2.5/#api-execute-a-flow}
+     *
+     */
+    public String fetchexecflowupdate(String execid, String lastUpdateTime) {
+        if (null == sessionId) {
+            login();
+        }
+        String res = restTemplate
+                .getForObject(uri + "/executor?ajax=fetchExecJobLogs&session.id={1}&execid={2}&lastUpdateTime={3}"
+                        , String.class, sessionId,execid,lastUpdateTime);
+        return res;
+    }
+
+    public String history() {
+        if(null == sessionId) {
+            login();
+        }
+        String res = restTemplate.getForObject(uri + "/history",String.class);
+        return res;
+    }
+
+    public String projectLogs(String projectName) {
+        if(null == sessionId) {
+            login();
+        }
+        String res = restTemplate.getForObject(uri +"/manager?session.id={1}&project={2}&logs",
+                String.class,sessionId,projectName);
+        return res;
+    }
+
     private static void disableChecks() {
         try {
             SSLUtils.trustAllHttpsCertificates();
@@ -530,21 +647,25 @@ public class AzkabanAdpater {
 
     public static void main(String[] args) throws Exception {
         AzkabanAdpater adpater = new AzkabanAdpater();
-        String projectFlows = adpater.fetchProjectFlows("abc");
-        System.out.println(projectFlows);
-        JSONObject jsonObject = JSONObject.parseObject(projectFlows);
-        JSONArray flows = jsonObject.getJSONArray("flows");
-        String flowId = ((JSONObject) flows.get(0)).getString("flowId");
-        System.out.println("flowId = " + flowId);
-
-//        String fetchJobsFlow = adpater.fetchJobsFlow(jsonObject.getString("project"),flowId);
-//        System.out.println(fetchJobsFlow);
-
-        String executorFlow = adpater.executorFlow(jsonObject.getString("project"), flowId);
-        System.out.println(executorFlow);
-
-        String fetchexecflow = adpater.fetchexecflow(JSONObject.parseObject(executorFlow).getString("execid"));
-        System.out.println(fetchexecflow);
+//        String history = adpater.history();
+//        System.out.println(history);
+        String projectLogs = adpater.projectLogs("abc");
+        System.out.println(projectLogs);
+//        String projectFlows = adpater.fetchProjectFlows("abc");
+//        System.out.println(projectFlows);
+//        JSONObject jsonObject = JSONObject.parseObject(projectFlows);
+//        JSONArray flows = jsonObject.getJSONArray("flows");
+//        String flowId = ((JSONObject) flows.get(0)).getString("flowId");
+//        System.out.println("flowId = " + flowId);
+//
+////        String fetchJobsFlow = adpater.fetchJobsFlow(jsonObject.getString("project"),flowId);
+////        System.out.println(fetchJobsFlow);
+//
+//        String executorFlow = adpater.executorFlow(jsonObject.getString("project"), flowId);
+//        System.out.println(executorFlow);
+//
+//        String fetchexecflow = adpater.fetchexecflow(JSONObject.parseObject(executorFlow).getString("execid"));
+//        System.out.println(fetchexecflow);
     }
 
     enum PeriodEnum{
