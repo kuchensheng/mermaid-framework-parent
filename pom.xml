@@ -6,7 +6,7 @@
   <groupId>com.mermaid.framework</groupId>
   <artifactId>mermaid-framework-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.4-SNAPSHOT</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
