@@ -1,9 +1,9 @@
 package com.mermaid.framework.azkaban;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
+import com.mermaid.framework.azkaban.job.JobTemplate;
+import com.mermaid.framework.azkaban.modules.JobDomain;
 import com.mermaid.framework.util.SSLUtils;
 import com.mermaid.framework.util.StringUtils;
 import org.slf4j.Logger;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,6 +21,7 @@ import javax.net.ssl.SSLSession;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -151,9 +153,24 @@ public class AzkabanAdpater {
         return 200 == exchange.getStatusCodeValue();
     }
 
+    public String uploadZip(File zipFile,String projectName) {
+        if(null == sessionId) {
+            login();
+        }
+        FileSystemResource resource = new FileSystemResource(zipFile);
+        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
+        linkedMultiValueMap.add("session.id", sessionId);
+        linkedMultiValueMap.add("ajax", "upload");
+        linkedMultiValueMap.add("project", projectName);
+        linkedMultiValueMap.add("file", resource);
+        String res = restTemplate.postForObject(uri + "/manager", linkedMultiValueMap, String.class);
+        logger.info("azkaban upload zip:{}", res);
+        return res;
+    }
+
     /**
      * 文件上传
-     * @param zipFilePath zip文件地址
+     * @param zipFilePath zip文件
      * @param projectName 项目名
      * @return 返回操作结果 json串
      * {
@@ -163,18 +180,29 @@ public class AzkabanAdpater {
     }
      */
     public String uploadZip(String zipFilePath, String projectName) {
-        if(null == sessionId) {
-            login();
+        return uploadZip(new File(zipFilePath),projectName);
+    }
+
+    /**
+     * 上传工作流
+     * @param flowName 流名称
+     * @param jobList 该流对应的作业信息
+     * @param projecteName 工程名
+     * @return
+     */
+    public String uploadZip(String flowName, List<JobDomain> jobList, String projecteName) {
+        if(CollectionUtils.isEmpty(jobList)) {
+            return null;
         }
-        FileSystemResource resource = new FileSystemResource(new File(zipFilePath));
-        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
-        linkedMultiValueMap.add("session.id", sessionId);
-        linkedMultiValueMap.add("ajax", "upload");
-        linkedMultiValueMap.add("project", projectName);
-        linkedMultiValueMap.add("file", resource);
-        String res = restTemplate.postForObject(uri + "/manager", linkedMultiValueMap, String.class);
-        logger.info("azkaban upload zip:{}", res);
-        return res;
+
+        Map<String,String> map = new HashMap<>();
+        for (JobDomain value : jobList) {
+            // 创建job
+            logger.info("创建Job【name={}】",value.getJobName());
+            map.put(value.getJobName(),JobTemplate.createCommand(value.getJobName(),
+                    value.getCommands(),value.getCallbackJobId(),value.getDependencies()));
+        }
+        return uploadZip(JobTemplate.createZipFile(flowName,map),projecteName);
     }
 
     /**
