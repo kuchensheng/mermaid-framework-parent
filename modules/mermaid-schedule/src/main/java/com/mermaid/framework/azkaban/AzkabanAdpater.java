@@ -21,6 +21,7 @@ import javax.net.ssl.SSLSession;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Desription:
@@ -435,7 +436,11 @@ public class AzkabanAdpater {
         linkedMultiValueMap.add("session.id", sessionId);
         linkedMultiValueMap.add("ajax", "scheduleFlow");
         linkedMultiValueMap.add("projectName", projectName);
-        linkedMultiValueMap.add("flowName", flowName);
+        String s = fetchProjectFlows(projectName);
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        String projectId = jsonObject.getString("projectId");
+        linkedMultiValueMap.add("projectId",projectId);
+        linkedMultiValueMap.add("flow", flowName);
         linkedMultiValueMap.add("is_recurring","on");
         if (!StringUtils.isEmpty(scheduleTime)) {
             linkedMultiValueMap.add("scheduleTime",scheduleTime);
@@ -449,7 +454,7 @@ public class AzkabanAdpater {
             linkedMultiValueMap.add("period",period + periodEnum.getValue());
         }
 
-        String res = restTemplate.getForObject("/schedule",String.class,linkedMultiValueMap);
+        String res = restTemplate.postForObject(uri + "/schedule",linkedMultiValueMap,String.class);
         return res;
     }
 
@@ -471,12 +476,12 @@ public class AzkabanAdpater {
         }
         LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
         linkedMultiValueMap.add("session.id", sessionId);
-        linkedMultiValueMap.add("ajax", "scheduleFlow");
+//        linkedMultiValueMap.add("ajax", "scheduleCronFlow");
         linkedMultiValueMap.add("projectName", projectName);
         linkedMultiValueMap.add("flow", flowName);
         linkedMultiValueMap.add("cronExpression",cron);
 
-        return restTemplate.getForObject("/schedule",String.class,linkedMultiValueMap);
+        return restTemplate.postForObject(uri + "/schedule?ajax=scheduleCronFlow",linkedMultiValueMap,String.class);
     }
 
     /**
@@ -675,7 +680,7 @@ public class AzkabanAdpater {
 
     public static void main(String[] args) throws Exception {
         AzkabanAdpater adpater = new AzkabanAdpater();
-//        String projects = adpater.createProjects("songxiaocai_1111", "这个是测试项目");
+//        String projects = adpater.createProjects("shehuishehui");
 //        System.out.println(projects);
 //        String history = adpater.history();
 //        System.out.println(history);
@@ -707,8 +712,8 @@ public class AzkabanAdpater {
 //        String s = adpater.uploadZip("kuchensheng", jobList, "songxiaocai_1111");
 //        System.out.println("upload result = "+s);
 
-        String projectFlows = adpater.fetchProjectFlows("abc");
-        System.out.println(projectFlows);
+//        String projectFlows = adpater.fetchProjectFlows("songxiaocai_1111");
+//        System.out.println(projectFlows);
 //        JSONObject jsonObject = JSONObject.parseObject(projectFlows);
 //        JSONArray flows = jsonObject.getJSONArray("flows");
 //        String flowId = ((JSONObject) flows.get(0)).getString("flowId");
@@ -722,6 +727,31 @@ public class AzkabanAdpater {
 //
 //        String fetchexecflow = adpater.fetchexecflow(JSONObject.parseObject(executorFlow).getString("execid"));
 //        System.out.println(fetchexecflow);
+
+//        String executorFlow = adpater.executorFlow("songxiaocai_1111", "my_job3");
+//        System.out.println(executorFlow);//execid:3096
+
+//        String fetchexecflow = adpater.fetchexecflow("3096");
+//        System.out.println(fetchexecflow);
+
+        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3", "*/5 * * * * ?");
+//        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3","5,19,PM,PDT","07/31/2019",5,PeriodEnum.SECONDS);
+        System.out.println("执行结果："+s);
+
+
+//        int offset = 0;
+//        int length = 5000;
+//        while (true) {
+//            String my_job3 = adpater.fetchExecJobLogs("3096", "my_job3", offset, length);
+//            System.out.println(my_job3);
+//            JSONObject jsonObject = JSONObject.parseObject(my_job3);
+//            System.out.println(jsonObject.getString("data"));
+//            offset = jsonObject.getIntValue("length");
+//            TimeUnit.SECONDS.sleep(10);
+//        }
+
+
+
     }
 
     enum PeriodEnum{

@@ -10,7 +10,6 @@ import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
-import org.springframework.core.io.FileSystemResource;
 
 import java.io.*;
 import java.nio.file.*;
