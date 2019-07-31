@@ -20,10 +20,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Desription:
@@ -104,7 +101,7 @@ public class AzkabanAdpater {
      * @param projectName 项目名称
      * @return 创建结果 json字符串
      */
-    private Boolean createProjects(String projectName) {
+    private String createProjects(String projectName) {
         return createProjects(projectName,projectName);
     }
 
@@ -114,7 +111,7 @@ public class AzkabanAdpater {
      * @param description 描述
      * @return 创建结果 json字符串
      */
-    private Boolean createProjects(String projectName, String description) {
+    private String createProjects(String projectName, String description) {
         LinkedMultiValueMap<String, String> linkedMultiValueMap = new LinkedMultiValueMap<String, String>();
         if(null == sessionId) {
             login();
@@ -125,14 +122,15 @@ public class AzkabanAdpater {
         linkedMultiValueMap.add("description", description);
         HttpEntity<LinkedMultiValueMap<String, String>> httpEntity = new HttpEntity<>(linkedMultiValueMap, hs);
         deleteProject(projectName);
-        ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.postForEntity(uri + "/manager", httpEntity, JSONObject.class);
-        if(HttpStatus.OK.value() == jsonObjectResponseEntity.getStatusCode().value()) {
-            JSONObject body = jsonObjectResponseEntity.getBody();
-            logger.info("azkaban create project info :{}",body.toJSONString());
-            return "success".equals(body.getString("status"));
-        }
-        logger.info("azkaban create project failure:{}",JSONObject.toJSONString(jsonObjectResponseEntity));
-        return false;
+        String res = restTemplate.postForObject(uri + "/manager", httpEntity, String.class);
+//        ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.postForEntity(uri + "/manager", httpEntity, JSONObject.class);
+//        if(HttpStatus.OK.value() == jsonObjectResponseEntity.getStatusCode().value()) {
+//            JSONObject body = jsonObjectResponseEntity.getBody();
+//            logger.info("azkaban create project info :{}",body.toJSONString());
+//            return "success".equals(body.getString("status"));
+//        }
+        logger.info("azkaban create project failure:{}",res);
+        return res;
     }
 
     /**
@@ -165,6 +163,8 @@ public class AzkabanAdpater {
         linkedMultiValueMap.add("file", resource);
         String res = restTemplate.postForObject(uri + "/manager", linkedMultiValueMap, String.class);
         logger.info("azkaban upload zip:{}", res);
+        //TODO 删除zip
+//        zipFile.delete();
         return res;
     }
 
@@ -675,12 +675,40 @@ public class AzkabanAdpater {
 
     public static void main(String[] args) throws Exception {
         AzkabanAdpater adpater = new AzkabanAdpater();
+//        String projects = adpater.createProjects("songxiaocai_1111", "这个是测试项目");
+//        System.out.println(projects);
 //        String history = adpater.history();
 //        System.out.println(history);
-        String projectLogs = adpater.projectLogs("abc");
-        System.out.println(projectLogs);
-//        String projectFlows = adpater.fetchProjectFlows("abc");
-//        System.out.println(projectFlows);
+//        String projectLogs = adpater.projectLogs("abc");
+//        System.out.println(projectLogs);
+
+//        List<JobDomain> jobList = new ArrayList<>();
+//        JobDomain jobDomain = new JobDomain();
+//        jobDomain.setJobName("my_job1");
+//        jobDomain.setCallbackJobId("1");
+//        jobDomain.setCommands(new String[]{"echo \'这里是测试\'"});
+//        jobList.add(jobDomain);
+//
+//        JobDomain jobDomain1 = new JobDomain();
+//        jobDomain1.setJobName("my_job2");
+//        jobDomain1.setCallbackJobId("2");
+//        jobDomain1.setCommands(new String[]{"echo \'这里是测试2\'"});
+//        jobDomain1.setDependencies(new String[]{"my_job1"});
+//        jobList.add(jobDomain1);
+//
+//        JobDomain jobDomain2 = new JobDomain();
+//        jobDomain2.setJobName("my_job3");
+//        jobDomain2.setCallbackJobId("3");
+//        jobDomain2.setCommands(new String[]{"echo \'这里是测试3\'"});
+//        jobDomain2.setDependencies(new String[]{"my_job1","my_job2"});
+//        jobList.add(jobDomain2);
+//
+//
+//        String s = adpater.uploadZip("kuchensheng", jobList, "songxiaocai_1111");
+//        System.out.println("upload result = "+s);
+
+        String projectFlows = adpater.fetchProjectFlows("abc");
+        System.out.println(projectFlows);
 //        JSONObject jsonObject = JSONObject.parseObject(projectFlows);
 //        JSONArray flows = jsonObject.getJSONArray("flows");
 //        String flowId = ((JSONObject) flows.get(0)).getString("flowId");
