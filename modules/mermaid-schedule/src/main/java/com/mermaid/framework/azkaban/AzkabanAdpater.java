@@ -3,6 +3,7 @@ package com.mermaid.framework.azkaban;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.mermaid.framework.azkaban.job.JobTemplate;
 import com.mermaid.framework.azkaban.modules.JobDomain;
 import com.mermaid.framework.util.SSLUtils;
@@ -322,15 +323,15 @@ public class AzkabanAdpater {
         if(null == sessionId) {
             login();
         }
-        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
-        linkedMultiValueMap.add("session.id", sessionId);
-        linkedMultiValueMap.add("ajax", "fetchFlowExecutions");
-        linkedMultiValueMap.add("project", projectName);
-        linkedMultiValueMap.add("flow", flowId);
-        linkedMultiValueMap.add("start",null == start ? 0 : start);
-        if(null != length || 0 != length) {
-            linkedMultiValueMap.add("length",length);
-        }
+//        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
+//        linkedMultiValueMap.add("session.id", sessionId);
+//        linkedMultiValueMap.add("ajax", "fetchFlowExecutions");
+//        linkedMultiValueMap.add("project", projectName);
+//        linkedMultiValueMap.add("flow", flowId);
+//        linkedMultiValueMap.add("start",null == start ? 0 : start);
+//        if(null != length || 0 != length) {
+//            linkedMultiValueMap.add("length",length);
+//        }
 
         String res = restTemplate.getForObject(uri +"/manager?ajax=fetchFlowExecutions&session.id={1}&project={2}&flow={3}&start={4}&length={5}",String.class,
                 sessionId,projectName,flowId,null == start ? 0 : start,length);
@@ -585,10 +586,11 @@ public class AzkabanAdpater {
         if(null == sessionId) {
             login();
         }
-        String res = restTemplate
-                .getForObject(uri + "?action=removeSched&session.id={1}&&scheduleId={2}"
-                        , String.class, sessionId,scheduleId
-                );
+        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
+        linkedMultiValueMap.add("session.id", sessionId);
+        linkedMultiValueMap.add("action", "removeSched");
+        linkedMultiValueMap.add("scheduleId", scheduleId);
+        String res = restTemplate.postForObject(uri + "/schedule",linkedMultiValueMap,String.class);
         return res;
     }
 
@@ -661,11 +663,11 @@ public class AzkabanAdpater {
         return res;
     }
 
-    public String projectLogs(String projectName) {
+    public String fetchProjectLogs(String projectName) {
         if(null == sessionId) {
             login();
         }
-        String res = restTemplate.getForObject(uri +"/manager?session.id={1}&project={2}&logs",
+        String res = restTemplate.getForObject(uri +"/manager?ajax=fetchProjectLogs&session.id={1}&project={2}",
                 String.class,sessionId,projectName);
         return res;
     }
@@ -742,46 +744,72 @@ public class AzkabanAdpater {
 //        System.out.println(fetchexecflow);
 
 //        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3", "* */2 * * * ?");
-//        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3","9,51,AM,+08:00","08/01/2019",1,PeriodEnum.MINUTES);
+//        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3","11,14,AM,+08:00","08/01/2019",1,PeriodEnum.MINUTES);
 //        System.out.println("执行结果："+s);
 
-        String s1 = adpater.fetchSchecule("songxiaocai_1111", "my_job3");
-        System.out.println("fetchSchecule:"+s1);
-
-//        JSONObject jsonObject1 = JSONObject.parseObject(s1);
+//        String s1 = adpater.fetchSchecule("songxiaocai_1111", "my_job3");
+//        System.out.println("fetchSchecule:"+s1);
+//
+//        JSONObject jsonObject1 = JSONObject.parseObject(s1).getJSONObject("schedule");
 //        String scheduleId = jsonObject1.getString("scheduleId");
+//
+//        String s222 = adpater.removeSched(scheduleId);
+//        System.out.println("result = "+s222);
 
 
+//        int start = 0;
+//        String execid = null;
+//        while (true) {
+//            //获取最新执行的execId，拿到这个工程的
+//
+//            String fetchFlowExecutions = adpater.fetchFlowExecutions("songxiaocai_1111", "my_job3", 0, 1);
+//            System.out.println("fetchFlowExecutions="+ fetchFlowExecutions);
+//            JSONObject jsonObject = JSONObject.parseObject(fetchFlowExecutions);
+//            JSONArray executions = jsonObject.getJSONArray("executions");
+//            JSONObject o = executions.getJSONObject(0);
+//
+//            String execid1  = o.getString("execId");
+//            if(execid1.equals(execid)) {
+//                System.out.println("两次execid一致，说明此次查询的日志还是同一个job的日志");
+//                TimeUnit.SECONDS.sleep(30);
+//                continue;
+//            }
+//            execid = execid1;
+//
+//            System.out.println("被查询的execid="+execid);
+//
+//            int offset = 0;
+//            int length = 1024;
+//            while (offset <= length) {
+//                try {
+//                    String my_job3 = adpater.fetchExecJobLogs(execid, "my_job3", offset, length);
+//                    System.out.println(my_job3);
+//                    JSONObject jsonObject_job3 = JSONObject.parseObject(my_job3);
+//                    System.out.println(jsonObject_job3.getString("data"));
+//                    length = jsonObject_job3.getIntValue("length");
+//                    offset = offset < length ? length : offset;
+//                    System.out.println("此次获取的日志长度="+length);
+//                    TimeUnit.SECONDS.sleep(5);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            System.out.println("进入下个循环");
+//
+//            TimeUnit.SECONDS.sleep(5);
+//
+//        }
 
-        int start = 0;
-        while (true) {
-            //获取最新执行的execId，拿到这个工程的
-            String execid = null;
-            String fetchFlowExecutions = adpater.fetchFlowExecutions("songxiaocai_1111", "my_job3", 0, 1);
-            System.out.println("fetchFlowExecutions="+ fetchFlowExecutions);
-            JSONObject jsonObject = JSONObject.parseObject(fetchFlowExecutions);
-            JSONArray executions = jsonObject.getJSONArray("executions");
-            JSONObject o = executions.getJSONObject(0);
-            execid = o.getString("execId");
-
-            int offset = 0;
-            int length = 5000;
-            while (offset < length) {
-                String my_job3 = adpater.fetchExecJobLogs(execid, "my_job3", offset, length);
-                System.out.println(my_job3);
-                JSONObject jsonObject_job3 = JSONObject.parseObject(my_job3);
-                System.out.println(jsonObject_job3.getString("data"));
-                int length1 = jsonObject_job3.getIntValue("length");
-                offset = length1;
-                TimeUnit.SECONDS.sleep(30);
-            }
-
-            TimeUnit.SECONDS.sleep(10);
-
+        String songxiaocai_1111 = adpater.fetchProjectLogs("songxiaocai_1111");
+        System.out.println(songxiaocai_1111);
+        JSONObject jsonObject = JSONObject.parseObject(songxiaocai_1111);
+        System.out.println(jsonObject.getString("columns"));
+        JSONArray logData = jsonObject.getJSONArray("logData");
+        for (Object o : logData) {
+            System.out.println(String.valueOf(o));
         }
-
-
-
+//        System.out.println(jsonObject.getString("logData"));
     }
 
     enum PeriodEnum{
