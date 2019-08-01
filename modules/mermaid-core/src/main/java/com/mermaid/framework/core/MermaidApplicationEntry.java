@@ -47,9 +47,9 @@ public class MermaidApplicationEntry {
         applicationInfo.setRuntimeProperties(globalRuntimeConfigFactory);
 
         args = globalRuntimeConfigFactory.getLaunchArgs();
-        SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
+//        SpringApplication springApplication = new SpringApplicationBuilder(MermaidApplicationEntry.class).web(true).build();
         printConfigInfo(globalRuntimeConfigFactory.getProperties());
-        springApplication.run(args);
+        SpringApplication.run(MermaidApplicationEntry.class,args);
         log.info("**MERMAID[{}]**应用{}:{}启动成功",applicationInfo.getAppVersion(),applicationInfo.getAppName(),applicationInfo.getAppPort());
         while (true) {
             log.info("測試代碼，時間{}", LocalDateTime.now().toString());

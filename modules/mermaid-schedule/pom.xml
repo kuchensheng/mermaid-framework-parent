@@ -37,7 +37,7 @@
         <dependency>
             <groupId>com.mermaid.framework</groupId>
             <artifactId>mermaid-common</artifactId>
-            <version>1.7-SNAPSHOT</version>
+            <version>1.6</version>
         </dependency>
 
         <dependency>
