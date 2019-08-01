@@ -22,6 +22,10 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import java.io.File;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -104,7 +108,8 @@ public class AzkabanAdpater {
      * @param projectName 项目名称
      * @return 创建结果 json字符串
      */
-    private String createProjects(String projectName) {
+    public String createProjects(String projectName) {
+        logger.info("create azkaban project【name={}】",projectName);
         return createProjects(projectName,projectName);
     }
 
@@ -114,7 +119,7 @@ public class AzkabanAdpater {
      * @param description 描述
      * @return 创建结果 json字符串
      */
-    private String createProjects(String projectName, String description) {
+    public String createProjects(String projectName, String description) {
         LinkedMultiValueMap<String, String> linkedMultiValueMap = new LinkedMultiValueMap<String, String>();
         if(null == sessionId) {
             login();
@@ -126,12 +131,6 @@ public class AzkabanAdpater {
         HttpEntity<LinkedMultiValueMap<String, String>> httpEntity = new HttpEntity<>(linkedMultiValueMap, hs);
         deleteProject(projectName);
         String res = restTemplate.postForObject(uri + "/manager", httpEntity, String.class);
-//        ResponseEntity<JSONObject> jsonObjectResponseEntity = restTemplate.postForEntity(uri + "/manager", httpEntity, JSONObject.class);
-//        if(HttpStatus.OK.value() == jsonObjectResponseEntity.getStatusCode().value()) {
-//            JSONObject body = jsonObjectResponseEntity.getBody();
-//            logger.info("azkaban create project info :{}",body.toJSONString());
-//            return "success".equals(body.getString("status"));
-//        }
         logger.info("azkaban create project failure:{}",res);
         return res;
     }
@@ -141,7 +140,9 @@ public class AzkabanAdpater {
      * @param projectName 项目名
      * @return 删除结果
      */
-    private boolean deleteProject(String projectName) {
+    public boolean deleteProject(String projectName) {
+        logger.info("删除工程={}",projectName);
+        logger.warn("请注意，这不是彻底删除！！！");
         if(null == sessionId) {
             login();
         }
@@ -194,6 +195,7 @@ public class AzkabanAdpater {
      * @return
      */
     public String uploadZip(String flowName, List<JobDomain> jobList, String projecteName) {
+        logger.info("根据配置信息创建job文件和对应的zip文件，并上传");
         if(CollectionUtils.isEmpty(jobList)) {
             return null;
         }
@@ -223,6 +225,7 @@ public class AzkabanAdpater {
     }
      */
     public String fetchProjectFlows(String projectName) {
+        logger.info("查询项目的流信息，projectName={}",projectName);
         if(null == sessionId) {
             login();
         }
@@ -235,7 +238,7 @@ public class AzkabanAdpater {
     }
 
     /**
-     * 获取流的作业
+     * 获取流的作业,in 表示依赖的上级job
      * @param projectName 项目名
      * @param flowId 流的id {@See fetchProjectFlows(projectName)}
      * @return
@@ -263,6 +266,7 @@ public class AzkabanAdpater {
     }
      */
     public String fetchJobsFlow(String projectName,String flowId) {
+        logger.info("获取流【projectName={},flowId={}】的相关信息和依赖",projectName,flowId);
         if(null == sessionId) {
             login();
         }
@@ -275,11 +279,11 @@ public class AzkabanAdpater {
     }
 
     /**
-     * 获取溜的执行列表
-     * @param projectName
-     * @param flowId
-     * @param start
-     * @param length
+     * 获取流的执行列表
+     * @param projectName 项目名
+     * @param flowId 流名称/ID
+     * @param start 开始位置
+     * @param length 返回的个数，用于分页
      * @return
      *
      * {
@@ -320,23 +324,13 @@ public class AzkabanAdpater {
      * }
      */
     public String fetchFlowExecutions(String projectName,String flowId,Integer start,Integer length) {
+        logger.info("获取流的执行信息列表，可查看对应的执行时间和状态，projectName={},flowId={}",projectName,flowId);
         if(null == sessionId) {
             login();
         }
-//        LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
-//        linkedMultiValueMap.add("session.id", sessionId);
-//        linkedMultiValueMap.add("ajax", "fetchFlowExecutions");
-//        linkedMultiValueMap.add("project", projectName);
-//        linkedMultiValueMap.add("flow", flowId);
-//        linkedMultiValueMap.add("start",null == start ? 0 : start);
-//        if(null != length || 0 != length) {
-//            linkedMultiValueMap.add("length",length);
-//        }
 
         String res = restTemplate.getForObject(uri +"/manager?ajax=fetchFlowExecutions&session.id={1}&project={2}&flow={3}&start={4}&length={5}",String.class,
                 sessionId,projectName,flowId,null == start ? 0 : start,length);
-//        String res = restTemplate.getForObject(uri + "/manager",String.class,linkedMultiValueMap);
-
         logger.info("azkban fetch project flows:{}", res);
         return res;
     }
@@ -351,6 +345,7 @@ public class AzkabanAdpater {
     }
      */
     public String getRunning(String projectName,String flowId) {
+        logger.info("获取正在执行的任务列表，projectName={},flowId={}",projectName,flowId);
         if(null == sessionId) {
             login();
         }
@@ -392,6 +387,7 @@ public class AzkabanAdpater {
     }
      */
     public String executorFlow(String projectName,String flowId,String[] disableExectionIds ) {
+        logger.info("执行流，projectName={},flowId={},需要剔除的节点信息={}",projectName,flowId,disableExectionIds);
         if(null == sessionId) {
             login();
         }
@@ -414,6 +410,7 @@ public class AzkabanAdpater {
      * @return
      */
     public boolean cancleExecutorFlow(String execId) {
+        logger.info("取消流任务的执行");
         String res = restTemplate
                 .getForObject(uri + " /executor?ajax=cancelFlow&session.id={1}&execid={2}"
                         , String.class, sessionId,execId
@@ -423,16 +420,46 @@ public class AzkabanAdpater {
     }
 
     /**
-     * 定时执行任务
-     * @param projectName
-     * @param flowName
-     * @param scheduleTime
-     * @param scheduleDate
-     * @param period
-     * @param periodEnum
+     * 定时执行 flow
+     * @param projectName 工程名
+     * @param flowId 流名称/ID
+     * @param startTime 开始执行时间
+     * @param period 周期
+     * @param periodEnum 周期单位
      * @return
      */
-    public String scheduleFlow(String projectName,String flowName,String scheduleTime,String scheduleDate, Integer period,PeriodEnum periodEnum) {
+    public String scheduleFlow(String projectName, String flowId, LocalDateTime startTime, Integer period, PeriodEnum periodEnum) {
+        LocalDate localDate = startTime.toLocalDate();
+        LocalTime localTime = startTime.toLocalTime();
+        DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        //"11,14,AM,+08:00","08/01/2019"
+        DateTimeFormatter.ofPattern("HH,mm");
+
+        String scheduleDate = localDate.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+        String scheduleTime = localTime.format(DateTimeFormatter.ofPattern("HH,mm"));
+
+        int hour = localTime.getHour();
+        if (hour >=12 ) {
+            scheduleTime += ",PM";
+        } else {
+            scheduleTime += ",AM";
+        }
+        scheduleTime += ",+8:00";
+
+        return scheduleFlow(projectName,flowId,scheduleTime,scheduleDate,period,periodEnum);
+    }
+    /**
+     * 定时执行任务
+     * @param projectName 工程名
+     * @param flowName 流名称/ID
+     * @param scheduleTime 开始时间
+     * @param scheduleDate 开始日期
+     * @param period 周期
+     * @param periodEnum 周期单位
+     * @return
+     */
+    private String scheduleFlow(String projectName,String flowName,String scheduleTime,String scheduleDate, Integer period,PeriodEnum periodEnum) {
+        logger.info("定时执行任务，projectName={},flowName={},开始时间={},开始日期={},周期={},",projectName,flowName,scheduleTime,scheduleDate,period+periodEnum.value);
         if(null == sessionId) {
             login();
         }
@@ -459,6 +486,7 @@ public class AzkabanAdpater {
         }
 
         String res = restTemplate.postForObject(uri + "/schedule?ajax=scheduleFlow",linkedMultiValueMap,String.class);
+        logger.info("schedule flow result = {}",res);
         return res;
     }
 
@@ -512,12 +540,12 @@ public class AzkabanAdpater {
                 .getForObject(uri + " /executor?ajax=pauseFlow&session.id={1}&execid={2}"
                         , String.class, sessionId,execId
                 );
-        logger.info("azkban executions that are currently running:{}", res);
+        logger.info("azkban pauseFlow that are currently running:{}", res);
         return !res.contains("error");
     }
 
     /**
-     * 暂停流执行
+     * 恢复流执行
      * @param execId
      * @return
      */
@@ -526,14 +554,14 @@ public class AzkabanAdpater {
                 .getForObject(uri + " /executor?ajax=resumeFlow&session.id={1}&execid={2}"
                         , String.class, sessionId,execId
                 );
-        logger.info("azkban executions that are currently running:{}", res);
+        logger.info("azkban resumeFlow that are currently running:{}", res);
         return !res.contains("error");
     }
 
 
 
     /**
-     *
+     * 查看定时任务信息
      * @param projectName
      * @param flowId
      * @return
@@ -582,6 +610,11 @@ public class AzkabanAdpater {
         return res;
     }
 
+    /**
+     * 移除定时任务
+     * @param scheduleId
+     * @return
+     */
     public String removeSched(String scheduleId) {
         if(null == sessionId) {
             login();
@@ -655,14 +688,11 @@ public class AzkabanAdpater {
         return res;
     }
 
-    public String history() {
-        if(null == sessionId) {
-            login();
-        }
-        String res = restTemplate.getForObject(uri + "/history",String.class);
-        return res;
-    }
-
+    /**
+     * 获取项目日志信息
+     * @param projectName 项目名
+     * @return
+     */
     public String fetchProjectLogs(String projectName) {
         if(null == sessionId) {
             login();
@@ -689,6 +719,7 @@ public class AzkabanAdpater {
 
     public static void main(String[] args) throws Exception {
         AzkabanAdpater adpater = new AzkabanAdpater();
+
 //        String projects = adpater.createProjects("shehuishehui");
 //        System.out.println(projects);
 //        String history = adpater.history();
@@ -745,7 +776,8 @@ public class AzkabanAdpater {
 
 //        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3", "* */2 * * * ?");
 //        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3","11,14,AM,+08:00","08/01/2019",1,PeriodEnum.MINUTES);
-//        System.out.println("执行结果："+s);
+        String s = adpater.scheduleFlow("songxiaocai_1111","my_job3",LocalDateTime.now(),1,PeriodEnum.MINUTES);
+        System.out.println("执行结果："+s);
 
 //        String s1 = adpater.fetchSchecule("songxiaocai_1111", "my_job3");
 //        System.out.println("fetchSchecule:"+s1);
@@ -801,14 +833,14 @@ public class AzkabanAdpater {
 //
 //        }
 
-        String songxiaocai_1111 = adpater.fetchProjectLogs("songxiaocai_1111");
-        System.out.println(songxiaocai_1111);
-        JSONObject jsonObject = JSONObject.parseObject(songxiaocai_1111);
-        System.out.println(jsonObject.getString("columns"));
-        JSONArray logData = jsonObject.getJSONArray("logData");
-        for (Object o : logData) {
-            System.out.println(String.valueOf(o));
-        }
+//        String songxiaocai_1111 = adpater.fetchProjectLogs("songxiaocai_1111");
+//        System.out.println(songxiaocai_1111);
+//        JSONObject jsonObject = JSONObject.parseObject(songxiaocai_1111);
+//        System.out.println(jsonObject.getString("columns"));
+//        JSONArray logData = jsonObject.getJSONArray("logData");
+//        for (Object o : logData) {
+//            System.out.println(String.valueOf(o));
+//        }
 //        System.out.println(jsonObject.getString("logData"));
     }
 
