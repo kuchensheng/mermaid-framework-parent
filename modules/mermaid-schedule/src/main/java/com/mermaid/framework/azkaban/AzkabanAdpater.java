@@ -1,6 +1,7 @@
 package com.mermaid.framework.azkaban;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mermaid.framework.azkaban.job.JobTemplate;
 import com.mermaid.framework.azkaban.modules.JobDomain;
@@ -331,7 +332,9 @@ public class AzkabanAdpater {
             linkedMultiValueMap.add("length",length);
         }
 
-        String res = restTemplate.getForObject(uri + "/manager",String.class,linkedMultiValueMap);
+        String res = restTemplate.getForObject(uri +"/manager?ajax=fetchFlowExecutions&session.id={1}&project={2}&flow={3}&start={4}&length={5}",String.class,
+                sessionId,projectName,flowId,null == start ? 0 : start,length);
+//        String res = restTemplate.getForObject(uri + "/manager",String.class,linkedMultiValueMap);
 
         logger.info("azkban fetch project flows:{}", res);
         return res;
@@ -434,7 +437,7 @@ public class AzkabanAdpater {
         }
         LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
         linkedMultiValueMap.add("session.id", sessionId);
-        linkedMultiValueMap.add("ajax", "scheduleFlow");
+//        linkedMultiValueMap.add("ajax", "scheduleFlow");
         linkedMultiValueMap.add("projectName", projectName);
         String s = fetchProjectFlows(projectName);
         JSONObject jsonObject = JSONObject.parseObject(s);
@@ -454,7 +457,7 @@ public class AzkabanAdpater {
             linkedMultiValueMap.add("period",period + periodEnum.getValue());
         }
 
-        String res = restTemplate.postForObject(uri + "/schedule",linkedMultiValueMap,String.class);
+        String res = restTemplate.postForObject(uri + "/schedule?ajax=scheduleFlow",linkedMultiValueMap,String.class);
         return res;
     }
 
@@ -476,12 +479,12 @@ public class AzkabanAdpater {
         }
         LinkedMultiValueMap<String, Object> linkedMultiValueMap = new LinkedMultiValueMap<String, Object>();
         linkedMultiValueMap.add("session.id", sessionId);
-//        linkedMultiValueMap.add("ajax", "scheduleCronFlow");
+        linkedMultiValueMap.add("ajax", "scheduleCronFlow");
         linkedMultiValueMap.add("projectName", projectName);
         linkedMultiValueMap.add("flow", flowName);
         linkedMultiValueMap.add("cronExpression",cron);
 
-        return restTemplate.postForObject(uri + "/schedule?ajax=scheduleCronFlow",linkedMultiValueMap,String.class);
+        return restTemplate.postForObject(uri + "/schedule",linkedMultiValueMap,String.class);
     }
 
     /**
@@ -530,7 +533,7 @@ public class AzkabanAdpater {
 
     /**
      *
-     * @param projectId
+     * @param projectName
      * @param flowId
      * @return
      * {
@@ -562,12 +565,16 @@ public class AzkabanAdpater {
      *   }
      * }
      */
-    public String fetchSchecule(String projectId,String flowId) {
+    public String fetchSchecule(String projectName,String flowId) {
         if(null == sessionId) {
             login();
         }
+
+        String s = fetchProjectFlows(projectName);
+        JSONObject jsonObject = JSONObject.parseObject(s);
+        String projectId = jsonObject.getString("projectId");
         String res = restTemplate
-                .getForObject(uri + "ajax=fetchSchedule&session.id={1}&&projectId={2}&flowId={3}"
+                .getForObject(uri + "/schedule?ajax=fetchSchedule&session.id={1}&&projectId={2}&flowId={3}"
                         , String.class, sessionId,projectId,flowId
                 );
         logger.info("azkban schedule info:{}", res);
@@ -579,7 +586,7 @@ public class AzkabanAdpater {
             login();
         }
         String res = restTemplate
-                .getForObject(uri + "action=removeSched&session.id={1}&&scheduleId={2}"
+                .getForObject(uri + "?action=removeSched&session.id={1}&&scheduleId={2}"
                         , String.class, sessionId,scheduleId
                 );
         return res;
@@ -734,21 +741,44 @@ public class AzkabanAdpater {
 //        String fetchexecflow = adpater.fetchexecflow("3096");
 //        System.out.println(fetchexecflow);
 
-        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3", "*/5 * * * * ?");
-//        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3","5,19,PM,PDT","07/31/2019",5,PeriodEnum.SECONDS);
-        System.out.println("执行结果："+s);
+//        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3", "* */2 * * * ?");
+//        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3","9,51,AM,+08:00","08/01/2019",1,PeriodEnum.MINUTES);
+//        System.out.println("执行结果："+s);
+
+        String s1 = adpater.fetchSchecule("songxiaocai_1111", "my_job3");
+        System.out.println("fetchSchecule:"+s1);
+
+//        JSONObject jsonObject1 = JSONObject.parseObject(s1);
+//        String scheduleId = jsonObject1.getString("scheduleId");
 
 
-//        int offset = 0;
-//        int length = 5000;
-//        while (true) {
-//            String my_job3 = adpater.fetchExecJobLogs("3096", "my_job3", offset, length);
-//            System.out.println(my_job3);
-//            JSONObject jsonObject = JSONObject.parseObject(my_job3);
-//            System.out.println(jsonObject.getString("data"));
-//            offset = jsonObject.getIntValue("length");
-//            TimeUnit.SECONDS.sleep(10);
-//        }
+
+        int start = 0;
+        while (true) {
+            //获取最新执行的execId，拿到这个工程的
+            String execid = null;
+            String fetchFlowExecutions = adpater.fetchFlowExecutions("songxiaocai_1111", "my_job3", 0, 1);
+            System.out.println("fetchFlowExecutions="+ fetchFlowExecutions);
+            JSONObject jsonObject = JSONObject.parseObject(fetchFlowExecutions);
+            JSONArray executions = jsonObject.getJSONArray("executions");
+            JSONObject o = executions.getJSONObject(0);
+            execid = o.getString("execId");
+
+            int offset = 0;
+            int length = 5000;
+            while (offset < length) {
+                String my_job3 = adpater.fetchExecJobLogs(execid, "my_job3", offset, length);
+                System.out.println(my_job3);
+                JSONObject jsonObject_job3 = JSONObject.parseObject(my_job3);
+                System.out.println(jsonObject_job3.getString("data"));
+                int length1 = jsonObject_job3.getIntValue("length");
+                offset = length1;
+                TimeUnit.SECONDS.sleep(30);
+            }
+
+            TimeUnit.SECONDS.sleep(10);
+
+        }
 
 
 
