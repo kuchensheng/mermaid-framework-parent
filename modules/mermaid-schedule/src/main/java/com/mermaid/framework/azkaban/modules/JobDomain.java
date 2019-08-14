@@ -29,7 +29,7 @@ public class JobDomain {
     private String callbackJobId;
 
 
-    enum JobTypeEnum {
+    public enum JobTypeEnum {
         COMMAND("command"),JAVA("java");
         private String value;
 

@@ -40,6 +40,12 @@ public class AzkabanAdpater {
 
     private String uri;
 
+    private String userName;
+
+    private String password;
+
+    private String commonShPath;
+
     private static RestTemplate restTemplate = restTemplate();
 
     private static HttpHeaders hs = buildHttpHeaders();
@@ -62,6 +68,17 @@ public class AzkabanAdpater {
         return hs;
     }
 
+    public AzkabanAdpater() {
+        login();
+    }
+
+    public AzkabanAdpater(String uri, String userName, String password) {
+        this.uri = uri;
+        this.userName = userName;
+        this.password = password;
+        login(uri,userName,password);
+    }
+
     /**
      * 登陆azkaban
      * @throws Exception
@@ -71,7 +88,17 @@ public class AzkabanAdpater {
             Properties properties = new Properties();
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/azkaban.properties");
             properties.load(resourceAsStream);
-            login(properties.getProperty("mermaid.azkaban.uri"),properties.getProperty("mermaid.azkaban.username"),properties.getProperty("mermaid.azkaban.password"));
+            if(null == uri) {
+                this.uri = properties.getProperty("mermaid.azkaban.uri");
+            }
+            if(null == userName) {
+                this.userName = properties.getProperty("mermaid.azkaban.username");
+            }
+            if(null == password) {
+                this.password = properties.getProperty("mermaid.azkaban.password");
+            }
+            this.commonShPath = properties.getProperty("mermaid.azkaban.home","/home/test/data/");
+            login(uri,userName,password);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,7 +111,7 @@ public class AzkabanAdpater {
      * @param password 密码
      * @throws Exception 登陆异常信息
      */
-    private void login(String uri,String userName,String password) throws Exception {
+    private void login(String uri,String userName,String password) {
         LinkedMultiValueMap<String, String> linkedMultiValueMap = new LinkedMultiValueMap<String, String>();
         linkedMultiValueMap.add("action", "login");
         linkedMultiValueMap.add("username", userName);
@@ -101,6 +128,8 @@ public class AzkabanAdpater {
             logger.warn("azkabna login failure:{}", resJson);
         }
         this.uri = uri;
+        this.userName = userName;
+        this.password = password;
     }
 
     /**
@@ -204,7 +233,7 @@ public class AzkabanAdpater {
         for (JobDomain value : jobList) {
             // 创建job
             logger.info("创建Job【name={}】",value.getJobName());
-            map.put(value.getJobName(),JobTemplate.createCommand(value.getJobName(),
+            map.put(value.getJobName(),JobTemplate.createCommand(this.commonShPath,value.getJobName(),
                     value.getCommands(),value.getCallbackJobId(),value.getDependencies()));
         }
         return uploadZip(JobTemplate.createZipFile(flowName,map),projecteName);
@@ -715,133 +744,6 @@ public class AzkabanAdpater {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        AzkabanAdpater adpater = new AzkabanAdpater();
-
-//        String projects = adpater.createProjects("shehuishehui");
-//        System.out.println(projects);
-//        String history = adpater.history();
-//        System.out.println(history);
-//        String projectLogs = adpater.projectLogs("abc");
-//        System.out.println(projectLogs);
-
-//        List<JobDomain> jobList = new ArrayList<>();
-//        JobDomain jobDomain = new JobDomain();
-//        jobDomain.setJobName("my_job1");
-//        jobDomain.setCallbackJobId("1");
-//        jobDomain.setCommands(new String[]{"echo \'这里是测试\'"});
-//        jobList.add(jobDomain);
-//
-//        JobDomain jobDomain1 = new JobDomain();
-//        jobDomain1.setJobName("my_job2");
-//        jobDomain1.setCallbackJobId("2");
-//        jobDomain1.setCommands(new String[]{"echo \'这里是测试2\'"});
-//        jobDomain1.setDependencies(new String[]{"my_job1"});
-//        jobList.add(jobDomain1);
-//
-//        JobDomain jobDomain2 = new JobDomain();
-//        jobDomain2.setJobName("my_job3");
-//        jobDomain2.setCallbackJobId("3");
-//        jobDomain2.setCommands(new String[]{"echo \'这里是测试3\'"});
-//        jobDomain2.setDependencies(new String[]{"my_job1","my_job2"});
-//        jobList.add(jobDomain2);
-//
-//
-//        String s = adpater.uploadZip("kuchensheng", jobList, "songxiaocai_1111");
-//        System.out.println("upload result = "+s);
-
-//        String projectFlows = adpater.fetchProjectFlows("songxiaocai_1111");
-//        System.out.println(projectFlows);
-//        JSONObject jsonObject = JSONObject.parseObject(projectFlows);
-//        JSONArray flows = jsonObject.getJSONArray("flows");
-//        String flowId = ((JSONObject) flows.get(0)).getString("flowId");
-//        System.out.println("flowId = " + flowId);
-//
-////        String fetchJobsFlow = adpater.fetchJobsFlow(jsonObject.getString("project"),flowId);
-////        System.out.println(fetchJobsFlow);
-//
-//        String executorFlow = adpater.executorFlow(jsonObject.getString("project"), flowId);
-//        System.out.println(executorFlow);
-//
-//        String fetchexecflow = adpater.fetchexecflow(JSONObject.parseObject(executorFlow).getString("execid"));
-//        System.out.println(fetchexecflow);
-
-//        String executorFlow = adpater.executorFlow("songxiaocai_1111", "my_job3");
-//        System.out.println(executorFlow);//execid:3096
-
-//        String fetchexecflow = adpater.fetchexecflow("3096");
-//        System.out.println(fetchexecflow);
-
-//        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3", "* */2 * * * ?");
-//        String s = adpater.scheduleFlow("songxiaocai_1111", "my_job3","11,14,AM,+08:00","08/01/2019",1,PeriodEnum.MINUTES);
-        String s = adpater.scheduleFlow("songxiaocai_1111","my_job3",LocalDateTime.now(),1,PeriodEnum.MINUTES);
-        System.out.println("执行结果："+s);
-
-//        String s1 = adpater.fetchSchecule("songxiaocai_1111", "my_job3");
-//        System.out.println("fetchSchecule:"+s1);
-//
-//        JSONObject jsonObject1 = JSONObject.parseObject(s1).getJSONObject("schedule");
-//        String scheduleId = jsonObject1.getString("scheduleId");
-//
-//        String s222 = adpater.removeSched(scheduleId);
-//        System.out.println("result = "+s222);
-
-
-//        int start = 0;
-//        String execid = null;
-//        while (true) {
-//            //获取最新执行的execId，拿到这个工程的
-//
-//            String fetchFlowExecutions = adpater.fetchFlowExecutions("songxiaocai_1111", "my_job3", 0, 1);
-//            System.out.println("fetchFlowExecutions="+ fetchFlowExecutions);
-//            JSONObject jsonObject = JSONObject.parseObject(fetchFlowExecutions);
-//            JSONArray executions = jsonObject.getJSONArray("executions");
-//            JSONObject o = executions.getJSONObject(0);
-//
-//            String execid1  = o.getString("execId");
-//            if(execid1.equals(execid)) {
-//                System.out.println("两次execid一致，说明此次查询的日志还是同一个job的日志");
-//                TimeUnit.SECONDS.sleep(30);
-//                continue;
-//            }
-//            execid = execid1;
-//
-//            System.out.println("被查询的execid="+execid);
-//
-//            int offset = 0;
-//            int length = 1024;
-//            while (offset <= length) {
-//                try {
-//                    String my_job3 = adpater.fetchExecJobLogs(execid, "my_job3", offset, length);
-//                    System.out.println(my_job3);
-//                    JSONObject jsonObject_job3 = JSONObject.parseObject(my_job3);
-//                    System.out.println(jsonObject_job3.getString("data"));
-//                    length = jsonObject_job3.getIntValue("length");
-//                    offset = offset < length ? length : offset;
-//                    System.out.println("此次获取的日志长度="+length);
-//                    TimeUnit.SECONDS.sleep(5);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            System.out.println("进入下个循环");
-//
-//            TimeUnit.SECONDS.sleep(5);
-//
-//        }
-
-//        String songxiaocai_1111 = adpater.fetchProjectLogs("songxiaocai_1111");
-//        System.out.println(songxiaocai_1111);
-//        JSONObject jsonObject = JSONObject.parseObject(songxiaocai_1111);
-//        System.out.println(jsonObject.getString("columns"));
-//        JSONArray logData = jsonObject.getJSONArray("logData");
-//        for (Object o : logData) {
-//            System.out.println(String.valueOf(o));
-//        }
-//        System.out.println(jsonObject.getString("logData"));
     }
 
     enum PeriodEnum{

@@ -10,6 +10,8 @@ import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.*;
@@ -34,17 +36,20 @@ import java.util.zip.ZipOutputStream;
  * 15:48   kuchensheng    1.0
  */
 public class JobTemplate {
+    private static final Logger logger = LoggerFactory.getLogger(JobTemplate.class);
 
     private static Template getTemplate() {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_26);
         try {
             String path = JobTemplate.class.getClassLoader().getResource("template").getPath();
+            logger.info("获取到template的父级目录「{}」",path);
             cfg.setDirectoryForTemplateLoading(new File(path));
             cfg.setDefaultEncoding("UTF-8");
             cfg.setObjectWrapper(new DefaultObjectWrapper(Configuration.VERSION_2_3_26));
             Template template = cfg.getTemplate("template.ftl");
             return template;
         } catch (Exception e) {
+            logger.error("读取template信息失败",e);
             e.printStackTrace();
         }
         return null;
@@ -58,22 +63,25 @@ public class JobTemplate {
      * @param dependencies 依赖的上级job
      * @return
      */
-    public static String createCommand(String jobName,String[] commands,String DCS_JOB_ID,String[] dependencies) {
-
+    public static String createCommand(String commonShPath,String jobName,String[] commands,String DCS_JOB_ID,String[] dependencies) {
+        logger.info("创建job信息，commonShPath={},jobName={},commands={},DCS_JOB_ID={},dependencies={}",commonShPath,jobName,commands,DCS_JOB_ID,dependencies);
         String res = null;
         StringWriter stringWriter = new StringWriter();
         BufferedWriter bw = new BufferedWriter(stringWriter);
         Map<String,Object> root = new HashMap<>();
         root.put("jobName",jobName);
         root.put("type","command");
-        if(null == commands) {
-            return null;
-        }
         List<String> commandList = new ArrayList<>();
-        for (String cs : commands) {
-            commandList.add(cs);
-            commandList.add("sh /home/test/data/common.sh " + DCS_JOB_ID);
+        if(null != commands) {
+            for (String cs : commands) {
+                commandList.add(cs);
+            }
         }
+
+        if(!commonShPath.endsWith("/")) {
+            commonShPath = commonShPath + "/";
+        }
+        commandList.add("sh "+commonShPath+" " + DCS_JOB_ID);
         root.put("commands", commandList);
         if(null != dependencies) {
             String strDepen = "";
@@ -91,11 +99,11 @@ public class JobTemplate {
             bw.flush();
             res = stringWriter.getBuffer().toString();
             bw.close();
-        } catch (TemplateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            logger.error("生成job异常",e);
             e.printStackTrace();
         }
+        logger.info("job生成成功：「{}」",res);
         return res;
 
     }
@@ -147,89 +155,6 @@ public class JobTemplate {
         }
         file.delete();
     }
-
-    public static void zip(String srcDir, String targetFile) throws IOException {
-        try (OutputStream fos = new FileOutputStream(targetFile);
-             OutputStream bos = new BufferedOutputStream(fos);
-             ArchiveOutputStream aos = new ZipArchiveOutputStream(bos)) {
-
-            Path dirPath = Paths.get(srcDir);
-            Files.walkFileTree(dirPath, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    ArchiveEntry entry = new ZipArchiveEntry(dir.toFile(), dirPath.relativize(dir).toString());
-                    aos.putArchiveEntry(entry);
-                    aos.closeArchiveEntry();
-                    return super.preVisitDirectory(dir, attrs);
-                }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    ArchiveEntry entry = new ZipArchiveEntry(
-                            file.toFile(), dirPath.relativize(file).toString());
-                    aos.putArchiveEntry(entry);
-                    IOUtils.copy(new FileInputStream(file.toFile()), aos);
-                    aos.closeArchiveEntry();
-                    return super.visitFile(file, attrs);
-                }
-
-            });
-        }
-    }
-
-    private static File zipFiles(String path, String flowName) throws IOException {
-        File sourceFile = new File(path+"/"+flowName+"/");
-        File[] files = sourceFile.listFiles();
-        if(null == files || files.length < 1) {
-            throw new FileNotFoundException(path+"/"+flowName+"/里没有文件");
-        }
-        InputStream inputStream = null;
-        ZipArchiveOutputStream zipArchiveOutputStream = null;
-        File zipFile = new File(path +"/"+flowName+".zip");
-        try {
-            zipArchiveOutputStream = new ZipArchiveOutputStream(zipFile);
-            //Use Zip64 extensions for all entries where they are required
-            zipArchiveOutputStream.setUseZip64(Zip64Mode.AsNeeded);
-            for (File file : files) {
-                //将每个文件用ZipArchiveEntry封装，使用ZipArchiveOutputStream写到压缩文件
-                ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(file, file.getName());
-                zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
-
-                inputStream = new FileInputStream(file);
-                byte[] buffer = new byte[1024 * 5];
-                int len = -1;
-                while ((len = inputStream.read(buffer)) != -1) {
-                    //把缓冲区的字节写入到ZipArchiveEntry
-                    zipArchiveOutputStream.write(buffer, 0, len);
-                }
-            }
-            zipArchiveOutputStream.closeArchiveEntry();
-            zipArchiveOutputStream.finish();
-
-            for (File file : files) {
-                file.deleteOnExit();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                //关闭输入流
-                if (null != inputStream) {
-                    inputStream.close();
-                }
-                //关闭输出流
-                if (null != zipArchiveOutputStream) {
-                    zipArchiveOutputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return zipFile;
-    }
-
 
     private static final int  BUFFER_SIZE = 2 * 1024;
 
@@ -358,7 +283,7 @@ public class JobTemplate {
         }
     }
     public static void main(String[] args) {
-        String test = JobTemplate.createCommand("test", new String[]{"echo 666"},"15", new String[]{"1","2"});
+        String test = JobTemplate.createCommand("/home/test/data/commons.sh","test1111", new String[]{"echo 666","echo '77777'"},"15", new String[]{"1","2"});
         System.out.println(test);
 
         Map<String,String> map = new HashMap<>();
