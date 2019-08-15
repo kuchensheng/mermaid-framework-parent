@@ -22,6 +22,8 @@ import java.util.Properties;
 public class MybatisConfig implements EnvironmentAware{
     private static final Logger logger  = LoggerFactory.getLogger(MybatisConfig.class);
 
+    private static final String DEFAULT_BASEPACKAGES = "com.mermaid";
+
     private Environment environment;
 
     @Override
@@ -31,12 +33,10 @@ public class MybatisConfig implements EnvironmentAware{
 
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer() throws ClassNotFoundException {
-        String mybatisMapperScanBasePackage = environment.getProperty("mermaid.framework.mybatis.mapper.scan.basePackages","com.mermaid");
+        String mybatisMapperScanBasePackage = environment.getProperty("mermaid.framework.mybatis.mapper.scan.basePackages");
+        mybatisMapperScanBasePackage = !StringUtils.isEmpty(mybatisMapperScanBasePackage) && !DEFAULT_BASEPACKAGES.equals(mybatisMapperScanBasePackage) ? mybatisMapperScanBasePackage +","+DEFAULT_BASEPACKAGES : DEFAULT_BASEPACKAGES;
         String mybatisMapperAnnotation = environment.getProperty("mermaid.framework.mybatis.mapper.scan.annotation","org.apache.ibatis.annotations.Mapper");
-        if(!StringUtils.hasText(mybatisMapperScanBasePackage)) {
-            //hack code to avoid mapper scan error
-            logger.info("未读取到mermaid.framework.mybatis.mapper.scan.basePackages的值，设置为默认值={}","com.mermaid");
-        }
+
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
         mapperScannerConfigurer.setBasePackage(mybatisMapperScanBasePackage);
