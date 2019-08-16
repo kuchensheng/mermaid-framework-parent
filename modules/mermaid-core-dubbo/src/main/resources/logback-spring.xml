@@ -151,17 +151,9 @@
     <!--<logger name="com.opensymphony" level="WARN"/>-->
 
     <!--开发环境-->
-    <springProfile name="default,dev">
+    <springProfile name="default,dev,test">
         <!--打印 通用 Mybatis sql 信息-->
-        <logger name="com.sxc.midgard.activityservice.domain.infrastructure.domain.model.entity.mapper" level="DEBUG" />
-        <logger name="com.sxc.midgard.activityservice" level="INFO" />
-        <root level="info">
-            <appender-ref ref="CONSOLE"/>
-        </root>
-    </springProfile>
 
-    <!--测试环境-->
-    <springProfile name="test">
         <root level="info">
             <appender-ref ref="CONSOLE"/>
         </root>

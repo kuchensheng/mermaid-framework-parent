@@ -5,6 +5,7 @@ import io.seata.rm.datasource.DataSourceProxy;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,7 @@ import javax.sql.DataSource;
  * 09:43   kuchensheng    1.0
  */
 @Configuration
+@ConditionalOnExpression("${mermaid.seata.transaction.enable:false} == true")
 public class SeataConfig {
 
     @Bean

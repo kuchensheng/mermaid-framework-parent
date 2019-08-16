@@ -33,15 +33,15 @@ public class MybatisConfig implements EnvironmentAware{
 
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer() throws ClassNotFoundException {
-        String mybatisMapperScanBasePackage = environment.getProperty("mermaid.framework.mybatis.mapper.scan.basePackages");
+        String mybatisMapperScanBasePackage = environment.getProperty("mybatis.mapper.scan.basePackages");
         mybatisMapperScanBasePackage = !StringUtils.isEmpty(mybatisMapperScanBasePackage) && !DEFAULT_BASEPACKAGES.equals(mybatisMapperScanBasePackage) ? mybatisMapperScanBasePackage +","+DEFAULT_BASEPACKAGES : DEFAULT_BASEPACKAGES;
-        String mybatisMapperAnnotation = environment.getProperty("mermaid.framework.mybatis.mapper.scan.annotation","org.apache.ibatis.annotations.Mapper");
+        String mybatisMapperAnnotation = environment.getProperty("mybatis.mapper.scan.annotation","org.apache.ibatis.annotations.Mapper");
 
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
         mapperScannerConfigurer.setBasePackage(mybatisMapperScanBasePackage);
         if(!StringUtils.hasText(mybatisMapperAnnotation)) {
-            logger.info("未读取到mermaid.framework.mybatis.mapper.scan.annotation，设置默认值={}","org.apache.ibatis.annotations.Mapper");
+            logger.info("未读取到mybatis.mapper.scan.annotation，设置默认值={}","org.apache.ibatis.annotations.Mapper");
         }
         mapperScannerConfigurer.setAnnotationClass(Class.forName(mybatisMapperAnnotation).asSubclass(java.lang.annotation.Annotation.class));
 
@@ -50,10 +50,10 @@ public class MybatisConfig implements EnvironmentAware{
 
     @Bean
     public PageHelper pageHelper() {
-        String helperDialect = environment.getProperty("mermaid.pagehelper.helperDialect","mysql");
-        String offsetAsPageNum = environment.getProperty("mermaid.pagehelper.offsetAsPageNum","true");
-        String rowBoundsWithCount = environment.getProperty("mermaid.pagehelper.rowBoundsWithCount","true");
-        String reasonable = environment.getProperty("mermaid.pagehelper.reasonable","true");
+        String helperDialect = environment.getProperty("pagehelper.helperDialect","mysql");
+        String offsetAsPageNum = environment.getProperty("pagehelper.offsetAsPageNum","true");
+        String rowBoundsWithCount = environment.getProperty("pagehelper.rowBoundsWithCount","true");
+        String reasonable = environment.getProperty("pagehelper.reasonable","true");
         PageHelper pageHelper = new PageHelper();
         Properties properties = new Properties();
         properties.setProperty("offsetAsPageNum",offsetAsPageNum);
