@@ -140,7 +140,7 @@
         <!--<producerConfig>security.protocol=SASL_PLAINTEXT</producerConfig>-->
         <!--<producerConfig>sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="06lR@E";</producerConfig>-->
         <!-- this is the fallback appender if kafka is not available. -->
-        <appender-ref ref="INFO_FILE" />
+<!--        <appender-ref ref="INFO_FILE" />-->
         <!-- 这里未作过滤，所有的日志都send到logName-info这个topic上去 -->
     </appender>
 
@@ -150,29 +150,5 @@
     <logger name="com.alibaba.dubbo" level="INFO"/>
     <!--<logger name="com.opensymphony" level="WARN"/>-->
 
-    <!--开发环境-->
-    <springProfile name="default,dev,test">
-        <!--打印 通用 Mybatis sql 信息-->
-
-        <root level="info">
-            <appender-ref ref="CONSOLE"/>
-        </root>
-    </springProfile>
-
-    <!-- 生产环境. -->
-    <springProfile name="prod">
-
-        <root level = "debug">
-            <appender-ref ref="FILEDEBUG" />
-        </root>
-        <root level = "info">
-            <appender-ref ref="FILEINFO" />
-        </root>
-        <root level = "warn">
-            <appender-ref ref="FILEWARN" />
-        </root>
-        <root level = "error">
-            <appender-ref ref="FILEERROR" />
-        </root>
-    </springProfile>
+<!--    -->
 </configuration>

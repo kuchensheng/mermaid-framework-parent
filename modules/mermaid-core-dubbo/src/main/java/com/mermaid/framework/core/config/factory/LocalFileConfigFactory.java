@@ -44,10 +44,6 @@ public class LocalFileConfigFactory extends AbstractConfigFactory {
                 is = classPathResource.getInputStream();
             }
             properties.load(is);
-            if("true".equals(properties.getProperty("mermaid.framework.cloud.enable","false"))) {
-                logger.info("连接统一配置中心，并获取云平台的配置信息");
-                connect2Cloud(properties);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -62,16 +58,17 @@ public class LocalFileConfigFactory extends AbstractConfigFactory {
         addConfigs(properties);
     }
 
-    private void connect2Cloud(Properties properties) {
+    public void connect2Cloud(Properties properties) {
         logger.info("正在以应用[{}]的身份[{}]连接到云平台[{}]",properties.getProperty("spring.application.name"),properties.get("mermaid.cloud.ticket"),properties.getProperty("mermaid.cloud.url"));
         //fixme:从微服务平台获取配置后，设置到properties中去。
+
     }
 
     private String getMermaidFrameworkVersion() throws IOException {
         String version = "UNKNOWN";
         PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
 //        Resource[] resource = pathMatchingResourcePatternResolver.getResources("classpath*:META-INFO/mermaid-framework-core.properties");
-        Resource resource = pathMatchingResourcePatternResolver.getResource("classpath*:META-INFO/mermaid-framework-core.properties");
+        Resource resource = pathMatchingResourcePatternResolver.getResource("classpath*:META-INF/mermaid-framework-core.properties");
         if(null != resource ) {
             Properties properties = new Properties();
             properties.load(resource.getInputStream());

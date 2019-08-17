@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.spring.context.annotation.EnableDubbo;
 import com.mermaid.framework.core.application.ApplicationInfo;
 import com.mermaid.framework.core.config.factory.GlobalRuntimeConfigFactory;
 import com.mermaid.framework.core.config.factory.LocalFileConfigFactory;
+import com.mermaid.framework.core.config.factory.MermaidCloudConfigFactory;
 import com.mermaid.framework.core.config.factory.ModulesConfigFactory;
 import com.mermaid.framework.util.IPAddressUtils;
 import com.mermaid.framework.util.RuntimeUtils;
@@ -37,6 +38,10 @@ public class MermaidFrameworkEntry {
         buildGlobalRuntimeConfig(applicationInfo);
 
         GlobalRuntimeConfigFactory globalRuntimeConfigFactory = GlobalRuntimeConfigFactory.getInstance();
+        if(Boolean.valueOf(globalRuntimeConfigFactory.getProperties().getProperty("mermaid.framework.cloud.enable","false"))) {
+            globalRuntimeConfigFactory.mergeConfig(new MermaidCloudConfigFactory());
+        }
+
         applicationInfo.setRuntimeProperties(globalRuntimeConfigFactory);
         applicationInfo.setAppVersion(globalRuntimeConfigFactory.getValue("mermaid.framework.version"));
         args = globalRuntimeConfigFactory.getLaunchArgs();
