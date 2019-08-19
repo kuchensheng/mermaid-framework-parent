@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /**
  * ClassName:MermaidCloudConfigFactory
- * Description: TODO
+ * Description: 获取云配置信息
  *
  * @author: kuchensheng
  * @version: Create at:  16:07
@@ -35,13 +35,17 @@ public class MermaidCloudConfigFactory extends AbstractConfigFactory {
 
     private  Properties properties = GlobalRuntimeConfigFactory.getInstance().getProperties();
 
-    private String lastUpdateVersion;
 
     @Autowired
     private RestTemplate restTemplate;
 
     public MermaidCloudConfigFactory() {
-        addConfigs(getCloudConfig());
+        Properties cloudConfig = getCloudConfig();
+        if(null != cloudConfig) {
+            addConfigs(cloudConfig);
+        }
+
+        //将application信息上传给配置中心，配置中心将根据applicationInfo创建对应的zk node
     }
 
     private Properties getCloudConfig() {
@@ -51,9 +55,9 @@ public class MermaidCloudConfigFactory extends AbstractConfigFactory {
         String ticket = properties.getProperty("mermaid.cloud.ticket");
         if(StringUtils.isEmpty(url) || StringUtils.isEmpty(applicationName) || StringUtils.isEmpty(ticket)) {
             logger.warn("正在以应用[{}]的身份[{}]连接到云平台[{}]",applicationName,ticket,url);
-            throw new RuntimeException("配置异常，请检查");
+            return null;
+//            throw new RuntimeException("配置异常，请检查");
         }
-        logger.info("正在以应用[{}]的身份[{}]连接到云平台[{}]",applicationName,ticket,url);
         Map<String,Object> param = new HashMap<>();
         param.put("application.name",applicationName);
         param.put("ticket",ticket);

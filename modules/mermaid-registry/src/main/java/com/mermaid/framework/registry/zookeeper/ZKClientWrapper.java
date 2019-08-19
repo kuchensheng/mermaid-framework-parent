@@ -162,4 +162,9 @@ public class ZKClientWrapper {
         this.zkClient.unsubscribeDataChanges(path,zkDataListener);
     }
 
+    public void setData(String path,Object data) {
+        Assert.assertNotNull(getZkClient());
+        this.zkClient.writeData(path,data);
+    }
+
 }
