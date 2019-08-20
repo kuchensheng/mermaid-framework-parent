@@ -3,6 +3,7 @@ package com.mermaid.framework.core.apollo;
 import com.alibaba.fastjson.JSONObject;
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.ConfigService;
+import com.ctrip.framework.apollo.enums.PropertyChangeType;
 import com.ctrip.framework.apollo.model.ConfigChange;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.property.AutoUpdateConfigChangeListener;
@@ -51,7 +52,8 @@ public class MermaidDataChangeListener implements IZkDataListener,EnvironmentAwa
     public void handleDataChange(String dataPath, Object data) throws Exception {
         //TODO 利用apollo的自动更新原理进行数据变更
         AutoUpdateConfigChangeListener autoUpdateConfigChangeListener = new AutoUpdateConfigChangeListener(this.environment, this.configurableListableBeanFactory);
-        ConfigChangeEvent changeEvent = JSONObject.parseObject(String.valueOf(data), ConfigChangeEvent.class);
+        ConfigChangeEvent changeEvent = mockConfigEvent();
+//        ConfigChangeEvent changeEvent = JSONObject.parseObject(String.valueOf(data), ConfigChangeEvent.class);
         autoUpdateConfigChangeListener.onChange(changeEvent);
         Set<String> changedKeys = changeEvent.changedKeys();
         for (String key : changedKeys) {
@@ -60,6 +62,15 @@ public class MermaidDataChangeListener implements IZkDataListener,EnvironmentAwa
                 new MermaidApplicationContext().refresh();
             }
         }
+    }
+
+    private ConfigChangeEvent mockConfigEvent() {
+        String m_namespace = "application";
+        Map<String,ConfigChange> map = new HashMap<>();
+        ConfigChange configChange = new ConfigChange(m_namespace,"dubbo.application.name","dubbo","mermaid", PropertyChangeType.MODIFIED);
+        map.put("module",configChange);
+        ConfigChangeEvent event = new ConfigChangeEvent(m_namespace,map);
+        return event;
     }
 
     @Override
