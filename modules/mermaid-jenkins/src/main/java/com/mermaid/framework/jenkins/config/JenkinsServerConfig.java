@@ -1,7 +1,9 @@
 package com.mermaid.framework.jenkins.config;
 
 import com.offbytwo.jenkins.JenkinsServer;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -11,6 +13,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Desription:
@@ -33,7 +37,7 @@ public class JenkinsServerConfig {
     @Value("${mermaid.jenkins.server.passwordOrToken}")
     private String passwordOrToken;
 
-    private static List<JenkinsServer> jenkinsServerList = new ArrayList<>();
+    private static List<JenkinsServer> jenkinsServerList;
 
     @PostConstruct
     public void init() throws URISyntaxException {
@@ -49,15 +53,18 @@ public class JenkinsServerConfig {
 
         //验证是否有多个地址
         if(!serverUrls.contains(",")) {
+            jenkinsServerList = new ArrayList<>(1);
             JenkinsServer jenkinsServer = new JenkinsServer(new URI(serverUrls),username,passwordOrToken);
             jenkinsServerList.add(jenkinsServer);
         } else {
             String[] urls = serverUrls.split(",");
+            jenkinsServerList = new ArrayList<>(urls.length);
             for (String url : urls) {
                 JenkinsServer jenkinsServer = new JenkinsServer(new URI(url),username,passwordOrToken);
                 jenkinsServerList.add(jenkinsServer);
             }
         }
+
     }
 
     public static List<JenkinsServer> getJenkinsServerList() {
@@ -66,5 +73,25 @@ public class JenkinsServerConfig {
 
     public static void setJenkinsServerList(List<JenkinsServer> jenkinsServerList) {
         JenkinsServerConfig.jenkinsServerList = jenkinsServerList;
+    }
+
+    @Bean
+    @ConditionalOnBean(JenkinsServerConfig.class)
+    public JenkinsServer jenkinsServer() {
+        CopyOnWriteArrayList<JenkinsServer> jenkinsServers = new CopyOnWriteArrayList<>(getJenkinsServerList());
+        //TODO 随机选择机制
+        Random random = new Random();
+        for (int i=0;i<jenkinsServers.size();i++) {
+            int n = random.nextInt(jenkinsServers.size());
+            JenkinsServer jenkinsServer = jenkinsServers.get(n);
+            if (jenkinsServer.isRunning()) {
+                return jenkinsServer;
+            } else {
+                jenkinsServers.remove(n);
+            }
+        }
+
+        throw new RuntimeException("Jenkins服务异常，请检查");
+
     }
 }
