@@ -68,7 +68,7 @@ public class MermaidDataChangeConfig implements ApplicationRunner{
                 zkClientWrapper.createPersistent(childPath);
             }
         }
-        logger.info("创建临时节点，znode={}",path);
+        logger.info("创建临时节点，znode={},并将实例配置信息写入该节点",path);
         zkClientWrapper.createEphemeral(path,applicationInfo.getRuntimeProperties().getProperties());
     }
 }
