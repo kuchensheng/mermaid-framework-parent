@@ -1,8 +1,6 @@
-${pipeline} {
+pipeline {
     agent any
     tools {
-//        maven apache-maven-3.5.0
-//        jdk jdk-1.7.149
         <#list tools as item>
         ${item.toolsName} '${item.toolsVersion}'
         </#list>

@@ -28,14 +28,17 @@ public class JenkinsServerConfig {
     /**
      * jenkins服务器地址，多个服务器地址用","隔开
      */
-    @Value("${mermaid.jenkins.server.urls}")
+    @Value("${mermaid.jenkins.server.urls:http://ci.songxiaocai.net}")
     private String serverUrls;
 
-    @Value("${mermaid.jenkins.server.username}")
+    @Value("${mermaid.jenkins.server.username:admin}")
     private String username;
 
-    @Value("${mermaid.jenkins.server.passwordOrToken}")
+    @Value("${mermaid.jenkins.server.passwordOrToken:123456}")
     private String passwordOrToken;
+
+    @Value("${mermaid.jenkins.callback.url:http://localhost:8080}")
+    private String callbackurl;
 
     private static List<JenkinsServer> jenkinsServerList;
 
@@ -92,6 +95,13 @@ public class JenkinsServerConfig {
         }
 
         throw new RuntimeException("Jenkins服务异常，请检查");
+    }
 
+    public String getCallbackurl() {
+        return callbackurl;
+    }
+
+    public void setCallbackurl(String callbackurl) {
+        this.callbackurl = callbackurl;
     }
 }
