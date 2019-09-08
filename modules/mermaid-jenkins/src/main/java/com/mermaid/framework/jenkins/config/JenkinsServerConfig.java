@@ -37,9 +37,6 @@ public class JenkinsServerConfig {
     @Value("${mermaid.jenkins.server.passwordOrToken:123456}")
     private String passwordOrToken;
 
-    @Value("${mermaid.jenkins.callback.url:http://localhost:8080}")
-    private String callbackurl;
-
     private static List<JenkinsServer> jenkinsServerList;
 
     @PostConstruct
@@ -78,9 +75,7 @@ public class JenkinsServerConfig {
         JenkinsServerConfig.jenkinsServerList = jenkinsServerList;
     }
 
-    @Bean
-    @ConditionalOnBean(JenkinsServerConfig.class)
-    public JenkinsServer jenkinsServer() {
+    public static JenkinsServer jenkinsServer() {
         CopyOnWriteArrayList<JenkinsServer> jenkinsServers = new CopyOnWriteArrayList<>(getJenkinsServerList());
         //TODO 随机选择机制
         Random random = new Random();
@@ -95,13 +90,5 @@ public class JenkinsServerConfig {
         }
 
         throw new RuntimeException("Jenkins服务异常，请检查");
-    }
-
-    public String getCallbackurl() {
-        return callbackurl;
-    }
-
-    public void setCallbackurl(String callbackurl) {
-        this.callbackurl = callbackurl;
     }
 }

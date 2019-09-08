@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +39,9 @@ public class ModulesConfigFactory extends AbstractConfigFactory {
                     is = resource.getInputStream();
                     if (is != null) {
                         properties.load(is);
+                    }
+                    if(StringUtils.hasText("swagger.dubbo.enable") && Boolean.valueOf(properties.getProperty("swagger.dubbo.enable"))) {
+
                     }
                     addConfigs(properties);
                 } catch (IOException e) {

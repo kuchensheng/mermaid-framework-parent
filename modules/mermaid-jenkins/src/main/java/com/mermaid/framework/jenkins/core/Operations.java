@@ -3,8 +3,11 @@ package com.mermaid.framework.jenkins.core;
 import com.mermaid.framework.jenkins.config.JenkinsServerConfig;
 import com.mermaid.framework.jenkins.module.EnumJobType;
 import com.mermaid.framework.jenkins.util.JenkinsPipelineUtil;
+import com.mermaid.framework.util.IPAddress;
+import com.mermaid.framework.util.IPAddressUtils;
 import com.offbytwo.jenkins.JenkinsServer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -33,6 +36,9 @@ public class Operations {
     @Autowired
     private JenkinsServerConfig jenkinsServerConfig;
 
+    @Value("${server.port:8080}")
+    private String serverPort;
+
 
     /**
      * 创建maven 打包 发布任务
@@ -60,16 +66,22 @@ public class Operations {
         }else {
             rootMap.put("mvnDeployCmd","mvn -B -U verify clean deploy ");
         }
-        rootMap.put("callbackUrl",jenkinsServerConfig.getCallbackurl());
-        rootMap.put("parameter",PARAMETERS);
-        String configXml = JenkinsPipelineUtil.createMavenJobConfigXml(rootMap);
+
         try {
+            rootMap.put("callbackUrl",getCallbackurl());
+            rootMap.put("parameter",PARAMETERS);
+            String configXml = JenkinsPipelineUtil.createMavenJobConfigXml(rootMap);
             jenkinsServer.createJob(jobName,configXml);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private String getCallbackurl() throws Exception {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append("http://").append(IPAddressUtils.getLocalIP()).append(":").append(serverPort);
+        return urlBuilder.toString();
+    }
 
 
 }

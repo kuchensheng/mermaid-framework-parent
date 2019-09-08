@@ -48,8 +48,8 @@
 
         <dependency>
             <groupId>com.mermaid.framework</groupId>
-            <artifactId>mermaid-common</artifactId>
-            <version>1.6</version>
+            <artifactId>mermaid-response</artifactId>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.gson</groupId>
