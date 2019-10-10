@@ -1,5 +1,6 @@
 package com.mermaid.framework.kafka.consumer;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -8,7 +9,15 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.security.auth.SecurityProtocol;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
+import java.io.*;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -20,23 +29,42 @@ import java.util.Properties;
 public class KafkaConsumer {
     public static void main(String[] args) {
         Properties p = new Properties();
-        p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "118.31.175.223:19093");
+        p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9092,kafka2:9092,kafka3:9092");
         p.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         p.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         p.put(ConsumerConfig.GROUP_ID_CONFIG, "duanjt_test");
-        p.put(SaslConfigs.SASL_MECHANISM,"PLAIN");
-        p.put("security.protocol", SecurityProtocol.SASL_PLAINTEXT.name);
-        p.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"06lR@E\";");
-        org.apache.kafka.clients.consumer.KafkaConsumer<String, String> kafkaConsumer = new org.apache.kafka.clients.consumer.KafkaConsumer<String, String>(p);
-        kafkaConsumer.subscribe(Collections.singletonList("gateway-biz.info"));// 订阅消息
+        p.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG,"1024");
+        p.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,"true");
+//        p.put(SaslConfigs.SASL_MECHANISM,"PLAIN");
+//        p.put("security.protocol", SecurityProtocol.SASL_PLAINTEXT.name);
+//        p.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"06lR@E\";");
+        org.apache.kafka.clients.consumer.KafkaConsumer<String, String> kafkaConsumer = new org.apache.kafka.clients.consumer.KafkaConsumer<>(p);
+        kafkaConsumer.subscribe(Collections.singletonList("gateway_apiCallLog"));// 订阅消息
 
+        int amount = 0;
+        Map<String,Integer> repeatData = new HashMap<>();
         while (true) {
-            ConsumerRecords<String, String> records = kafkaConsumer.poll(100);
+            ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(20));
+
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println(String.format("topic:%s,offset:%d,消息:%s", //
-                        record.topic(), record.offset(), record.value()));
+                System.out.println(String.format("topic:%s,offset:%d,%s", //
+                        record.topic(), record.offset(),record.value()));
+//                JSONObject jsonObject = JSONObject.parseObject(record.value());
+//                write2File(jsonObject.getString("key"), jsonObject.getBytes("img_data"));
                 kafkaConsumer.commitAsync();
+                System.out.println("amount="+ ++ amount);
             }
+        }
+    }
+
+    private static void write2File(String key ,byte[] data) {
+//        byte[] data = img_data.getBytes();
+        try {
+            FileImageOutputStream imageOutput = new FileImageOutputStream(new File("/Users/kuchensheng/Desktop/test_consumer/"+key+".jpg"));
+            imageOutput.write(data,0,data.length);
+            imageOutput.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

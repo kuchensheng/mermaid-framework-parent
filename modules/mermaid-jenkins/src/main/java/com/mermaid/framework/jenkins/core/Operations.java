@@ -65,6 +65,7 @@ public class Operations {
         String configXml = JenkinsPipelineUtil.createMavenJobConfigXml(rootMap);
         try {
             jenkinsServer.createJob(jobName,configXml);
+            //TODO 将JOB——SERVER关系记录到xml
         } catch (IOException e) {
             e.printStackTrace();
         }

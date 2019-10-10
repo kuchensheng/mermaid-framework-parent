@@ -143,6 +143,17 @@
             <artifactId>apollo-core</artifactId>
             <version>1.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.mermaid.framework</groupId>
+            <artifactId>mermaid-response</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave-bom</artifactId>
+            <version>5.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
