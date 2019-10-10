@@ -60,7 +60,7 @@ public class Operations {
         }else {
             rootMap.put("mvnDeployCmd","mvn -B -U verify clean deploy ");
         }
-        rootMap.put("callbackUrl",jenkinsServerConfig.getCallbackurl());
+//        rootMap.put("callbackUrl",jenkinsServerConfig.getCallbackurl());
         rootMap.put("parameter",PARAMETERS);
         String configXml = JenkinsPipelineUtil.createMavenJobConfigXml(rootMap);
         try {
