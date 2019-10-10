@@ -1,6 +1,9 @@
 package com.mermaid.framework.core.controller;
 
 import com.mermaid.framework.registry.zookeeper.ZKClientWrapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +27,15 @@ import java.util.Map;
  */
 @RestController
 @ConditionalOnExpression("${mermaid.framework.cloud.enable:false} == true")
+@Api
 public class MermaidConfigController {
 
     @Autowired
     private ZKClientWrapper zkClientWrapper;
 
     @RequestMapping(value = "/core/config",method = RequestMethod.PUT)
-    public void receiveChange(@RequestBody Map<String,Object> changedMap) {
+    @ApiOperation(value = "测试")
+    public void receiveChange(@ApiParam(value = "参数实体",name = "changedMap") @RequestBody Map<String,Object> changedMap) {
 
     }
 
