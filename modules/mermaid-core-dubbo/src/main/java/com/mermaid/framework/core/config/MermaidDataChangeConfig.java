@@ -36,7 +36,7 @@ public class MermaidDataChangeConfig implements ApplicationRunner{
     ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
 
     @Bean
-    public Registry zkClientWrapper() {
+    public Registry registry() {
 
         String zkAddress = GlobalRuntimeConfigFactory.getInstance().getProperties().getProperty("dubbo.registry.address");
         if(!StringUtils.isEmpty(zkAddress) && zkAddress.startsWith("zookeeper://")) {
@@ -48,17 +48,17 @@ public class MermaidDataChangeConfig implements ApplicationRunner{
     }
 
     @Autowired
-    private Registry zookeeperClient;
+    private Registry registry;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
         String znode = "/applications/"+applicationInfo.getAppName()+"/data";
-        zookeeperClient.addDataListener(znode,new MermaidDataChangeListener(configurableListableBeanFactory));
+        registry.addDataListener(znode,new MermaidDataChangeListener(configurableListableBeanFactory));
         String host = applicationInfo.getAppHost();
         host = StringUtils.replace(host,".","_");
         //TODO 级联创建znode
         String path = "/applications/"+applicationInfo.getAppName()+"/Instances/"+host+"_"+applicationInfo.getAppPort();
-        zookeeperClient.create(path,true,applicationInfo.getRuntimeProperties().getProperties());
+        registry.create(path,true,applicationInfo.getRuntimeProperties().getProperties());
         logger.info("创建临时节点，znode={},并将实例配置信息写入该节点",path);
     }
 }

@@ -27,6 +27,7 @@ public class ZookeeperClient extends AbstractZkclient {
 
     public ZookeeperClient(String servers, int sessionTimeout, int connectTimeout) {
         client = new ZKClientWrapper(servers, sessionTimeout, connectTimeout);
+        client.start();
         client.addStateListener(new IZkStateListener() {
             @Override
             public void handleStateChanged(Watcher.Event.KeeperState keeperState) throws Exception {
@@ -43,7 +44,6 @@ public class ZookeeperClient extends AbstractZkclient {
                 stateChanged(IStateListener.RECONNECTED);
             }
         });
-        client.start();
     }
 
     @Override
