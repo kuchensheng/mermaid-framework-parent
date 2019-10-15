@@ -57,13 +57,8 @@ public class ZookeeperClient extends AbstractZkclient {
     }
 
     @Override
-    protected void createPersistent(String path, Object data) {
-        client.createPersistent(path, data);
-    }
-
-    @Override
-    protected void createEphemeral(String path, Object data) {
-        client.createEphemeral(path, data);
+    protected void setData(String path, Object data) {
+        client.setData(path,data);
     }
 
     @Override

@@ -60,11 +60,7 @@ public abstract class AbstractRegistry implements Registry{
         if(i > 0) {
             create(path.substring(0,i),false);
         }
-        if(ephemeral) {
-            createEphemeral(path,data);
-        } else {
-            createPersistent(path,data);
-        }
+        setData(path,data);
     }
 
 
@@ -118,11 +114,11 @@ public abstract class AbstractRegistry implements Registry{
 
     protected abstract boolean checkExists(String path);
 
-    protected abstract void createPersistent(String path, Object data);
+    protected abstract void setData(String path, Object data);
 
-    protected abstract void createEphemeral(String path, Object data);
 
     protected abstract void createEphemeral(String path);
 
     protected abstract void createPersistent(String path);
+
 }
