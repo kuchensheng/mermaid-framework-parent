@@ -33,7 +33,7 @@ import java.util.Set;
  * @author:Hui CreateDate:2019/8/18 0:20
  * version 1.0
  */
-public class MermaidDataChangeListener implements IZkDataListener,EnvironmentAware {
+public class MermaidDataChangeListener implements IDataListener,EnvironmentAware {
 
     private Environment environment;
 
@@ -49,8 +49,7 @@ public class MermaidDataChangeListener implements IZkDataListener,EnvironmentAwa
     }
 
     @Override
-    public void handleDataChange(String dataPath, Object data) throws Exception {
-        //TODO 利用apollo的自动更新原理进行数据变更
+    public void dataChanged(String path, Object value, EventType eventType) {
         AutoUpdateConfigChangeListener autoUpdateConfigChangeListener = new AutoUpdateConfigChangeListener(this.environment, this.configurableListableBeanFactory);
         ConfigChangeEvent changeEvent = mockConfigEvent();
 //        ConfigChangeEvent changeEvent = JSONObject.parseObject(String.valueOf(data), ConfigChangeEvent.class);
@@ -71,11 +70,6 @@ public class MermaidDataChangeListener implements IZkDataListener,EnvironmentAwa
         map.put("module",configChange);
         ConfigChangeEvent event = new ConfigChangeEvent(m_namespace,map);
         return event;
-    }
-
-    @Override
-    public void handleDataDeleted(String dataPath) throws Exception {
-
     }
 
     class MermaidApplicationContext extends ServletWebServerApplicationContext {

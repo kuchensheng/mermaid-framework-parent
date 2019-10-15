@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import java.util.Properties;
  * version 1.0
  */
 @Configuration
+@ConditionalOnExpression("${com.mermaid.mybatis.enable:false} == true")
 public class MybatisConfig implements EnvironmentAware{
     private static final Logger logger  = LoggerFactory.getLogger(MybatisConfig.class);
 

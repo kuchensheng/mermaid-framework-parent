@@ -1,14 +1,15 @@
 package com.mermaid.framework.core.config;
 
 import com.deepoove.swagger.dubbo.annotations.EnableDubboSwagger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.mermaid.framework.util.MavenUtil;
+import com.mermaid.framework.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -18,25 +19,37 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-
-//@Component
+/**
+ * Desription:
+ *
+ * @author:Hui CreateDate:2019/9/7 18:20
+ * version 1.0
+ */
 @Configuration
 @EnableDubboSwagger
+@Slf4j
+@ConditionalOnExpression("${com.mermaid.swagger2.enable:false} == true")
 @PropertySource(value = "classpath:META-INF/mermaid-framework-swagger.properties",ignoreResourceNotFound = true,encoding = "UTF-8")
-public class Swagger2Configuration {
-    private final Logger log = LoggerFactory.getLogger(getClass());
+public class SwaggerDubboConfiguration {
 
     @Autowired
     private Environment environment;
-
     @Bean
     public Docket createRestApi(){
-        String baskPackageName = environment.getProperty("mermaid.swagger.package","com");
-        log.info("swagger基础包={}",baskPackageName);
+        String groupId = null;
+        try {
+            groupId = MavenUtil.getTagContent("groupId");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(!StringUtils.hasText(groupId)) {
+            groupId = "com.mermaid";
+        }
+        log.info("项目的顶级pom中的groupId = {},这个将作为swagger的basePackage",groupId);
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage(baskPackageName))
+                .apis(RequestHandlerSelectors.basePackage(groupId))
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -50,5 +63,4 @@ public class Swagger2Configuration {
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
                 .build();
     }
-
 }

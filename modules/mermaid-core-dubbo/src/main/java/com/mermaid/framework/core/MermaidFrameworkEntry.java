@@ -9,6 +9,7 @@ import com.mermaid.framework.core.config.factory.MermaidCloudConfigFactory;
 import com.mermaid.framework.core.config.factory.ModulesConfigFactory;
 import com.mermaid.framework.registry.zookeeper.ZKClientWrapper;
 import com.mermaid.framework.util.IPAddressUtils;
+import com.mermaid.framework.util.MavenUtil;
 import com.mermaid.framework.util.RuntimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,6 @@ public class MermaidFrameworkEntry {
         }
 
         applicationInfo.setRuntimeProperties(globalRuntimeConfigFactory);
-        applicationInfo.setAppVersion(globalRuntimeConfigFactory.getValue("mermaid.framework.version"));
         args = globalRuntimeConfigFactory.getLaunchArgs();
         printConfigInfo(globalRuntimeConfigFactory.getProperties());
         SpringApplication.run(MermaidFrameworkEntry.class,args);
@@ -67,7 +67,7 @@ public class MermaidFrameworkEntry {
         applicationInfo.setAppPort(Integer.parseInt(applicationInfo.getAppId()));
         applicationInfo.setLaunchTime(System.currentTimeMillis());
         applicationInfo.setPid(RuntimeUtils.getCurrentPID());
-//        applicationInfo.setAppVersion(factory.getValue("mermaid.framework.version"));
+        applicationInfo.setAppVersion(MavenUtil.getTagContent("version"));
         applicationInfo.setRuntimeProperties(factory);
         return applicationInfo;
     }

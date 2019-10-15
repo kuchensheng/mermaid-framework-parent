@@ -1,7 +1,6 @@
 package com.mermaid.framework.registry.zookeeper;
 
 import org.I0Itec.zkclient.*;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,12 +59,12 @@ public class ZKClientWrapper {
     }
 
     public List<String> subscribeChildChanges(String path, IZkChildListener listener) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         return getZkClient().subscribeChildChanges(path,listener);
     }
 
     public void unsubscribeChildChanges(String path, IZkChildListener listener) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         getZkClient().unsubscribeChildChanges(path,listener);
     }
 
@@ -74,47 +73,47 @@ public class ZKClientWrapper {
     }
 
     public void createPersistent(String path) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         getZkClient().createPersistent(path,true);
     }
 
     public void createPersistent(String path,Object data) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         getZkClient().createPersistent(path,data);
     }
 
     public void createEphemeral(String path) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         getZkClient().createEphemeral(path);
     }
 
     public void createEphemeral(String path,Object data) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         getZkClient().createEphemeral(path,data);
     }
 
     public void delete(String path) {
-        Assert.assertTrue(exists(path));
+//        Assert.assertTrue(exists(path));
         getZkClient().delete(path);
     }
 
     public List<String> getChildren(String path) {
-        Assert.assertTrue(exists(path));
+//        Assert.assertTrue(exists(path));
         return getZkClient().getChildren(path);
     }
 
     public <T> T getData(String path) {
-        Assert.assertTrue(exists(path));
+//        Assert.assertTrue(exists(path));
         return getZkClient().readData(path);
     }
 
     public boolean exists(String path) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         return getZkClient().exists(path);
     }
 
     public void close() {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         getZkClient().close();
     }
 
@@ -153,17 +152,17 @@ public class ZKClientWrapper {
     }
 
     public void subscribeDataChanges(String path,IZkDataListener zkDataListener) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         this.zkClient.subscribeDataChanges(path, zkDataListener);
     }
 
     public void unSubscribeDataChanges(String path,IZkDataListener zkDataListener) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         this.zkClient.unsubscribeDataChanges(path,zkDataListener);
     }
 
     public void setData(String path,Object data) {
-        Assert.assertNotNull(getZkClient());
+//        Assert.assertNotNull(getZkClient());
         this.zkClient.writeData(path,data);
     }
 
