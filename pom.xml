@@ -30,7 +30,6 @@
       <module>modules/mermaid-socket</module>
       <module>modules/mermaid-registry</module>
       <module>modules/mermaid-fescar</module>
-      <module>modules/mermaid-response</module>
     <module>modules/mermaid-schedule</module>
       <module>modules/mermaid-elasticsearch</module>
   </modules>
