@@ -1,0 +1,18 @@
+<map>
+  <entry>
+    <string>new</string>
+    <long>11111</long>
+  </entry>
+  <entry>
+    <string>price</string>
+    <double>1.1</double>
+  </entry>
+  <entry>
+    <string>name</string>
+    <string>hahah</string>
+  </entry>
+  <entry>
+    <string>id</string>
+    <int>1</int>
+  </entry>
+</map>

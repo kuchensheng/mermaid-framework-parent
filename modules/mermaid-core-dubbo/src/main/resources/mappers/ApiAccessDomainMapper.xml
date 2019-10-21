@@ -1,0 +1,1762 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sxc.dubbo.demo.mapper.ApiAccessDomainMapper">
+  <resultMap id="BaseResultMap" type="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+    <result column="client_ip" jdbcType="VARCHAR" property="clientIp" />
+    <result column="client_version" jdbcType="VARCHAR" property="clientVersion" />
+    <result column="client_sys_name" jdbcType="VARCHAR" property="clientSysName" />
+    <result column="client_sys_version" jdbcType="VARCHAR" property="clientSysVersion" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_nick" jdbcType="VARCHAR" property="userNick" />
+    <result column="cost_time" jdbcType="INTEGER" property="costTime" />
+    <result column="error_code" jdbcType="INTEGER" property="errorCode" />
+    <result column="sub_code" jdbcType="VARCHAR" property="subCode" />
+    <result column="call_time" jdbcType="BIGINT" property="callTime" />
+    <result column="app_key" jdbcType="BIGINT" property="appKey" />
+    <result column="device_uuid" jdbcType="VARCHAR" property="deviceUuid" />
+    <result column="platform_cost_time" jdbcType="INTEGER" property="platformCostTime" />
+    <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="archives" jdbcType="TINYINT" property="archives" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    <result column="request_snapshot" jdbcType="LONGVARCHAR" property="requestSnapshot" />
+    <result column="response_snapshot" jdbcType="LONGVARCHAR" property="responseSnapshot" />
+    <result column="call_snapshot" jdbcType="LONGVARCHAR" property="callSnapshot" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, api_name, client_ip, client_version, client_sys_name, client_sys_version, user_id, 
+    user_nick, cost_time, error_code, sub_code, call_time, app_key, device_uuid, platform_cost_time, 
+    trace_id, archives
+  </sql>
+  <sql id="Blob_Column_List">
+    request_snapshot, response_snapshot, call_snapshot
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access (id, api_name, client_ip, 
+      client_version, client_sys_name, client_sys_version, 
+      user_id, user_nick, cost_time, 
+      error_code, sub_code, call_time, 
+      app_key, device_uuid, platform_cost_time, 
+      trace_id, archives, request_snapshot, 
+      response_snapshot, call_snapshot)
+    values (#{id,jdbcType=INTEGER}, #{apiName,jdbcType=VARCHAR}, #{clientIp,jdbcType=VARCHAR}, 
+      #{clientVersion,jdbcType=VARCHAR}, #{clientSysName,jdbcType=VARCHAR}, #{clientSysVersion,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{userNick,jdbcType=VARCHAR}, #{costTime,jdbcType=INTEGER}, 
+      #{errorCode,jdbcType=INTEGER}, #{subCode,jdbcType=VARCHAR}, #{callTime,jdbcType=BIGINT}, 
+      #{appKey,jdbcType=BIGINT}, #{deviceUuid,jdbcType=VARCHAR}, #{platformCostTime,jdbcType=INTEGER}, 
+      #{traceId,jdbcType=VARCHAR}, #{archives,jdbcType=TINYINT}, #{requestSnapshot,jdbcType=LONGVARCHAR}, 
+      #{responseSnapshot,jdbcType=LONGVARCHAR}, #{callSnapshot,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="apiName != null">
+        api_name,
+      </if>
+      <if test="clientIp != null">
+        client_ip,
+      </if>
+      <if test="clientVersion != null">
+        client_version,
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name,
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userNick != null">
+        user_nick,
+      </if>
+      <if test="costTime != null">
+        cost_time,
+      </if>
+      <if test="errorCode != null">
+        error_code,
+      </if>
+      <if test="subCode != null">
+        sub_code,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="appKey != null">
+        app_key,
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid,
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time,
+      </if>
+      <if test="traceId != null">
+        trace_id,
+      </if>
+      <if test="archives != null">
+        archives,
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot,
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot,
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="apiName != null">
+        #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    <set>
+      <if test="apiName != null">
+        api_name = #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        client_ip = #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        client_version = #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        user_nick = #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        cost_time = #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        error_code = #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        sub_code = #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        call_time = #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        app_key = #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        trace_id = #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        archives = #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT},
+      request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+    <result column="client_ip" jdbcType="VARCHAR" property="clientIp" />
+    <result column="client_version" jdbcType="VARCHAR" property="clientVersion" />
+    <result column="client_sys_name" jdbcType="VARCHAR" property="clientSysName" />
+    <result column="client_sys_version" jdbcType="VARCHAR" property="clientSysVersion" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_nick" jdbcType="VARCHAR" property="userNick" />
+    <result column="cost_time" jdbcType="INTEGER" property="costTime" />
+    <result column="error_code" jdbcType="INTEGER" property="errorCode" />
+    <result column="sub_code" jdbcType="VARCHAR" property="subCode" />
+    <result column="call_time" jdbcType="BIGINT" property="callTime" />
+    <result column="app_key" jdbcType="BIGINT" property="appKey" />
+    <result column="device_uuid" jdbcType="VARCHAR" property="deviceUuid" />
+    <result column="platform_cost_time" jdbcType="INTEGER" property="platformCostTime" />
+    <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="archives" jdbcType="TINYINT" property="archives" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    <result column="request_snapshot" jdbcType="LONGVARCHAR" property="requestSnapshot" />
+    <result column="response_snapshot" jdbcType="LONGVARCHAR" property="responseSnapshot" />
+    <result column="call_snapshot" jdbcType="LONGVARCHAR" property="callSnapshot" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, api_name, client_ip, client_version, client_sys_name, client_sys_version, user_id, 
+    user_nick, cost_time, error_code, sub_code, call_time, app_key, device_uuid, platform_cost_time, 
+    trace_id, archives
+  </sql>
+  <sql id="Blob_Column_List">
+    request_snapshot, response_snapshot, call_snapshot
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access (id, api_name, client_ip, 
+      client_version, client_sys_name, client_sys_version, 
+      user_id, user_nick, cost_time, 
+      error_code, sub_code, call_time, 
+      app_key, device_uuid, platform_cost_time, 
+      trace_id, archives, request_snapshot, 
+      response_snapshot, call_snapshot)
+    values (#{id,jdbcType=INTEGER}, #{apiName,jdbcType=VARCHAR}, #{clientIp,jdbcType=VARCHAR}, 
+      #{clientVersion,jdbcType=VARCHAR}, #{clientSysName,jdbcType=VARCHAR}, #{clientSysVersion,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{userNick,jdbcType=VARCHAR}, #{costTime,jdbcType=INTEGER}, 
+      #{errorCode,jdbcType=INTEGER}, #{subCode,jdbcType=VARCHAR}, #{callTime,jdbcType=BIGINT}, 
+      #{appKey,jdbcType=BIGINT}, #{deviceUuid,jdbcType=VARCHAR}, #{platformCostTime,jdbcType=INTEGER}, 
+      #{traceId,jdbcType=VARCHAR}, #{archives,jdbcType=TINYINT}, #{requestSnapshot,jdbcType=LONGVARCHAR}, 
+      #{responseSnapshot,jdbcType=LONGVARCHAR}, #{callSnapshot,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="apiName != null">
+        api_name,
+      </if>
+      <if test="clientIp != null">
+        client_ip,
+      </if>
+      <if test="clientVersion != null">
+        client_version,
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name,
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userNick != null">
+        user_nick,
+      </if>
+      <if test="costTime != null">
+        cost_time,
+      </if>
+      <if test="errorCode != null">
+        error_code,
+      </if>
+      <if test="subCode != null">
+        sub_code,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="appKey != null">
+        app_key,
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid,
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time,
+      </if>
+      <if test="traceId != null">
+        trace_id,
+      </if>
+      <if test="archives != null">
+        archives,
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot,
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot,
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="apiName != null">
+        #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    <set>
+      <if test="apiName != null">
+        api_name = #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        client_ip = #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        client_version = #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        user_nick = #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        cost_time = #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        error_code = #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        sub_code = #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        call_time = #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        app_key = #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        trace_id = #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        archives = #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT},
+      request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+    <result column="client_ip" jdbcType="VARCHAR" property="clientIp" />
+    <result column="client_version" jdbcType="VARCHAR" property="clientVersion" />
+    <result column="client_sys_name" jdbcType="VARCHAR" property="clientSysName" />
+    <result column="client_sys_version" jdbcType="VARCHAR" property="clientSysVersion" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_nick" jdbcType="VARCHAR" property="userNick" />
+    <result column="cost_time" jdbcType="INTEGER" property="costTime" />
+    <result column="error_code" jdbcType="INTEGER" property="errorCode" />
+    <result column="sub_code" jdbcType="VARCHAR" property="subCode" />
+    <result column="call_time" jdbcType="BIGINT" property="callTime" />
+    <result column="app_key" jdbcType="BIGINT" property="appKey" />
+    <result column="device_uuid" jdbcType="VARCHAR" property="deviceUuid" />
+    <result column="platform_cost_time" jdbcType="INTEGER" property="platformCostTime" />
+    <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="archives" jdbcType="TINYINT" property="archives" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    <result column="request_snapshot" jdbcType="LONGVARCHAR" property="requestSnapshot" />
+    <result column="response_snapshot" jdbcType="LONGVARCHAR" property="responseSnapshot" />
+    <result column="call_snapshot" jdbcType="LONGVARCHAR" property="callSnapshot" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, api_name, client_ip, client_version, client_sys_name, client_sys_version, user_id, 
+    user_nick, cost_time, error_code, sub_code, call_time, app_key, device_uuid, platform_cost_time, 
+    trace_id, archives
+  </sql>
+  <sql id="Blob_Column_List">
+    request_snapshot, response_snapshot, call_snapshot
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access (id, api_name, client_ip, 
+      client_version, client_sys_name, client_sys_version, 
+      user_id, user_nick, cost_time, 
+      error_code, sub_code, call_time, 
+      app_key, device_uuid, platform_cost_time, 
+      trace_id, archives, request_snapshot, 
+      response_snapshot, call_snapshot)
+    values (#{id,jdbcType=INTEGER}, #{apiName,jdbcType=VARCHAR}, #{clientIp,jdbcType=VARCHAR}, 
+      #{clientVersion,jdbcType=VARCHAR}, #{clientSysName,jdbcType=VARCHAR}, #{clientSysVersion,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{userNick,jdbcType=VARCHAR}, #{costTime,jdbcType=INTEGER}, 
+      #{errorCode,jdbcType=INTEGER}, #{subCode,jdbcType=VARCHAR}, #{callTime,jdbcType=BIGINT}, 
+      #{appKey,jdbcType=BIGINT}, #{deviceUuid,jdbcType=VARCHAR}, #{platformCostTime,jdbcType=INTEGER}, 
+      #{traceId,jdbcType=VARCHAR}, #{archives,jdbcType=TINYINT}, #{requestSnapshot,jdbcType=LONGVARCHAR}, 
+      #{responseSnapshot,jdbcType=LONGVARCHAR}, #{callSnapshot,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="apiName != null">
+        api_name,
+      </if>
+      <if test="clientIp != null">
+        client_ip,
+      </if>
+      <if test="clientVersion != null">
+        client_version,
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name,
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userNick != null">
+        user_nick,
+      </if>
+      <if test="costTime != null">
+        cost_time,
+      </if>
+      <if test="errorCode != null">
+        error_code,
+      </if>
+      <if test="subCode != null">
+        sub_code,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="appKey != null">
+        app_key,
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid,
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time,
+      </if>
+      <if test="traceId != null">
+        trace_id,
+      </if>
+      <if test="archives != null">
+        archives,
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot,
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot,
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="apiName != null">
+        #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    <set>
+      <if test="apiName != null">
+        api_name = #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        client_ip = #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        client_version = #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        user_nick = #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        cost_time = #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        error_code = #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        sub_code = #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        call_time = #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        app_key = #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        trace_id = #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        archives = #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT},
+      request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+    <result column="client_ip" jdbcType="VARCHAR" property="clientIp" />
+    <result column="client_version" jdbcType="VARCHAR" property="clientVersion" />
+    <result column="client_sys_name" jdbcType="VARCHAR" property="clientSysName" />
+    <result column="client_sys_version" jdbcType="VARCHAR" property="clientSysVersion" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_nick" jdbcType="VARCHAR" property="userNick" />
+    <result column="cost_time" jdbcType="INTEGER" property="costTime" />
+    <result column="error_code" jdbcType="INTEGER" property="errorCode" />
+    <result column="sub_code" jdbcType="VARCHAR" property="subCode" />
+    <result column="call_time" jdbcType="BIGINT" property="callTime" />
+    <result column="app_key" jdbcType="BIGINT" property="appKey" />
+    <result column="device_uuid" jdbcType="VARCHAR" property="deviceUuid" />
+    <result column="platform_cost_time" jdbcType="INTEGER" property="platformCostTime" />
+    <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="archives" jdbcType="TINYINT" property="archives" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    <result column="request_snapshot" jdbcType="LONGVARCHAR" property="requestSnapshot" />
+    <result column="response_snapshot" jdbcType="LONGVARCHAR" property="responseSnapshot" />
+    <result column="call_snapshot" jdbcType="LONGVARCHAR" property="callSnapshot" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, api_name, client_ip, client_version, client_sys_name, client_sys_version, user_id, 
+    user_nick, cost_time, error_code, sub_code, call_time, app_key, device_uuid, platform_cost_time, 
+    trace_id, archives
+  </sql>
+  <sql id="Blob_Column_List">
+    request_snapshot, response_snapshot, call_snapshot
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access (id, api_name, client_ip, 
+      client_version, client_sys_name, client_sys_version, 
+      user_id, user_nick, cost_time, 
+      error_code, sub_code, call_time, 
+      app_key, device_uuid, platform_cost_time, 
+      trace_id, archives, request_snapshot, 
+      response_snapshot, call_snapshot)
+    values (#{id,jdbcType=INTEGER}, #{apiName,jdbcType=VARCHAR}, #{clientIp,jdbcType=VARCHAR}, 
+      #{clientVersion,jdbcType=VARCHAR}, #{clientSysName,jdbcType=VARCHAR}, #{clientSysVersion,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{userNick,jdbcType=VARCHAR}, #{costTime,jdbcType=INTEGER}, 
+      #{errorCode,jdbcType=INTEGER}, #{subCode,jdbcType=VARCHAR}, #{callTime,jdbcType=BIGINT}, 
+      #{appKey,jdbcType=BIGINT}, #{deviceUuid,jdbcType=VARCHAR}, #{platformCostTime,jdbcType=INTEGER}, 
+      #{traceId,jdbcType=VARCHAR}, #{archives,jdbcType=TINYINT}, #{requestSnapshot,jdbcType=LONGVARCHAR}, 
+      #{responseSnapshot,jdbcType=LONGVARCHAR}, #{callSnapshot,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="apiName != null">
+        api_name,
+      </if>
+      <if test="clientIp != null">
+        client_ip,
+      </if>
+      <if test="clientVersion != null">
+        client_version,
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name,
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userNick != null">
+        user_nick,
+      </if>
+      <if test="costTime != null">
+        cost_time,
+      </if>
+      <if test="errorCode != null">
+        error_code,
+      </if>
+      <if test="subCode != null">
+        sub_code,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="appKey != null">
+        app_key,
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid,
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time,
+      </if>
+      <if test="traceId != null">
+        trace_id,
+      </if>
+      <if test="archives != null">
+        archives,
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot,
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot,
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="apiName != null">
+        #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    <set>
+      <if test="apiName != null">
+        api_name = #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        client_ip = #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        client_version = #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        user_nick = #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        cost_time = #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        error_code = #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        sub_code = #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        call_time = #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        app_key = #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        trace_id = #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        archives = #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT},
+      request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+    <result column="client_ip" jdbcType="VARCHAR" property="clientIp" />
+    <result column="client_version" jdbcType="VARCHAR" property="clientVersion" />
+    <result column="client_sys_name" jdbcType="VARCHAR" property="clientSysName" />
+    <result column="client_sys_version" jdbcType="VARCHAR" property="clientSysVersion" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_nick" jdbcType="VARCHAR" property="userNick" />
+    <result column="cost_time" jdbcType="INTEGER" property="costTime" />
+    <result column="error_code" jdbcType="INTEGER" property="errorCode" />
+    <result column="sub_code" jdbcType="VARCHAR" property="subCode" />
+    <result column="call_time" jdbcType="BIGINT" property="callTime" />
+    <result column="app_key" jdbcType="BIGINT" property="appKey" />
+    <result column="device_uuid" jdbcType="VARCHAR" property="deviceUuid" />
+    <result column="platform_cost_time" jdbcType="INTEGER" property="platformCostTime" />
+    <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="archives" jdbcType="TINYINT" property="archives" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    <result column="request_snapshot" jdbcType="LONGVARCHAR" property="requestSnapshot" />
+    <result column="response_snapshot" jdbcType="LONGVARCHAR" property="responseSnapshot" />
+    <result column="call_snapshot" jdbcType="LONGVARCHAR" property="callSnapshot" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, api_name, client_ip, client_version, client_sys_name, client_sys_version, user_id, 
+    user_nick, cost_time, error_code, sub_code, call_time, app_key, device_uuid, platform_cost_time, 
+    trace_id, archives
+  </sql>
+  <sql id="Blob_Column_List">
+    request_snapshot, response_snapshot, call_snapshot
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access (id, api_name, client_ip, 
+      client_version, client_sys_name, client_sys_version, 
+      user_id, user_nick, cost_time, 
+      error_code, sub_code, call_time, 
+      app_key, device_uuid, platform_cost_time, 
+      trace_id, archives, request_snapshot, 
+      response_snapshot, call_snapshot)
+    values (#{id,jdbcType=INTEGER}, #{apiName,jdbcType=VARCHAR}, #{clientIp,jdbcType=VARCHAR}, 
+      #{clientVersion,jdbcType=VARCHAR}, #{clientSysName,jdbcType=VARCHAR}, #{clientSysVersion,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{userNick,jdbcType=VARCHAR}, #{costTime,jdbcType=INTEGER}, 
+      #{errorCode,jdbcType=INTEGER}, #{subCode,jdbcType=VARCHAR}, #{callTime,jdbcType=BIGINT}, 
+      #{appKey,jdbcType=BIGINT}, #{deviceUuid,jdbcType=VARCHAR}, #{platformCostTime,jdbcType=INTEGER}, 
+      #{traceId,jdbcType=VARCHAR}, #{archives,jdbcType=TINYINT}, #{requestSnapshot,jdbcType=LONGVARCHAR}, 
+      #{responseSnapshot,jdbcType=LONGVARCHAR}, #{callSnapshot,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="apiName != null">
+        api_name,
+      </if>
+      <if test="clientIp != null">
+        client_ip,
+      </if>
+      <if test="clientVersion != null">
+        client_version,
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name,
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userNick != null">
+        user_nick,
+      </if>
+      <if test="costTime != null">
+        cost_time,
+      </if>
+      <if test="errorCode != null">
+        error_code,
+      </if>
+      <if test="subCode != null">
+        sub_code,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="appKey != null">
+        app_key,
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid,
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time,
+      </if>
+      <if test="traceId != null">
+        trace_id,
+      </if>
+      <if test="archives != null">
+        archives,
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot,
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot,
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="apiName != null">
+        #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    <set>
+      <if test="apiName != null">
+        api_name = #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        client_ip = #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        client_version = #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        user_nick = #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        cost_time = #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        error_code = #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        sub_code = #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        call_time = #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        app_key = #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        trace_id = #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        archives = #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT},
+      request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="api_name" jdbcType="VARCHAR" property="apiName" />
+    <result column="client_ip" jdbcType="VARCHAR" property="clientIp" />
+    <result column="client_version" jdbcType="VARCHAR" property="clientVersion" />
+    <result column="client_sys_name" jdbcType="VARCHAR" property="clientSysName" />
+    <result column="client_sys_version" jdbcType="VARCHAR" property="clientSysVersion" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_nick" jdbcType="VARCHAR" property="userNick" />
+    <result column="cost_time" jdbcType="INTEGER" property="costTime" />
+    <result column="error_code" jdbcType="INTEGER" property="errorCode" />
+    <result column="sub_code" jdbcType="VARCHAR" property="subCode" />
+    <result column="call_time" jdbcType="BIGINT" property="callTime" />
+    <result column="app_key" jdbcType="BIGINT" property="appKey" />
+    <result column="device_uuid" jdbcType="VARCHAR" property="deviceUuid" />
+    <result column="platform_cost_time" jdbcType="INTEGER" property="platformCostTime" />
+    <result column="trace_id" jdbcType="VARCHAR" property="traceId" />
+    <result column="archives" jdbcType="TINYINT" property="archives" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    <result column="request_snapshot" jdbcType="LONGVARCHAR" property="requestSnapshot" />
+    <result column="response_snapshot" jdbcType="LONGVARCHAR" property="responseSnapshot" />
+    <result column="call_snapshot" jdbcType="LONGVARCHAR" property="callSnapshot" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, api_name, client_ip, client_version, client_sys_name, client_sys_version, user_id, 
+    user_nick, cost_time, error_code, sub_code, call_time, app_key, device_uuid, platform_cost_time, 
+    trace_id, archives
+  </sql>
+  <sql id="Blob_Column_List">
+    request_snapshot, response_snapshot, call_snapshot
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from scx_gateway_analysis_api_access
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access (id, api_name, client_ip, 
+      client_version, client_sys_name, client_sys_version, 
+      user_id, user_nick, cost_time, 
+      error_code, sub_code, call_time, 
+      app_key, device_uuid, platform_cost_time, 
+      trace_id, archives, request_snapshot, 
+      response_snapshot, call_snapshot)
+    values (#{id,jdbcType=INTEGER}, #{apiName,jdbcType=VARCHAR}, #{clientIp,jdbcType=VARCHAR}, 
+      #{clientVersion,jdbcType=VARCHAR}, #{clientSysName,jdbcType=VARCHAR}, #{clientSysVersion,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{userNick,jdbcType=VARCHAR}, #{costTime,jdbcType=INTEGER}, 
+      #{errorCode,jdbcType=INTEGER}, #{subCode,jdbcType=VARCHAR}, #{callTime,jdbcType=BIGINT}, 
+      #{appKey,jdbcType=BIGINT}, #{deviceUuid,jdbcType=VARCHAR}, #{platformCostTime,jdbcType=INTEGER}, 
+      #{traceId,jdbcType=VARCHAR}, #{archives,jdbcType=TINYINT}, #{requestSnapshot,jdbcType=LONGVARCHAR}, 
+      #{responseSnapshot,jdbcType=LONGVARCHAR}, #{callSnapshot,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    insert into scx_gateway_analysis_api_access
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="apiName != null">
+        api_name,
+      </if>
+      <if test="clientIp != null">
+        client_ip,
+      </if>
+      <if test="clientVersion != null">
+        client_version,
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name,
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userNick != null">
+        user_nick,
+      </if>
+      <if test="costTime != null">
+        cost_time,
+      </if>
+      <if test="errorCode != null">
+        error_code,
+      </if>
+      <if test="subCode != null">
+        sub_code,
+      </if>
+      <if test="callTime != null">
+        call_time,
+      </if>
+      <if test="appKey != null">
+        app_key,
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid,
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time,
+      </if>
+      <if test="traceId != null">
+        trace_id,
+      </if>
+      <if test="archives != null">
+        archives,
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot,
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot,
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="apiName != null">
+        #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    <set>
+      <if test="apiName != null">
+        api_name = #{apiName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientIp != null">
+        client_ip = #{clientIp,jdbcType=VARCHAR},
+      </if>
+      <if test="clientVersion != null">
+        client_version = #{clientVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysName != null">
+        client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      </if>
+      <if test="clientSysVersion != null">
+        client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userNick != null">
+        user_nick = #{userNick,jdbcType=VARCHAR},
+      </if>
+      <if test="costTime != null">
+        cost_time = #{costTime,jdbcType=INTEGER},
+      </if>
+      <if test="errorCode != null">
+        error_code = #{errorCode,jdbcType=INTEGER},
+      </if>
+      <if test="subCode != null">
+        sub_code = #{subCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callTime != null">
+        call_time = #{callTime,jdbcType=BIGINT},
+      </if>
+      <if test="appKey != null">
+        app_key = #{appKey,jdbcType=BIGINT},
+      </if>
+      <if test="deviceUuid != null">
+        device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="platformCostTime != null">
+        platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      </if>
+      <if test="traceId != null">
+        trace_id = #{traceId,jdbcType=VARCHAR},
+      </if>
+      <if test="archives != null">
+        archives = #{archives,jdbcType=TINYINT},
+      </if>
+      <if test="requestSnapshot != null">
+        request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="responseSnapshot != null">
+        response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="callSnapshot != null">
+        call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomainWithBLOBs">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT},
+      request_snapshot = #{requestSnapshot,jdbcType=LONGVARCHAR},
+      response_snapshot = #{responseSnapshot,jdbcType=LONGVARCHAR},
+      call_snapshot = #{callSnapshot,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sxc.dubbo.demo.module.ApiAccessDomain">
+    update scx_gateway_analysis_api_access
+    set api_name = #{apiName,jdbcType=VARCHAR},
+      client_ip = #{clientIp,jdbcType=VARCHAR},
+      client_version = #{clientVersion,jdbcType=VARCHAR},
+      client_sys_name = #{clientSysName,jdbcType=VARCHAR},
+      client_sys_version = #{clientSysVersion,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_nick = #{userNick,jdbcType=VARCHAR},
+      cost_time = #{costTime,jdbcType=INTEGER},
+      error_code = #{errorCode,jdbcType=INTEGER},
+      sub_code = #{subCode,jdbcType=VARCHAR},
+      call_time = #{callTime,jdbcType=BIGINT},
+      app_key = #{appKey,jdbcType=BIGINT},
+      device_uuid = #{deviceUuid,jdbcType=VARCHAR},
+      platform_cost_time = #{platformCostTime,jdbcType=INTEGER},
+      trace_id = #{traceId,jdbcType=VARCHAR},
+      archives = #{archives,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
