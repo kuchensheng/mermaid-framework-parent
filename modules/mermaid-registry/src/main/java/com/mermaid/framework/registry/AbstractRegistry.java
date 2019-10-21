@@ -20,7 +20,7 @@ public abstract class AbstractRegistry implements Registry{
 
     private volatile boolean closed = false;
 
-    private static final Character SEPARATOR = '/';
+    private static final String SEPARATOR = "/";
 
     protected void stateChanged(int state) {
         for (IStateListener sessionListener : getSessionListeners()) {
@@ -39,8 +39,8 @@ public abstract class AbstractRegistry implements Registry{
                 return;
             }
         }
-        int index = path.lastIndexOf(SEPARATOR);
-        if(index > 0) {
+        int index = path.indexOf(SEPARATOR);
+        if(index > -1) {
             create(path.substring(0,index),false);
         }
         if(ephemeral) {
@@ -52,15 +52,28 @@ public abstract class AbstractRegistry implements Registry{
 
     @Override
     public void create(String path, boolean ephemeral,Object data) {
-        if(checkExists(path)) {
+        if(ephemeral && checkExists(path)) {
             delete(path);
         }
+        String[] childs = path.split(SEPARATOR);
+        StringBuilder stringBuilder = new StringBuilder(SEPARATOR);
+        for (int i = 1; i< childs.length;i++) {
+            stringBuilder.append(childs[i]);
+            if(checkExists(stringBuilder.toString())) {
+                stringBuilder.append(SEPARATOR);
+                continue;
+            }
 
-        int i = path.lastIndexOf(SEPARATOR);
-        if(i > 0) {
-            create(path.substring(0,i),false);
+            if (i != childs.length - 1) {
+                if ((stringBuilder.lastIndexOf(SEPARATOR) <= -1)) {
+                    stringBuilder.append(SEPARATOR);
+                }
+                createPersistent(stringBuilder.toString());
+            } else {
+                createEphemeral(stringBuilder.toString());
+            }
         }
-        setData(path,data);
+        setData(stringBuilder.toString(),data);
     }
 
 

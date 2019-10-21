@@ -1,5 +1,6 @@
 package com.mermaid.framework.core.config;
 
+import com.mermaid.framework.util.MavenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -40,7 +41,18 @@ public class AnnotaionProxyFactoryBean implements ApplicationContextAware,Enviro
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;
-        BASE_PACKAGES = environment.getProperty("mermaid.framework.component.scan.basePackages",BASE_PACKAGES);
+        try {
+            String required = MavenUtil.getTagContent("groupId");
+            BASE_PACKAGES = environment.getProperty("mermaid.framework.component.scan.basePackages","com.mermiad,"+ MavenUtil.getTagContent("groupId"));
+            if (!BASE_PACKAGES.contains(required)) {
+                BASE_PACKAGES = BASE_PACKAGES.endsWith(",") ? BASE_PACKAGES+required : BASE_PACKAGES+","+required;
+            }
+            if(!BASE_PACKAGES.contains("com.mermaid")) {
+                BASE_PACKAGES = BASE_PACKAGES.endsWith(",") ? BASE_PACKAGES+"com.mermaid" : BASE_PACKAGES+",com.mermaid";
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("获取key=mermaid.framework.component.scan.basePackages配置异常",e);
+        }
     }
 
     private void setComonetScanValue() {

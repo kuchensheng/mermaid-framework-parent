@@ -20,7 +20,7 @@ public abstract class AbstractZkclient extends AbstractRegistry implements IZook
         if(null != children || children.size() > 0) {
             logger.info("path = ->{}有子节点，删除其子节点信息");
             for (String child :children) {
-                delete(path);
+                delete(child);
             }
         }else {
             doDelete(path);

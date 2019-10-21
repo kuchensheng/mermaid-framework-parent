@@ -1,6 +1,7 @@
 package com.mermaid.framework.core.config;
 
 import com.github.pagehelper.PageHelper;
+import com.mermaid.framework.util.MavenUtil;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,19 +32,20 @@ public class MybatisConfig implements EnvironmentAware{
 
     @Bean
     public MapperScannerConfigurer mapperScannerConfigurer() throws ClassNotFoundException {
-        String mybatisMapperScanBasePackage = environment.getProperty("mermaid.framework.mybatis.mapper.scan.basePackages","com.mermaid");
-        String mybatisMapperAnnotation = environment.getProperty("mermaid.framework.mybatis.mapper.scan.annotation","org.apache.ibatis.annotations.Mapper");
-        if(!StringUtils.hasText(mybatisMapperScanBasePackage)) {
-            //hack code to avoid mapper scan error
-            logger.info("未读取到mermaid.framework.mybatis.mapper.scan.basePackages的值，设置为默认值={}","com.mermaid");
+        String groupId = null;
+        try {
+            groupId = MavenUtil.getTagContent("groupId");
+        } catch (Exception e) {
+            throw new RuntimeException("获取group ID异常请检查",e);
+        }
+        String mybatisMapperScanBasePackage = environment.getProperty("mermaid.framework.mybatis.mapper.scan.basePackages",groupId);
+        if(!mybatisMapperScanBasePackage.contains(groupId)) {
+            mybatisMapperScanBasePackage = mybatisMapperScanBasePackage.endsWith(",") ? mybatisMapperScanBasePackage + groupId : mybatisMapperScanBasePackage+","+groupId;
         }
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
         mapperScannerConfigurer.setBasePackage(mybatisMapperScanBasePackage);
-        if(!StringUtils.hasText(mybatisMapperAnnotation)) {
-            logger.info("未读取到mermaid.framework.mybatis.mapper.scan.annotation，设置默认值={}","org.apache.ibatis.annotations.Mapper");
-        }
-        mapperScannerConfigurer.setAnnotationClass(Class.forName(mybatisMapperAnnotation).asSubclass(java.lang.annotation.Annotation.class));
+        mapperScannerConfigurer.setAnnotationClass(Class.forName("org.apache.ibatis.annotations.Mapper").asSubclass(java.lang.annotation.Annotation.class));
 
         return mapperScannerConfigurer;
     }

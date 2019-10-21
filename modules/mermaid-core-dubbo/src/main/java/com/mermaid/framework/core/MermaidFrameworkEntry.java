@@ -29,7 +29,7 @@ import java.util.Properties;
 
 @EnableDubbo
 @SpringBootApplication
-@ComponentScan({"com.mermaid.framework","${mermaid.modules.basePackages:}"})
+@ComponentScan("com.mermaid.framework")
 public class MermaidFrameworkEntry {
     private static final String CLASSPATH_CONFIG_RESOURCE_NAME = "application.properties";
 

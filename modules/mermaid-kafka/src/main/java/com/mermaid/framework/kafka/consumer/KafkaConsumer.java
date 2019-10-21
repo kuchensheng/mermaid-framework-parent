@@ -29,7 +29,7 @@ import java.util.Properties;
 public class KafkaConsumer {
     public static void main(String[] args) {
         Properties p = new Properties();
-        p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9092,kafka2:9092,kafka3:9092");
+        p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka4:9092");
         p.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         p.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         p.put(ConsumerConfig.GROUP_ID_CONFIG, "duanjt_test");
@@ -39,7 +39,7 @@ public class KafkaConsumer {
 //        p.put("security.protocol", SecurityProtocol.SASL_PLAINTEXT.name);
 //        p.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"06lR@E\";");
         org.apache.kafka.clients.consumer.KafkaConsumer<String, String> kafkaConsumer = new org.apache.kafka.clients.consumer.KafkaConsumer<>(p);
-        kafkaConsumer.subscribe(Collections.singletonList("gateway_apiCallLog"));// 订阅消息
+        kafkaConsumer.subscribe(Collections.singletonList("gateway_apiCallLog_pig"));// 订阅消息
 
         int amount = 0;
         Map<String,Integer> repeatData = new HashMap<>();
@@ -47,12 +47,12 @@ public class KafkaConsumer {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(20));
 
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println(String.format("topic:%s,offset:%d,%s", //
-                        record.topic(), record.offset(),record.value()));
+                System.out.println(String.format("%s", //
+                        record.value()));
 //                JSONObject jsonObject = JSONObject.parseObject(record.value());
 //                write2File(jsonObject.getString("key"), jsonObject.getBytes("img_data"));
                 kafkaConsumer.commitAsync();
-                System.out.println("amount="+ ++ amount);
+//                System.out.println("amount="+ ++ amount);
             }
         }
     }
