@@ -2,9 +2,15 @@ package com.mermaid.framework.util;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * ClassName:XmlUtil
@@ -110,4 +116,22 @@ public class XmlUtil {
         }
     }
 
+    public static <T> T getTagContent(String xmlPath,String tag,Class<T> clazz) throws Exception{
+        SAXReader reader = new SAXReader();
+        Document document = reader.read(new File(xmlPath));
+
+        Element rootElement = document.getRootElement();
+        Iterator<Element> iterator = rootElement.elementIterator(tag);
+        if(clazz.isInstance(List.class)) {
+
+        }
+        if(clazz.isInstance(String.class)) {
+            while (iterator.hasNext()) {
+                Element next = iterator.next();
+                return (T) next.getText();
+            }
+        }
+
+        return null;
+    }
 }
