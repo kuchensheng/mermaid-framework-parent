@@ -8,6 +8,7 @@ import com.mermaid.framework.serialize.ISerializer;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkDataListener;
 import org.I0Itec.zkclient.IZkStateListener;
+import org.I0Itec.zkclient.ZkClient;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,5 +122,15 @@ public class ZookeeperClient extends AbstractZkclient {
         });
     }
 
+
+    public static void main(String[] args) {
+        ZkClient zkClient = new ZkClient("zk:2181");
+        String dubboPath = "/dubbo";
+        List<String> providers = zkClient.getChildren(dubboPath);
+        for (String providersPath : providers) {
+            List<String> children = zkClient.getChildren(dubboPath + "/" + providersPath);
+
+        }
+    }
 
 }

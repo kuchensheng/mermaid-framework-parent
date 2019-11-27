@@ -1,6 +1,6 @@
 package com.mermaid.framework.kafka.sender;
 
-import com.alibaba.fastjson.JSONObject;
+//import com.alibaba.fastjson.JSONObject;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -32,13 +32,13 @@ public class KafkaSender {
     private static ExecutorService executorService = Executors.newFixedThreadPool(3);
     public static void main(String[] args) throws Exception {
         Properties p = new Properties();
-        p.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka4:9092");//kafka地址，多个地址用逗号分割
+        p.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");//kafka地址，多个地址用逗号分割
         p.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         p.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 //        p.put(ProducerConfig.PARTITIONER_CLASS_CONFIG,"com.mermaid.framework.kafka.sender.TestPartitioner");
-        p.put(SaslConfigs.SASL_MECHANISM,"PLAIN");
-        p.put("security.protocol", SecurityProtocol.SASL_PLAINTEXT.name);
-        p.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"06lR@E\";");
+//        p.put(SaslConfigs.SASL_MECHANISM,"PLAIN");
+//        p.put("security.protocol", SecurityProtocol.SASL_PLAINTEXT.name);
+//        p.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"06lR@E\";");
 
 
         KafkaProducer<String, String> kafkaProducer = new KafkaProducer<>(p);
@@ -50,7 +50,7 @@ public class KafkaSender {
                     try {
                         String[] uuids = createUUIDs();
                         String msg = sender.createCallLog(id.getAndIncrement(),uuids);
-                        ProducerRecord<String, String> record = new ProducerRecord<String, String>("gateway_apiCallLog_pig", msg);
+                        ProducerRecord<String, String> record = new ProducerRecord<String, String>("sxc_dts_rds_mysql_binlog_test", msg);
                         kafkaProducer.send(record,(recordMetadata,e) -> {
                             if( e != null) {
                                 e.printStackTrace();
@@ -96,7 +96,7 @@ public class KafkaSender {
         apiCallLog.setResponseSnapshot("这个是响应字段");
         apiCallLog.setTraceId(uuids[random.nextInt(uuids.length)]);
         apiCallLog.setCallSnapshot("[1,2,3]");
-        return JSONObject.toJSONString(apiCallLog);
+        return "66666666";
     }
 
 

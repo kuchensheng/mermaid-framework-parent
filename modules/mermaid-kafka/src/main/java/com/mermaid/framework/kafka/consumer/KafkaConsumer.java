@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Desription:
@@ -29,22 +30,31 @@ import java.util.Properties;
 public class KafkaConsumer {
     public static void main(String[] args) {
         Properties p = new Properties();
-        p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka4:9092");
+        p.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9092");
         p.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         p.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        p.put(ConsumerConfig.GROUP_ID_CONFIG, "duanjt_test");
+        p.put(ConsumerConfig.GROUP_ID_CONFIG, "kucs_1111");
         p.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG,"1024");
         p.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,"true");
+        p.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
 //        p.put(SaslConfigs.SASL_MECHANISM,"PLAIN");
 //        p.put("security.protocol", SecurityProtocol.SASL_PLAINTEXT.name);
 //        p.put("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"06lR@E\";");
         org.apache.kafka.clients.consumer.KafkaConsumer<String, String> kafkaConsumer = new org.apache.kafka.clients.consumer.KafkaConsumer<>(p);
-        kafkaConsumer.subscribe(Collections.singletonList("gateway_apiCallLog_pig"));// 订阅消息
+        kafkaConsumer.subscribe(Collections.singletonList("commander.prod"));// 订阅消息
 
         int amount = 0;
         Map<String,Integer> repeatData = new HashMap<>();
         while (true) {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(20));
+            System.out.println("recores length="+records.count());
+            if (records.count() == 0) {
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
             for (ConsumerRecord<String, String> record : records) {
                 System.out.println(String.format("%s", //
