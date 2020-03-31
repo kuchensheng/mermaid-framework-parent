@@ -11,6 +11,7 @@ import com.mermaid.framework.registry.EventType;
 import com.mermaid.framework.registry.IDataListener;
 import org.I0Itec.zkclient.IZkDataListener;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
@@ -21,6 +22,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,7 +35,11 @@ import java.util.Set;
  * @author:Hui CreateDate:2019/8/18 0:20
  * version 1.0
  */
+@Component
 public class MermaidDataChangeListener implements IDataListener,EnvironmentAware {
+
+    @Autowired
+    private DefaultListableBeanFactory beanFactory;
 
     private Environment environment;
 
