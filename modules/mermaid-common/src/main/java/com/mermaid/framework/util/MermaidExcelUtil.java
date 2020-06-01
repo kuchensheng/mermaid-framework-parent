@@ -360,7 +360,18 @@ public class MermaidExcelUtil {
                             if (!com.mermaid.framework.util.StringUtils.hasText(msg)) {
                                 msg = annotation.name()+"与正则["+annotation.regex()+"]不匹配";
                             }
-                            throw new IllegalArgumentException(annotation.errMsg());
+                            throw new IllegalArgumentException(msg);
+                        }
+                    }
+
+                    if (type.equals(int.class) || type.equals(Integer.class) || type.equals(long.class) || type.equals(Long.class)
+                            || type.equals(double.class) || type.equals(Double.class) || type.equals(BigDecimal.class)) {
+                        if ((int) convert > annotation.max()) {
+                            String msg = annotation.errMsg();
+                            if (!com.mermaid.framework.util.StringUtils.hasText(msg)) {
+                                msg = annotation.name()+"超过了最大值";
+                            }
+                            throw new IllegalArgumentException(msg);
                         }
                     }
                     field.set(t,convert);
