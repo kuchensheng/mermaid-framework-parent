@@ -4,6 +4,7 @@ import com.mermaid.framework.annotation.Cell;
 import com.mermaid.framework.annotation.Excel;
 
 import java.util.Date;
+import java.util.List;
 
 @Excel(startRow = 2)
 public class UserParamDTO {
@@ -33,6 +34,9 @@ public class UserParamDTO {
 
     @Cell(clumonNum = 7,name = "出生年月",required = true)
     private String birth;
+
+
+    private List<ParamDTO> paramDTOList;
 
     public String getId() {
         return id;
@@ -114,6 +118,15 @@ public class UserParamDTO {
         this.birth = birth;
     }
 
+
+    public List<ParamDTO> getParamDTOList() {
+        return paramDTOList;
+    }
+
+    public void setParamDTOList(List<ParamDTO> paramDTOList) {
+        this.paramDTOList = paramDTOList;
+    }
+
     @Override
     public String toString() {
         return "UserParamDTO{" +
@@ -127,6 +140,7 @@ public class UserParamDTO {
                 ", educationDesc='" + educationDesc + '\'' +
                 ", birthDate=" + birthDate +
                 ", birth='" + birth + '\'' +
+                ", paramDTOList=" + paramDTOList +
                 '}';
     }
 }

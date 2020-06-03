@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.math.BigDecimal;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -173,7 +174,7 @@ public class MermaidExcelUtil {
                 writer.merge(mergeLastColumnNum,mergeContent);
             }
 
-            List<TreeMap<String,Object>> result = filterDataList(dataList);
+            List<Map<String,Object>> result = filterDataList(dataList);
             writer.write(result,true);
             writer.flush(file);
         } catch (Exception e) {
@@ -185,45 +186,136 @@ public class MermaidExcelUtil {
         }
     }
 
-    private static List<TreeMap<String,Object>> filterDataList(List<?> dataList) throws Exception {
-        List<TreeMap<String,Object>> result = new LinkedList<>();
+    /**
+     * 只输出那些被@Cell注解的属性
+     * @param dataList
+     * @return
+     * @throws Exception
+     */
+    private static List<Map<String,Object>> filterDataList(List<?> dataList) throws Exception {
+        List<Map<String,Object>> result = new LinkedList<>();
         if (CollectionUtils.isEmpty(dataList)) {
             return result;
         }
-        Class<?> clazz = dataList.get(0).getClass();
-        Set<String> cellSet = new HashSet<>();
+
+        for (Object item : dataList) {
+            result.addAll(getFieldVal(item,null));
+        }
+        return result;
+    }
+
+    public static List<Map<String,Object>> getFieldVal(final Object obj,Map<String,Object> map) throws IllegalAccessException {
+        Field[] fields = obj.getClass().getDeclaredFields();
+
+        List<Map<String,Object>> result = new LinkedList<>();
+
+        final Map<String,Object> objectList = new HashMap<>();
+        if (null != map) {
+            map.forEach((key,val) ->{
+                objectList.put(key,val);
+            });
+        }
+
+        boolean addFlag = true;
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (null != field.getAnnotation(Cell.class)) {
+                objectList.put(field.getName(),field.get(obj));
+            } else if (!isBasicType(field.getType())){
+                //如果字段没有被@Cell修饰，则判断属性是否是对象/List/Map
+                Class<?> type = field.getType();
+                if (type.isAssignableFrom(List.class) || type.isArray()) {
+                    //List集合，则获取集合类型的字段
+                    List<?> list = (List<?>) field.get(obj);
+                    addFlag = false;
+                    for (Object item : list) {
+                        result.addAll(getFieldVal(item,objectList));
+                    }
+                } else if (!isJavaClass(type)) {
+                    addFlag =false;
+                    result.addAll(getFieldVal(field.get(obj),objectList));
+                }
+
+            }
+        }
+        if (addFlag) {
+            result.add(objectList);
+        }
+
+        return result;
+    }
+
+    public static List<Field> getFieldList(Class<?> clazz) {
         Field[] fields = clazz.getDeclaredFields();
-        List<Field> fieldList = new ArrayList<>();
+
+        List<Field> fieldList = new LinkedList<>();
+
         for (Field field : fields) {
             field.setAccessible(true);
             if (null != field.getAnnotation(Cell.class)) {
                 fieldList.add(field);
-                cellSet.add(field.getName());
-            }
-        }
-
-        fieldList.sort(new Comparator<Field>() {
-            @Override
-            public int compare(Field o1, Field o2) {
-                Cell cell1 = o1.getAnnotation(Cell.class);
-                Cell cell2 = o2.getAnnotation(Cell.class);
-                return cell1.clumonNum() - cell2.clumonNum();
-            }
-        });
-        for (Object item : dataList) {
-            TreeMap<String,Object> map = new TreeMap<>();
-
-            for (Field field : fieldList) {
-                field.setAccessible(true);
-                if (cellSet.contains(field.getName())) {
-                    map.put(field.getName(),field.get(item));
+            } else if (!isBasicType(field.getType())){
+                //如果字段没有被@Cell修饰，则判断属性是否是对象/List/Map
+                Class<?> type = field.getType();
+                if (type.isAssignableFrom(List.class) || type.isArray()) {
+                    //List集合，则获取集合类型的字段
+                    ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
+                    fieldList.addAll(getFieldList((Class<?>)parameterizedType.getActualTypeArguments()[0]));
+                } else if (!isJavaClass(type)) {
+                    fieldList.addAll(getFieldList(type));
                 }
-            }
-            if (!map.isEmpty()) {
-                result.add(map);
+
             }
         }
-        return result;
+
+        //按照Column升序
+        fieldList.sort((o1,o2)-> {
+            Cell cell1 = o1.getAnnotation(Cell.class);
+            Cell cell2 = o2.getAnnotation(Cell.class);
+            return cell1.clumonNum() - cell2.clumonNum();
+        });
+
+        return fieldList;
+    }
+
+    private static boolean isJavaClass(Class<?> type) {
+        return type != null && type.getClassLoader() == null;
+    }
+
+    /**
+     * 检查是否是基础类型
+     * @param type
+     * @return
+     */
+    private static boolean isBasicType(Class<?> type) {
+
+        if(type.isAssignableFrom(Number.class)) {
+            return true;
+        }
+
+        if (type.isInstance(CharSequence.class)) {
+            return true;
+        }
+
+        if (type.isAssignableFrom(Boolean.class)) {
+            return true;
+        }
+
+        if (type.isAssignableFrom(String.class)) {
+            return true;
+        }
+
+        if (type.isInstance(Comparable.class)) {
+            return true;
+        }
+
+
+        if (type.isAssignableFrom(int.class) || type.isAssignableFrom(float.class) || type.isAssignableFrom(long.class)
+                || type.isAssignableFrom(double.class) || type.isAssignableFrom(short.class) || type.isAssignableFrom(char.class)
+                || type.isAssignableFrom(boolean.class)) {
+            return true;
+        }
+        return false;
     }
 
     public static <T> void write(OutputStream outputStream,List<T> dataList,Map<String,String> headerAliasMap) throws Exception {
@@ -285,26 +377,11 @@ public class MermaidExcelUtil {
         }
     }
     private static <T> List<Node> getHeaderAliasMap(Class<T> clazz) {
-        Field[] fields = clazz.getDeclaredFields();
 
         List<Node> result = new ArrayList<>();
 
-        List<Field> fieldList = new ArrayList<>();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            if (null != field.getAnnotation(Cell.class)) {
-                fieldList.add(field);
-            }
-        }
+        List<Field> fieldList = getFieldList(clazz);
 
-        fieldList.sort(new Comparator<Field>() {
-            @Override
-            public int compare(Field o1, Field o2) {
-                Cell cell1 = o1.getAnnotation(Cell.class);
-                Cell cell2 = o2.getAnnotation(Cell.class);
-                return cell1.clumonNum() - cell2.clumonNum();
-            }
-        });
         for (Field field : fieldList) {
             field.setAccessible(true);
             Cell cell = field.getAnnotation(Cell.class);
