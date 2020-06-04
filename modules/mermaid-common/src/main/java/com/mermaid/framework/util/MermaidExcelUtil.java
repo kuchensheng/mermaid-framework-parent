@@ -1,5 +1,6 @@
 package com.mermaid.framework.util;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.resource.ClassPathResource;
@@ -166,7 +167,7 @@ public class MermaidExcelUtil {
             }
 
             List<Map<String,Object>> result = filterDataList(dataList);
-//            writer = mergeRowWriter(writer,dataList);
+            writer = mergeRowWriter(writer,dataList);
             writer.write(result,true);
             writer.flush(file);
 
@@ -190,27 +191,35 @@ public class MermaidExcelUtil {
         //TODO 分析合并单元格，返回writer
 //        Field[] fieldList = dataList.get(0).getClass().getDeclaredFields();
         List<Field> fieldList = getFieldList(dataList.get(0).getClass());
+
         Excel excel = dataList.get(0).getClass().getAnnotation(Excel.class);
         int startRow = excel.startRow();
+        if (startRow > 0) {
+            startRow = startRow -1;
 
+        }
+        int maxMerge = 0;
         for (int row = 0; row < dataList.size();row ++) {
             for (Field field : fieldList) {
                 Cell cell = field.getAnnotation(Cell.class);
                 //获取当前列需要merge的行数
-                int mergeRowCount = getMergeRowCount(dataList.get(row),cell.clumonNum());
+                int mergeRowCount = getMergeRowCount(dataList.get(row),cell.clumonNum(),null);
+                maxMerge = maxMerge > mergeRowCount ? maxMerge : mergeRowCount;
                 if (mergeRowCount > 1) {
-                    int firstRow = startRow + row;
-                    int endRow = firstRow + mergeRowCount;
-                    writer.merge(firstRow,endRow,cell.clumonNum(),cell.clumonNum(),getCellVal(dataList.get(row),cell.clumonNum()),false);
+                    int firstRow = row +startRow;
+                    int endRow = firstRow + mergeRowCount -1;
+
+                    writer.merge(firstRow,endRow,cell.clumonNum() -1 ,cell.clumonNum() -1 ,getCellVal(dataList.get(row),cell.clumonNum()),false);
                 }
             }
+            startRow += maxMerge;
         }
 
         return writer;
     }
 
     private static <T> Object getCellVal(T t, int clumonNum) throws IllegalAccessException {
-        System.out.println(String.format("columnNum = %d",clumonNum));
+//        System.out.println(String.format("columnNum = %d",clumonNum));
         Field[] fieldList = t.getClass().getDeclaredFields();
 
         for (Field field : fieldList) {
@@ -236,38 +245,52 @@ public class MermaidExcelUtil {
         }
         return null;
     }
-
-    private static <T> int getMergeRowCount(T t, int columnNum) throws IllegalAccessException {
-        int sum = 0;
+    static int maxColumn = 0;
+    private static <T> int getMergeRowCount(T t, int columnNum, List<Field> fieldWithCellList) throws IllegalAccessException {
+        int max = 0;
 
         Field[] declaredFields = t.getClass().getDeclaredFields();
+
+        //所有被Cell注解的字段
+        if (CollectionUtil.isEmpty(fieldWithCellList)) {
+            fieldWithCellList = getFieldList(t.getClass());
+        }
 
         for (Field field : declaredFields) {
             field.setAccessible(true);
             Class<?> type = field.getType();
-            System.out.println(type.getName());
             Cell cell = field.getAnnotation(Cell.class);
             if (null != cell && cell.clumonNum() == columnNum) {
                 continue;
             }
-            sum = 1;
+
+            //判断其他字段是否有复合对象
             if (Iterable.class.isAssignableFrom(type) || type.isArray()) {
                 Collection<Object> objects = (Collection<Object>) field.get(t);
+                int size = 0;
                 if (null != objects && objects.size() > 0) {
                     for (Object object : objects) {
-                        sum += getMergeRowCount(object, columnNum);
+                        size += getMergeRowCount(object, columnNum,fieldWithCellList);
                     }
                 }
+                max = setMax(size, max);
 
             } else if (!isJavaClass(type)) {
-                sum += getMergeRowCount(field.get(t), columnNum);
+                 max = setMax(getMergeRowCount(field.get(t), columnNum,fieldWithCellList), max);
+            } else {
+                max = 1;
             }
         }
-
         //如果只有一个，那么表示不用合并单元格，返回1
-        return sum;
+        return max;
     }
 
+    private static int setMax(int a, int max){
+        if(a > max){
+            max = a;
+        }
+        return max;
+    }
     /**
      * 只输出那些被@Cell注解的属性
      * @param dataList

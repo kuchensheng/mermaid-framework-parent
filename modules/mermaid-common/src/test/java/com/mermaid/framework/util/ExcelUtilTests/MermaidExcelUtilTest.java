@@ -25,13 +25,13 @@ public class MermaidExcelUtilTest {
     public void write() throws Exception {
         List<UserParamDTO> read = MermaidExcelUtil.read(inputFilePath, UserParamDTO.class);
         ParamDTO paramDTO = new ParamDTO();
-        paramDTO.setDeviceId("1111");
+//        paramDTO.setDeviceId("1111");
         paramDTO.setDeviceName("测试测试");
 
         List<ParamDTO> dtoList = new ArrayList<>();
         for (int i= 0;i <3;i++) {
             ParamDTO dto = new ParamDTO();
-            dto.setDeviceId("1111"+i);
+//            dto.setDeviceId("1111"+i);
             dto.setDeviceName("测试测试"+i);
             dtoList.add(dto);
         }
