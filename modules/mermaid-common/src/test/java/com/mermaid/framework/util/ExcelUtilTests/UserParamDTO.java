@@ -37,6 +37,8 @@ public class UserParamDTO {
 
     private List<ParamDTO> paramDTOList;
 
+    private List<TestDTO> testDTOList;
+
 
     public String getId() {
         return id;
@@ -125,6 +127,14 @@ public class UserParamDTO {
 
     public void setParamDTOList(List<ParamDTO> paramDTOList) {
         this.paramDTOList = paramDTOList;
+    }
+
+    public List<TestDTO> getTestDTOList() {
+        return testDTOList;
+    }
+
+    public void setTestDTOList(List<TestDTO> testDTOList) {
+        this.testDTOList = testDTOList;
     }
 
     @Override

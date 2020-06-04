@@ -35,6 +35,14 @@ public class MermaidExcelUtilTest {
             dto.setDeviceName("测试测试"+i);
             dtoList.add(dto);
         }
+        List<TestDTO> dtos = new ArrayList<>();
+        for (int i = 0;i<5;i ++) {
+            TestDTO testDTO = new TestDTO();
+            testDTO.setAha(i);
+            testDTO.setTestName("aha"+i);
+            dtos.add(testDTO);
+        }
+        read.get(0).setTestDTOList(dtos);
         read.get(0).setParamDTOList(dtoList);
         MermaidExcelUtil.write(outputFilePath,read);
     }
