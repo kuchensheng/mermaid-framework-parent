@@ -5,9 +5,7 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.io.resource.FileResource;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.poi.excel.ExcelReader;
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
+import cn.hutool.poi.excel.*;
 import com.mermaid.framework.annotation.Cell;
 import com.mermaid.framework.annotation.Excel;
 import org.codehaus.plexus.util.StringUtils;
@@ -167,10 +165,11 @@ public class MermaidExcelUtil {
                 writer.merge(mergeLastColumnNum,mergeContent);
             }
 
-            writer = mergeRowWriter(writer,dataList);
             List<Map<String,Object>> result = filterDataList(dataList);
+//            writer = mergeRowWriter(writer,dataList);
             writer.write(result,true);
             writer.flush(file);
+
         } catch (Exception e) {
             throw e;
         } finally {
@@ -187,9 +186,86 @@ public class MermaidExcelUtil {
      * @param <T>
      * @return
      */
-    private static <T> ExcelWriter mergeRowWriter(ExcelWriter writer, List<T> dataList) {
+    private static <T> ExcelWriter mergeRowWriter(ExcelWriter writer, List<T> dataList) throws IllegalAccessException {
         //TODO 分析合并单元格，返回writer
+//        Field[] fieldList = dataList.get(0).getClass().getDeclaredFields();
+        List<Field> fieldList = getFieldList(dataList.get(0).getClass());
+        Excel excel = dataList.get(0).getClass().getAnnotation(Excel.class);
+        int startRow = excel.startRow();
+
+        for (int row = 0; row < dataList.size();row ++) {
+            for (Field field : fieldList) {
+                Cell cell = field.getAnnotation(Cell.class);
+                //获取当前列需要merge的行数
+                int mergeRowCount = getMergeRowCount(dataList.get(row),cell.clumonNum());
+                if (mergeRowCount > 1) {
+                    int firstRow = startRow + row;
+                    int endRow = firstRow + mergeRowCount;
+                    writer.merge(firstRow,endRow,cell.clumonNum(),cell.clumonNum(),getCellVal(dataList.get(row),cell.clumonNum()),false);
+                }
+            }
+        }
+
         return writer;
+    }
+
+    private static <T> Object getCellVal(T t, int clumonNum) throws IllegalAccessException {
+        System.out.println(String.format("columnNum = %d",clumonNum));
+        Field[] fieldList = t.getClass().getDeclaredFields();
+
+        for (Field field : fieldList) {
+            field.setAccessible(true);
+            Cell cell = field.getAnnotation(Cell.class);
+            if (null != cell) {
+                if (field.getAnnotation(Cell.class).clumonNum() == clumonNum) {
+                    return field.get(t);
+                }
+            } else {
+                Class<?> type = field.getType();
+                if (Iterable.class.isAssignableFrom(type) || type.isArray()) {
+                    Object o = field.get(t);
+                    List list = (List) o;
+                    for (Object item : list) {
+                        return getCellVal(item,clumonNum);
+                    }
+                } else if (!isJavaClass(type)) {
+
+                    return getCellVal(field.get(t),clumonNum);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static <T> int getMergeRowCount(T t, int columnNum) throws IllegalAccessException {
+        int sum = 0;
+
+        Field[] declaredFields = t.getClass().getDeclaredFields();
+
+        for (Field field : declaredFields) {
+            field.setAccessible(true);
+            Class<?> type = field.getType();
+            System.out.println(type.getName());
+            Cell cell = field.getAnnotation(Cell.class);
+            if (null != cell && cell.clumonNum() == columnNum) {
+                continue;
+            }
+            sum = 1;
+            if (Iterable.class.isAssignableFrom(type) || type.isArray()) {
+                Collection<Object> objects = (Collection<Object>) field.get(t);
+                if (null != objects && objects.size() > 0) {
+                    for (Object object : objects) {
+                        sum += getMergeRowCount(object, columnNum);
+                    }
+                }
+
+            } else if (!isJavaClass(type)) {
+                sum += getMergeRowCount(field.get(t), columnNum);
+            }
+        }
+
+        //如果只有一个，那么表示不用合并单元格，返回1
+        return sum;
     }
 
     /**
@@ -230,12 +306,14 @@ public class MermaidExcelUtil {
             } else if (!isBasicType(field.getType())){
                 //如果字段没有被@Cell修饰，则判断属性是否是对象/List/Map
                 Class<?> type = field.getType();
-                if (type.isAssignableFrom(List.class) || type.isArray()) {
+                if (Iterable.class.isAssignableFrom(type) || type.isArray()) {
                     //List集合，则获取集合类型的字段
                     List<?> list = (List<?>) field.get(obj);
-                    addFlag = false;
-                    for (Object item : list) {
-                        result.addAll(getFieldVal(item,objectList));
+                    if (null != list && list.size() > 0) {
+                        addFlag = false;
+                        for (Object item : list) {
+                            result.addAll(getFieldVal(item,objectList));
+                        }
                     }
                 } else if (!isJavaClass(type)) {
                     addFlag =false;
@@ -263,7 +341,7 @@ public class MermaidExcelUtil {
             } else if (!isBasicType(field.getType())){
                 //如果字段没有被@Cell修饰，则判断属性是否是对象/List/Map
                 Class<?> type = field.getType();
-                if (type.isAssignableFrom(List.class) || type.isArray()) {
+                if (Iterable.class.isAssignableFrom(type) || type.isArray()) {
                     //List集合，则获取集合类型的字段
                     ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
                     fieldList.addAll(getFieldList((Class<?>)parameterizedType.getActualTypeArguments()[0]));
@@ -312,6 +390,14 @@ public class MermaidExcelUtil {
         }
 
         if (type.isInstance(Comparable.class)) {
+            return true;
+        }
+
+        if (type.isAssignableFrom(Date.class)) {
+            return true;
+        }
+
+        if (type.getName().startsWith("java.lang")) {
             return true;
         }
 

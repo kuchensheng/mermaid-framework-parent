@@ -3,12 +3,16 @@ package com.mermaid.framework.util.ExcelUtilTests;
 import com.mermaid.framework.annotation.Cell;
 import com.mermaid.framework.annotation.Excel;
 
+import java.util.List;
+
 @Excel
 public class ParamDTO {
     @Cell(clumonNum = 8,name = "扩展字段Id")
     private String deviceId;
     @Cell(clumonNum = 9,name = "扩展字段名称")
     private String deviceName;
+
+    private List<Object> params;
 
     public String getDeviceId() {
         return deviceId;

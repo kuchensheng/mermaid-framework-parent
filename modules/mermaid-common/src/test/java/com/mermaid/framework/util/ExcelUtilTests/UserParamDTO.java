@@ -35,8 +35,8 @@ public class UserParamDTO {
     @Cell(clumonNum = 7,name = "出生年月",required = true)
     private String birth;
 
-
     private List<ParamDTO> paramDTOList;
+
 
     public String getId() {
         return id;
