@@ -48,4 +48,10 @@ public @interface Cell {
      */
     String[] group() default "";
 
+    /**
+     * 分组标记
+     * @return
+     */
+    boolean isGroupClumon() default false;
+
 }

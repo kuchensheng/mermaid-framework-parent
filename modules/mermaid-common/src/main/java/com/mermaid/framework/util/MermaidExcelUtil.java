@@ -78,21 +78,77 @@ public class MermaidExcelUtil {
             List<T> subList = new LinkedList<>();
             for (int i = excel.startRow();i < sheet.getLastRowNum(); i ++) {
                 List<Object> objects = reader.readRow(i);
-                subList.add(generalInstance(objects,clazz));
+                T t = generalInstance(objects, clazz);
+                if (null != t) {
+                    subList.add(t);
+                }
+
             }
-            dataList.addAll(mergeData(subList,mergedRegions));
+            dataList.addAll(mergeData(subList,clazz));
         }
 
         logger.info("读取到有效数据共[{}]行",dataList.size());
         return dataList;
     }
 
-    private static <T> T generalInstance(Object val, Class<T> clazz) throws IllegalAccessException, InstantiationException {
-        return clazz.newInstance();
+    private static <T> Collection<? extends T> mergeData(List<T> subList,Class<T> clazz) throws IllegalAccessException,InstantiationException {
+        List<Field> fieldList = getFieldList(clazz);
+        Field groupField = null;
+        for (Field field : fieldList) {
+            Cell cell = field.getAnnotation(Cell.class);
+            if (cell.isGroupClumon()) {
+                groupField = field;
+                break;
+            }
+        }
+        if (null == groupField) {
+            groupField = fieldList.get(0);
+        }
+
+        List result = new LinkedList();
+
+        T t = subList.get(0);
+
+        boolean merge =false;
+        for (int i = 1;i<subList.size();i ++) {
+            Object val = groupField.get(t);
+            if (val.equals(groupField.get(subList.get(i)))) {
+
+                //合并同类项
+                for (Field field : clazz.getDeclaredFields()) {
+                    field.setAccessible(true);
+                    if (Iterable.class.isAssignableFrom(field.getType())) {
+                        //如果是集合类型，则合并，其他保持不变
+                        merge = true;
+                        List list = (List) field.get(t);
+                        list.addAll((List) field.get(subList.get(i)));
+                        field.set(t,list);
+                    }
+                }
+
+            } else {
+                //不是同类，则继续向下
+                result.add(copyInstance(t));
+                t = subList.get(i);
+                merge =false;
+            }
+
+            if (merge && i == subList.size() -1) {
+                result.add(copyInstance(t));
+            }
+        }
+
+        return result;
     }
 
-    private static <T> Collection<? extends T> mergeData(List<T> subList,List<CellRangeAddress> mergedRegions) {
-        return null;
+    private static <T> T copyInstance(T t) throws IllegalAccessException, InstantiationException {
+        T newInstance = (T) t.getClass().newInstance();
+        Field[] fields= t.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            field.set(newInstance,field.get(t));
+        }
+        return newInstance;
     }
 
     /**

@@ -41,17 +41,17 @@ public class MermaidExcelUtilTest {
 //            read.add(userParamDTO);
 //
 //        }
-        ParamDTO paramDTO = new ParamDTO();
-//        paramDTO.setDeviceId("1111");
-        paramDTO.setDeviceName("测试测试");
-
-        List<ParamDTO> dtoList = new ArrayList<>();
-        for (int i= 0;i <3;i++) {
-            ParamDTO dto = new ParamDTO();
-//            dto.setDeviceId("1111"+i);
-            dto.setDeviceName("测试测试"+i);
-            dtoList.add(dto);
-        }
+//        ParamDTO paramDTO = new ParamDTO();
+////        paramDTO.setDeviceId("1111");
+//        paramDTO.setDeviceName("测试测试");
+//
+//        List<ParamDTO> dtoList = new ArrayList<>();
+//        for (int i= 0;i <3;i++) {
+//            ParamDTO dto = new ParamDTO();
+////            dto.setDeviceId("1111"+i);
+//            dto.setDeviceName("测试测试"+i);
+//            dtoList.add(dto);
+//        }
 //        List<TestDTO> dtos = new ArrayList<>();
 //        for (int i = 0;i<5;i ++) {
 //            TestDTO testDTO = new TestDTO();
@@ -60,7 +60,7 @@ public class MermaidExcelUtilTest {
 //            dtos.add(testDTO);
 //        }
 //        read.get(0).setTestDTOList(dtos);
-        read.get(0).setParamDTOList(dtoList);
+//        read.get(0).setParamDTOList(dtoList);
         MermaidExcelUtil.write(outputFilePath,read);
     }
 
