@@ -40,4 +40,12 @@ public @interface Cell {
 
     int max() default Integer.MAX_VALUE;
 
+    int min() default Integer.MIN_VALUE;
+
+    /**
+     * 取值范围
+     * @return
+     */
+    String[] group() default "";
+
 }

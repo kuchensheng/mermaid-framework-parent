@@ -9,5 +9,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Excel {
 
+    /**
+     * 数据的起始行
+     * @return
+     */
     int startRow() default 0;
+
+    /**
+     * 设置分组列
+     * @return
+     */
+    int groupClumnNum() default 1;
 }

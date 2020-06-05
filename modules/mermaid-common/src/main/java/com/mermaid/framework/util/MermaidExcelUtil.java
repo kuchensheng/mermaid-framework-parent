@@ -7,8 +7,12 @@ import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.io.resource.FileResource;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.poi.excel.*;
+import cn.hutool.poi.excel.cell.CellUtil;
 import com.mermaid.framework.annotation.Cell;
 import com.mermaid.framework.annotation.Excel;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +26,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static cn.hutool.poi.excel.cell.CellUtil.getMergedRegionValue;
+import static cn.hutool.poi.excel.cell.CellUtil.isMergedRegion;
 
 /**
  * Excel读写工具类
@@ -62,23 +69,30 @@ public class MermaidExcelUtil {
             throw new Exception("目标对象必须拥有注解" + Excel.class.getName());
         }
 
-        int sheetCount = ExcelUtil.getReader(file).getSheetCount();
-        logger.info("Excel有[{}]个sheet",sheetCount);
+        ExcelReader reader = ExcelUtil.getReader(file);
+        logger.info("Excel有[{}]个sheet",reader.getSheetCount());
 
         List<T> dataList = new LinkedList<>();
-        for (int sheetIndex = 0; sheetIndex < sheetCount;sheetIndex ++) {
-            ExcelReader reader = ExcelUtil.getReader(file, sheetIndex);
-            int rowCount = reader.getRowCount();
-            for (int i = excel.startRow();i < rowCount; i ++) {
+        for (Sheet sheet : reader.getSheets()) {
+            List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
+            List<T> subList = new LinkedList<>();
+            for (int i = excel.startRow();i < sheet.getLastRowNum(); i ++) {
                 List<Object> objects = reader.readRow(i);
-                T t = generalInstance(objects,clazz);
-                if (null != t) {
-                    dataList.add(t);
-                }
+                subList.add(generalInstance(objects,clazz));
             }
+            dataList.addAll(mergeData(subList,mergedRegions));
         }
+
         logger.info("读取到有效数据共[{}]行",dataList.size());
         return dataList;
+    }
+
+    private static <T> T generalInstance(Object val, Class<T> clazz) throws IllegalAccessException, InstantiationException {
+        return clazz.newInstance();
+    }
+
+    private static <T> Collection<? extends T> mergeData(List<T> subList,List<CellRangeAddress> mergedRegions) {
+        return null;
     }
 
     /**
@@ -96,21 +110,21 @@ public class MermaidExcelUtil {
             throw new Exception("目标对象必须拥有注解" + Excel.class.getName());
         }
 
-        int sheetCount = ExcelUtil.getReader(inputStream,false).getSheetCount();
-        logger.info("Excel有[{}]个sheet",sheetCount);
+        ExcelReader reader = ExcelUtil.getReader(inputStream);
+        logger.info("Excel有[{}]个sheet",reader.getSheetCount());
 
             List<T> dataList = new LinkedList<>();
-            for (int sheetIndex = 0; sheetIndex < sheetCount;sheetIndex ++) {
-                ExcelReader reader = ExcelUtil.getReader(inputStream, sheetIndex);
-                int rowCount = reader.getRowCount();
-                for (int i = excel.startRow();i < rowCount; i ++) {
-                    List<Object> objects = reader.readRow(i);
-                    T t = generalInstance(objects,clazz);
-                    if (null != t) {
-                        dataList.add(t);
-                    }
+        int rowCount = reader.getRowCount();
+        for (Sheet sheet : reader.getSheets()) {
+            for (int i = excel.startRow();i < rowCount; i ++) {
+                List<Object> objects = reader.readRow(i);
+                T t = generalInstance(objects,clazz);
+                if (null != t) {
+                    dataList.add(t);
                 }
             }
+        }
+
             logger.info("读取到有效数据共[{}]行",dataList.size());
             return dataList;
     }
@@ -188,7 +202,6 @@ public class MermaidExcelUtil {
      * @return
      */
     private static <T> ExcelWriter mergeRowWriter(ExcelWriter writer, List<T> dataList) throws IllegalAccessException {
-        //TODO 分析合并单元格，返回writer
 //        Field[] fieldList = dataList.get(0).getClass().getDeclaredFields();
         List<Field> fieldList = getFieldList(dataList.get(0).getClass());
 
@@ -385,7 +398,7 @@ public class MermaidExcelUtil {
         return fieldList;
     }
 
-    private static boolean isJavaClass(Class<?> type) {
+    public static boolean isJavaClass(Class<?> type) {
         return type != null && type.getClassLoader() == null;
     }
 
@@ -514,9 +527,9 @@ public class MermaidExcelUtil {
 
     /**
      * 将读取到的数据转化为目标对象
+     * @param <T>
      * @param objects row数据集合
      * @param clazz 目标对象
-     * @param <T>
      * @return
      * @throws Exception
      */
@@ -524,50 +537,73 @@ public class MermaidExcelUtil {
         if (null == objects || objects.size() ==0) {
             return null;
         }
+
         T t = null;
         try {
             t = clazz.newInstance();
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field field : declaredFields) {
                 field.setAccessible(true);
-                Cell annotation = field.getAnnotation(Cell.class);
-                if (null != annotation) {
-                    int columnNum = Integer.valueOf(annotation.clumonNum());
-                    Class<?> type = field.getType();
-                    Object val = objects.get(columnNum -1);
-                    if (annotation.required() && ObjectUtil.isEmpty(val)) {
-                        String msg = annotation.errMsg();
-                        if (!com.mermaid.framework.util.StringUtils.hasText(msg)) {
-                            msg = annotation.name()+"is required";
-                        }
-                        throw new IllegalArgumentException(msg);
+                Class<?> declaringClass = field.getDeclaringClass();
+                if (Iterable.class.isAssignableFrom(field.getType())) {
+                    ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
+                    Object o = field.get(t);
+                    List list = null;
+                    if (null != o) {
+                        list = (List) o;
+                    } else {
+                        list = new LinkedList();
                     }
-
-                    Object convert = convert(val, type);
-                    if (type.getClass().getName().equals("java.lang.String") && com.mermaid.framework.util.StringUtils.hasText(annotation.regex())) {
-                        Pattern pattern = Pattern.compile(annotation.regex());
-                        Matcher matcher = pattern.matcher(String.valueOf(convert));
-                        if (!matcher.find()) {
+                    list.add(generalInstance(objects,Class.forName(parameterizedType.getActualTypeArguments()[0].getTypeName())));
+                    field.set(t,list);
+                } else if (!isJavaClass(field.getType())) {
+                    //自定义类型
+                    Object o = generalInstance(objects, field.getDeclaringClass());
+                    field.set(t,o);
+                } else {
+                    Cell annotation = field.getAnnotation(Cell.class);
+                    if (null != annotation) {
+                        int columnNum = Integer.valueOf(annotation.clumonNum());
+                        Class<?> type = field.getType();
+                        if (columnNum > objects.size() || columnNum < 1) {
+                            throw new IndexOutOfBoundsException(declaringClass.getName() +"类:字段" +annotation.name() + "的columnNum设置不正确");
+                        }
+                        Object val = objects.get(columnNum -1);
+                        if (annotation.required() && ObjectUtil.isEmpty(val)) {
                             String msg = annotation.errMsg();
                             if (!com.mermaid.framework.util.StringUtils.hasText(msg)) {
-                                msg = annotation.name()+"与正则["+annotation.regex()+"]不匹配";
+                                msg = annotation.name()+"is required";
                             }
                             throw new IllegalArgumentException(msg);
                         }
-                    }
 
-                    if (type.equals(int.class) || type.equals(Integer.class) || type.equals(long.class) || type.equals(Long.class)
-                            || type.equals(double.class) || type.equals(Double.class) || type.equals(BigDecimal.class)) {
-                        if ((int) convert > annotation.max()) {
-                            String msg = annotation.errMsg();
-                            if (!com.mermaid.framework.util.StringUtils.hasText(msg)) {
-                                msg = annotation.name()+"超过了最大值";
+                        Object convert = convert(val, type);
+                        if (type.getClass().getName().equals("java.lang.String") && com.mermaid.framework.util.StringUtils.hasText(annotation.regex())) {
+                            Pattern pattern = Pattern.compile(annotation.regex());
+                            Matcher matcher = pattern.matcher(String.valueOf(convert));
+                            if (!matcher.find()) {
+                                String msg = annotation.errMsg();
+                                if (!com.mermaid.framework.util.StringUtils.hasText(msg)) {
+                                    msg = annotation.name()+"与正则["+annotation.regex()+"]不匹配";
+                                }
+                                throw new IllegalArgumentException(msg);
                             }
-                            throw new IllegalArgumentException(msg);
                         }
+
+                        if (type.equals(int.class) || type.equals(Integer.class) || type.equals(long.class) || type.equals(Long.class)
+                                || type.equals(double.class) || type.equals(Double.class) || type.equals(BigDecimal.class)) {
+                            if ((int) convert > annotation.max()) {
+                                String msg = annotation.errMsg();
+                                if (!com.mermaid.framework.util.StringUtils.hasText(msg)) {
+                                    msg = annotation.name()+"超过了最大值";
+                                }
+                                throw new IllegalArgumentException(msg);
+                            }
+                        }
+                        field.set(t,convert);
                     }
-                    field.set(t,convert);
                 }
+
 
             }
         } catch (Exception e) {
