@@ -121,7 +121,9 @@ public class MermaidExcelUtil {
                         //如果是集合类型，则合并，其他保持不变
                         merge = true;
                         List list = (List) field.get(t);
-                        list.addAll((List) field.get(subList.get(i)));
+                        if (null != list) {
+                            list.addAll((List) field.get(subList.get(i)));
+                        }
                         field.set(t,list);
                     }
                 }
@@ -263,10 +265,11 @@ public class MermaidExcelUtil {
 
         Excel excel = dataList.get(0).getClass().getAnnotation(Excel.class);
         int startRow = excel.startRow();
-        if (startRow > 0) {
-            startRow = startRow -1;
-
-        }
+        int initRow = startRow;
+//        if (startRow > 0) {
+//            startRow = startRow -1;
+//
+//        }
         int maxMerge = 0;
         for (int row = 0; row < dataList.size();row ++) {
             for (Field field : fieldList) {
@@ -275,8 +278,8 @@ public class MermaidExcelUtil {
                 int mergeRowCount = getMergeRowCount(dataList.get(row),cell.clumonNum(),null);
                 maxMerge = maxMerge > mergeRowCount ? maxMerge : mergeRowCount;
                 if (mergeRowCount > 1) {
-                    int firstRow = row +startRow;
-                    int endRow = firstRow + mergeRowCount -1;
+                    int firstRow = startRow;
+                    int endRow = firstRow + mergeRowCount -initRow;
 
                     writer.merge(firstRow,endRow,cell.clumonNum() -1 ,cell.clumonNum() -1 ,getCellVal(dataList.get(row),cell.clumonNum()),false);
                 }
@@ -528,7 +531,9 @@ public class MermaidExcelUtil {
                 writer.addHeaderAlias(entry.getKey(),entry.getValue());
             }
 
-            writer.write(nodeList,true);
+            List<Map<String,Object>> result = filterDataList(dataList);
+            writer = mergeRowWriter(writer,dataList);
+            writer.write(result,true);
             writer.flush(outputStream);
         } catch (IORuntimeException e) {
             throw new Exception(e);
